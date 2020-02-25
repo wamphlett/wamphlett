@@ -1,11 +1,11 @@
 {
-    "name": "wamphlett",
+    "name": "Warren Amphlett",
     "short_name": "wamphlett",
     "start_url": ".",
     "display": "minimal-ui",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Warren Amphlett. Web developer and tech addict.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
