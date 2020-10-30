@@ -1,4 +1,4 @@
 warrenamphlett.co.uk
 
-root /srv/wamphlett
+root * /srv/wamphlett
 tls warrenamphlett@gmail.com
