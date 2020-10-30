@@ -24,6 +24,6 @@ WORKDIR /usr/local/wamphlett
 RUN /usr/local/flutter/bin/flutter build web
 
 # Start a new Caddy container and copy the build files to the web root
-FROM abiosoft/caddy
+FROM caddy
 COPY ./Caddyfile /etc/Caddyfile
 COPY --from=build /usr/local/wamphlett/build/web /srv/wamphlett
