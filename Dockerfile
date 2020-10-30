@@ -25,5 +25,5 @@ RUN /usr/local/flutter/bin/flutter build web
 
 # Start a new Caddy container and copy the build files to the web root
 FROM caddy
-COPY ./Caddyfile /etc/Caddyfile
+COPY ./Caddyfile /etc/caddy/Caddyfile
 COPY --from=build /usr/local/wamphlett/build/web /srv/wamphlett
