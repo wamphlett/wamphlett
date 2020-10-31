@@ -1,4 +1,4 @@
-warrenamphlett.co.uk
+{$SITE_HOST}
 
 root * /srv/wamphlett
-tls warrenamphlett@gmail.com
+file_server
