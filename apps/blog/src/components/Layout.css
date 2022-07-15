@@ -1,0 +1,81 @@
+.layout, .layout header > div {
+    max-width: 1260px;
+    width: 90%;
+    margin: 0 auto;
+}
+
+.layout header {
+    position: fixed;
+    background-color: white;
+    width: 100%;
+    left: 0;
+    top: 0;
+    height: 60px;
+}
+
+.layout header div {
+    font-weight: bold;
+    font-size: 1em;
+    line-height: 60px;
+}
+
+.layout header div a {
+    color: #000;
+    text-decoration: none;
+}
+
+.layout header div a > span {
+    font-size: 2em;
+    color: #67bbc2;
+}
+
+.layout header.with-shadow {
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.17);
+}
+
+.layout > div {
+    display: flex;
+}
+
+.layout .main {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    margin-top: 60px;
+}
+
+.layout .sidebar {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 300px;
+    min-height: 100vh;
+    margin-left: 80px;
+    border-left: 1px solid #efefef;
+    z-index: 2;
+}
+
+.layout .sidebar > div {
+    position: fixed;
+    min-height: 100vh;
+    padding-left: 30px;
+    padding-right:999px;
+    margin-right: -999px;
+    background: #f7f7f7;
+    max-width: 300px;
+}
+
+.layout .sidebar p.heading {
+    font-weight: bold;
+    margin: 10px 0;
+    text-transform: uppercase;
+    margin-top: 50px;
+}
+
+.layout .sidebar a {
+    color: rgb(31, 31, 31);
+    text-decoration: none;
+}
+
+.layout .sidebar ul li {
+    margin: 8px 0;
+}

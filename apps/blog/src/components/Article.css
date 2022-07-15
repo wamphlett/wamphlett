@@ -1,0 +1,86 @@
+article > pre {
+    margin: 24px 0;
+}
+article pre code {
+    padding: 20px !important;
+    border-radius: 10px;
+}
+
+article h1, article h2, article h3, article h4, article h5, article h6 {
+    font-weight: bold;
+}
+
+article h1 {
+    font-size: 2.8em;
+    text-transform: uppercase;
+    margin: 10px 0;
+}
+article h2 {
+    font-size: 2.2em;
+}
+
+article > p {
+    font-size: 1.4em;
+    line-height: 1.4em;
+    font-weight: 200;
+    margin: 15px 0;
+    color: #4a4a4a;
+}
+
+article p code {
+    background-color: #f3f3f3;
+    padding: 0 8px;
+    font-size: .8em;
+    border-radius: 4px;
+    color: #474747;
+}
+
+article > p, article > h1, article > h2, article > img {
+    padding: 0 20px;
+}
+
+article .images {
+    display: flex;
+    margin: 40px 0;
+}
+
+/* hide all images by default until they have been wrapped */
+article .images > img {
+    display: none;
+}
+
+article .images > div {
+    display: none;
+}
+
+article .images > div img {
+    display: block;
+}
+
+/* double layout */
+article .images.double > .image-1, 
+article .images.double > .image-2 {
+    display: block;
+}
+
+article .images.double {
+    justify-content: space-between;
+}
+
+article .images.double > .image {
+    position: relative;
+    width: 49%;
+    padding-bottom: 49%;
+    background-color: #aaa;
+    border-radius: 10px;
+    overflow: hidden;
+}
+article .images.double > .image > div {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
