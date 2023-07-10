@@ -29,12 +29,14 @@ class SocialIcons extends StatelessWidget {
 class SocialIcon extends StatefulWidget {
   final double size;
   final String asset;
-  SocialIcon({Key key, @required this.size, @required this.asset}) : super(key: key);
+  SocialIcon({Key key, @required this.size, @required this.asset})
+      : super(key: key);
 
   _SocialIconState createState() => _SocialIconState();
 }
 
-class _SocialIconState extends State<SocialIcon> with SingleTickerProviderStateMixin {
+class _SocialIconState extends State<SocialIcon>
+    with SingleTickerProviderStateMixin {
   AnimationController controller;
   Animation<double> animation;
   Animation curve;
@@ -42,48 +44,43 @@ class _SocialIconState extends State<SocialIcon> with SingleTickerProviderStateM
   @override
   void initState() {
     super.initState();
-    controller = AnimationController(duration: const Duration(milliseconds: 500), vsync: this);
+    controller = AnimationController(
+        duration: const Duration(milliseconds: 500), vsync: this);
     curve = CurvedAnimation(parent: controller, curve: Curves.elasticOut);
     animation = Tween<double>(begin: 0, end: 1.5).animate(curve)
-        ..addListener(() {
-          setState(() {
-
-          });
-        });
+      ..addListener(() {
+        setState(() {});
+      });
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10),
-      child: Stack(
-        children: <Widget>[
-          MouseRegion(
+        padding: EdgeInsets.symmetric(horizontal: 10),
+        child: MouseRegion(
+            cursor: SystemMouseCursors.click,
             onEnter: (PointerEvent event) {
               controller.forward();
             },
             onExit: (PointerEvent event) {
               controller.reverse();
             },
-            child: Transform.scale(
-              scale: animation.value,
-              child: Container(
-                height: widget.size,
-                width: widget.size,
-                decoration: BoxDecoration(
-                  color: BrandColors.primary,
-                  shape: BoxShape.circle
+            child: Stack(children: <Widget>[
+              Transform.scale(
+                scale: animation.value,
+                child: Container(
+                  height: widget.size,
+                  width: widget.size,
+                  decoration: BoxDecoration(
+                      color: BrandColors.primary, shape: BoxShape.circle),
                 ),
               ),
-            ),
-          ),
-          Container(
-            height: widget.size,
-            width: widget.size,
-            child: Image.asset('assets/social/' + widget.asset, width: widget.size, height: widget.size),
-          )
-        ]
-      )
-    );
+              Container(
+                height: widget.size,
+                width: widget.size,
+                child: Image.asset('assets/social/' + widget.asset,
+                    width: widget.size, height: widget.size),
+              )
+            ])));
   }
 }
