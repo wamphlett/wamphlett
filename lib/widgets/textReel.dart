@@ -5,29 +5,22 @@ import 'package:wamphlett/widgets/animations.dart';
 
 class TextReel extends StatefulWidget {
   final List<Widget> children;
-  TextReel({Key key, this.children}) : super(key: key);
+  TextReel({required Key key, required this.children}) : super(key: key);
 
   _TextReelState createState() => _TextReelState();
 }
 
 class _TextReelState extends State<TextReel> {
-  Timer _timer;
   int index = 0;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _timer = Timer.periodic(Duration(seconds: 3), (timer) {
-      setState(() {
-        if (index == widget.children.length - 1) {
-          index = 0;
-        } else {
-          index = index + 1;
-        }
-      });
+  late final Timer _timer = Timer.periodic(Duration(seconds: 3), (timer) {
+    setState(() {
+      if (index == widget.children.length - 1) {
+        index = 0;
+      } else {
+        index = index + 1;
+      }
     });
-  }
+  });
 
   @override
   void dispose() {

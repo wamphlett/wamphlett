@@ -6,14 +6,14 @@ import '../extensions/hover.dart';
 class Link extends StatelessWidget {
   final Widget child;
   final String link;
-  Link({Key key, @required this.child, @required this.link}) : super(key: key);
+  Link({required Key key, required this.child, required this.link}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       child: child.showCursorOnHover,
       onTap: () {
-        launch(link);
+        launchUrl(Uri.dataFromString(link));
       },
     );
   }

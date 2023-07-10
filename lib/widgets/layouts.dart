@@ -5,7 +5,7 @@ import 'backgrounds.dart';
 class PageLayout extends StatelessWidget {
   final Widget child;
 
-  PageLayout({Key key, @required this.child}) : super(key: key);
+  PageLayout({required Key key, required this.child}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

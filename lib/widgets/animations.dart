@@ -7,8 +7,8 @@ class ShowUp extends StatefulWidget {
   final Duration delay;
   final Duration duration;
   ShowUp(
-      {Key key,
-      @required this.child,
+      {required Key key,
+      required this.child,
       this.delay = const Duration(seconds: 0),
       this.duration = const Duration(milliseconds: 800)})
       : super(key: key);
@@ -16,26 +16,23 @@ class ShowUp extends StatefulWidget {
 }
 
 class _ShowUpState extends State<ShowUp> with SingleTickerProviderStateMixin {
-  AnimationController controller;
-  Animation<Offset> slideAnimation;
-  Animation<double> fadeAnimation;
+
+  late final AnimationController controller = AnimationController(duration: widget.duration, vsync: this);
+  late final Animation<Offset> slideAnimation = Tween<Offset>(begin: Offset(0, 1), end: Offset(0, 0))
+      .animate(CurvedAnimation(parent: controller, curve: Curves.ease))
+    ..addListener(() {
+      setState(() {});
+    });
+  late final Animation<double> fadeAnimation = Tween<double>(begin: -1, end: 1)
+      .animate(CurvedAnimation(parent: controller, curve: Curves.ease))
+    ..addListener(() {
+      setState(() {});
+    });
 
   @override
   void initState() {
     super.initState();
 
-    controller = AnimationController(duration: widget.duration, vsync: this);
-    slideAnimation = Tween<Offset>(begin: Offset(0, 1), end: Offset(0, 0))
-        .animate(CurvedAnimation(parent: controller, curve: Curves.ease))
-      ..addListener(() {
-        setState(() {});
-      });
-
-    fadeAnimation = Tween<double>(begin: -1, end: 1)
-        .animate(CurvedAnimation(parent: controller, curve: Curves.ease))
-      ..addListener(() {
-        setState(() {});
-      });
     Future.delayed(widget.delay, () {
       controller.forward();
     });
@@ -61,8 +58,8 @@ class FadeOut extends StatefulWidget {
   final Duration after;
   final Duration duration;
   FadeOut(
-      {Key key,
-      @required this.child,
+      {required Key key,
+      required this.child,
       this.after = const Duration(seconds: 0),
       this.duration = const Duration(milliseconds: 800)})
       : super(key: key);
@@ -70,24 +67,15 @@ class FadeOut extends StatefulWidget {
 }
 
 class _FadeOutState extends State<FadeOut> with SingleTickerProviderStateMixin {
-  Timer _timer;
-  AnimationController controller;
-  Animation<double> fadeAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-
-    controller = AnimationController(duration: widget.duration, vsync: this);
-    fadeAnimation = Tween<double>(begin: 1, end: -1)
-        .animate(CurvedAnimation(parent: controller, curve: Curves.ease))
-      ..addListener(() {
-        setState(() {});
-      });
-    _timer = Timer(widget.after, () {
-      controller.forward();
+  late final AnimationController controller = AnimationController(duration: widget.duration, vsync: this);
+  late final Animation<double> fadeAnimation = Tween<double>(begin: 1, end: -1)
+      .animate(CurvedAnimation(parent: controller, curve: Curves.ease))
+    ..addListener(() {
+      setState(() {});
     });
-  }
+  late final Timer _timer = Timer(widget.after, () {
+    controller.forward();
+  });
 
   @override
   void dispose() {

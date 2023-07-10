@@ -12,11 +12,13 @@ class SocialIcons extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Link(
-            child: SocialIcon(asset: 'linkedin.png', size: 32),
+            key: Key("linked-in"),
+            child: SocialIcon(key: Key("linked-in"), asset: 'linkedin.png', size: 32),
             link: 'https://www.linkedin.com/in/warren-amphlett-5bb9b6170/',
           ),
           Link(
-            child: SocialIcon(asset: 'github.png', size: 32),
+            key: Key("github"),
+            child: SocialIcon(key: Key("github"), asset: 'github.png', size: 32),
             link: 'https://github.com/wamphlett/',
           ),
         ],
@@ -29,7 +31,7 @@ class SocialIcons extends StatelessWidget {
 class SocialIcon extends StatefulWidget {
   final double size;
   final String asset;
-  SocialIcon({Key key, @required this.size, @required this.asset})
+  SocialIcon({required Key key, required this.size, required this.asset})
       : super(key: key);
 
   _SocialIconState createState() => _SocialIconState();
@@ -37,21 +39,14 @@ class SocialIcon extends StatefulWidget {
 
 class _SocialIconState extends State<SocialIcon>
     with SingleTickerProviderStateMixin {
-  AnimationController controller;
-  Animation<double> animation;
-  Animation curve;
 
-  @override
-  void initState() {
-    super.initState();
-    controller = AnimationController(
-        duration: const Duration(milliseconds: 500), vsync: this);
-    curve = CurvedAnimation(parent: controller, curve: Curves.elasticOut);
-    animation = Tween<double>(begin: 0, end: 1.5).animate(curve)
-      ..addListener(() {
-        setState(() {});
-      });
-  }
+  late final AnimationController controller = AnimationController(
+      duration: const Duration(milliseconds: 500), vsync: this);
+  late final Animation<double> curve = CurvedAnimation(parent: controller, curve: Curves.elasticOut);
+  late final Animation<double> animation = Tween<double>(begin: 0, end: 1.5).animate(curve)
+    ..addListener(() {
+      setState(() {});
+    });
 
   @override
   Widget build(BuildContext context) {
