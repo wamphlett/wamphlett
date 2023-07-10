@@ -26,98 +26,100 @@ class HomePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
-                child: Center(
-                    child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 100),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  // Name
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
+              child: Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 100),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
-                      Text("WARREN",
-                          style: TextStyle(
-                              fontSize: nameSize,
-                              height: 1,
-                              fontWeight: FontWeight.w900)),
-                      RichText(
-                        text: TextSpan(
-                          style: TextStyle(color: Colors.black, height: .9),
-                          children: <TextSpan>[
-                            TextSpan(
-                                text: 'AMPHLETT',
-                                style: TextStyle(
+                      // Name
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text("WARREN", style: TextStyle(
+                            color: Colors.white,
+                            fontSize: nameSize,
+                            height: 1,
+                            fontWeight: FontWeight.w900)),
+                          RichText(
+                            text: TextSpan(
+                              style: TextStyle(color: Colors.white, height: .9),
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: 'AMPHLETT',
+                                  style: TextStyle(
                                     fontSize: nameSize,
                                     height: .9,
                                     fontFamily: 'Heebo',
                                     fontWeight: FontWeight.w900)),
-                            TextSpan(
-                                text: '.',
-                                style: TextStyle(
+                                TextSpan(
+                                  text: '.',
+                                  style: TextStyle(
                                     fontSize: nameSize,
                                     height: .9,
                                     fontFamily: 'Heebo',
                                     fontWeight: FontWeight.w900,
                                     color: BrandColors.primary)),
-                          ],
-                        ),
+                              ],
+                            ),
+                          ),
+                          // Tagline
+                          Text("software engineer and tech addict", style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 37 * textMultiplier,
+                            height: .8,
+                            fontWeight: FontWeight.w100)),
+                        ],
                       ),
-                      // Tagline
-                      Text("software engineer and tech addict",
-                          style: TextStyle(
-                              fontSize: 37 * textMultiplier,
-                              height: .8,
-                              fontWeight: FontWeight.w100)),
-                    ],
-                  ),
 
-                  Column(
-                    children: <Widget>[
-                      // Skills
-                      Container(
-                        child: Column(
-                          children: <Widget>[
-                            Text("things I play with",
-                                style: TextStyle(
+                      Column(
+                        children: <Widget>[
+                          // Skills
+                          Container(
+                            child: Column(
+                              children: <Widget>[
+                                Text("things I play with",
+                                  style: TextStyle(
+                                    color: Colors.white,
                                     fontSize: 24 * textMultiplier,
                                     fontWeight: FontWeight.w100)),
-                            ShowUp(
-                                key: Key("main"),
-                                child: Text("GO PHP LARAVEL FLUTTER",
+                                ShowUp(
+                                  key: Key("main"),
+                                  child: Text("GO PHP LARAVEL FLUTTER",
                                     style: TextStyle(
-                                        fontWeight: FontWeight.w900,
-                                        fontSize: 32 * textMultiplier))),
-                            TextReel(
-                              key: Key("extra"),
-                              children: [
-                                ExtraText("kubernetes docker unix",
-                                    fontSize: 16 * textMultiplier),
-                                ExtraText("gRPC rabbitMQ",
-                                    fontSize: 16 * textMultiplier),
-                                ExtraText("MySQL mongoDB",
-                                    fontSize: 16 * textMultiplier),
-                                ExtraText("redis memcached",
-                                    fontSize: 16 * textMultiplier),
-                                ExtraText("nodejs react css sass",
-                                    fontSize: 16 * textMultiplier),
-                                ExtraText("GCP AWS",
-                                    fontSize: 16 * textMultiplier),
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 32 * textMultiplier))),
+                                TextReel(
+                                  key: Key("extra"),
+                                  children: [
+                                    ExtraText("kubernetes docker unix",
+                                        fontSize: 16 * textMultiplier),
+                                    ExtraText("gRPC rabbitMQ",
+                                        fontSize: 16 * textMultiplier),
+                                    ExtraText("MySQL mongoDB",
+                                        fontSize: 16 * textMultiplier),
+                                    ExtraText("redis memcached",
+                                        fontSize: 16 * textMultiplier),
+                                    ExtraText("nodejs react css sass",
+                                        fontSize: 16 * textMultiplier),
+                                    ExtraText("GCP AWS",
+                                        fontSize: 16 * textMultiplier),
+                                  ],
+                                )
                               ],
-                            )
-                          ],
-                        ),
-                      ),
+                            ),
+                          ),
 
-                      // Social
-                      SocialIcons()
+                          // Social
+                          SocialIcons()
+                        ],
+                      )
                     ],
-                  )
-                ],
-              ),
-            ))),
+                  ),
+                ))),
             BlogLink(
               "SEE MY BLOG",
               fontSize: 18 * textMultiplier,
@@ -136,7 +138,7 @@ class ExtraText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(text,
-        style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.w100));
+        style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.w100, color: Colors.white));
   }
 }
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'backgrounds.dart';
+// import 'backgrounds.dart';
 
 // The default site page layout.
 class PageLayout extends StatelessWidget {
@@ -19,7 +19,20 @@ class PageLayout extends StatelessWidget {
             child: Stack(
               children: <Widget>[
                 // Background
-                AnimatedBackground(),
+                // AnimatedBackground(),
+                Container(
+                  color: Colors.black,
+                ),
+                Opacity(
+                  opacity: .5,
+                  child: Image.asset(
+                    "images/albania.jpg",
+                    fit: BoxFit.cover,
+                    height: double.infinity,
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                  ),
+                ),
                 // Child
                 child
               ],
