@@ -25,8 +25,9 @@ class PageLayout extends StatelessWidget {
                 ),
                 Opacity(
                   opacity: .5,
-                  child: Image.asset(
-                    "images/albania.jpg",
+                  child: FadeInImage.assetNetwork(
+                    placeholder: "images/transparent.png", 
+                    image: "https://library.wamphlett.net/photos/website/albania/ksamil.jpg",
                     fit: BoxFit.cover,
                     height: double.infinity,
                     width: double.infinity,

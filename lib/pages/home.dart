@@ -33,6 +33,8 @@ class HomePage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
+                      Container(height: MediaQuery.of(context).size.height * .15),
+
                       // Name
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -170,7 +172,7 @@ class _BlogLinkState extends State<BlogLink> {
             link: "/topics",
             child: Text(widget.text,
                 style: TextStyle(
-                    color: isHovered ? BrandColors.primary : Colors.black,
+                    color: isHovered ? BrandColors.primary : Colors.white,
                     fontWeight: FontWeight.w700,
                     fontSize: widget.fontSize)),
           ),

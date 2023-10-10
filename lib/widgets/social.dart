@@ -13,12 +13,12 @@ class SocialIcons extends StatelessWidget {
         children: <Widget>[
           Link(
             key: Key("linked-in"),
-            child: SocialIcon(key: Key("linked-in"), asset: 'linkedin.png', size: 32),
+            child: SocialIcon(key: Key("linked-in"), asset: 'linkedin-white.png', size: 32),
             link: 'https://www.linkedin.com/in/warren-amphlett-5bb9b6170/',
           ),
           Link(
             key: Key("github"),
-            child: SocialIcon(key: Key("github"), asset: 'github.png', size: 32),
+            child: SocialIcon(key: Key("github"), asset: 'github-white.png', size: 32),
             link: 'https://github.com/wamphlett/',
           ),
         ],

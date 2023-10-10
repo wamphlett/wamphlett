@@ -13,7 +13,7 @@ class Link extends StatelessWidget {
     return GestureDetector(
       child: child.showCursorOnHover,
       onTap: () {
-        launchUrl(Uri.dataFromString(link));
+        launchUrl(Uri.parse(link));
       },
     );
   }
