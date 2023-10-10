@@ -1,4 +1,0 @@
-{$SITE_HOST}
-
-root * /srv/wamphlett
-file_server
