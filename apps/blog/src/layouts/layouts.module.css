@@ -1,0 +1,52 @@
+.defaultWidth {
+    width: 100%;
+    max-width: 1600px;
+    padding: 0 34px;
+    margin: 0 auto;
+}
+
+.page {
+    display: flex;
+}
+
+.page .content {
+    width: 70%;
+}
+
+.page .sidebar {
+    width: 30%;
+    padding-top: 50vh;
+}
+
+@media only screen and (max-width: 850px) {
+    .page {
+        position: relative;
+        display: flex;
+    }
+
+    .page .content {
+        width: 100%;
+    }
+    
+    .page .sidebar {
+        position: fixed;
+        top:0;
+        right:-70%;
+        bottom: 0;
+        width: 70%;
+        padding: 20px;
+        padding-top: 124px;
+        background: linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.9) 50%, white);
+        transition: right .4s ease;
+    }
+
+    .page .sidebar.open {
+        right: 0;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .defaultWidth {
+        padding: 0 4px;
+    }
+}

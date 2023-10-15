@@ -1,5 +1,0 @@
-{$SITE_HOST}
-
-root * /srv/blog
-file_server
-try_files {path} /index.html

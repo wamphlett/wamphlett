@@ -1,0 +1,11 @@
+.container {
+  padding: 40px 20px;
+  background-color: #f7f7f7;
+  border-radius: 10px;
+  color: black;
+  overflow: hidden;
+}
+
+.container > h1:first-of-type {
+  display: none;
+}
