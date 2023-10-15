@@ -51,7 +51,8 @@ export default async function Page({ params }: PageProps) {
   }
 
   const headerURL =
-    'https://library.wamphlett.net/photos/website/2023/albania/lifes-better-by-the-sea.jpg';
+    data.image ||
+    'https://library.wamphlett.net/photos/website/2023/albania/ksamil.jpg';
   const blurDataURL = await getBlurUrl(headerURL);
 
   return (
@@ -65,10 +66,7 @@ export default async function Page({ params }: PageProps) {
         />
       }
     >
-      <Title
-        subtitle="and and sub heading about the piece of exciting content that you are about to read"
-        title={data.title}
-      />
+      <Title subtitle={data.description} title={data.title} />
 
       <Article html={data.html} />
     </PrimaryLayout>

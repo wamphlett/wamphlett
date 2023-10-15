@@ -35,7 +35,7 @@ export default async function Page() {
       sidebar={<Sidebar currentUrl={'/'} topic={null} />}
     >
       <Title
-        subtitle="and and sub heading about the piece of exciting content that you are about to read"
+        subtitle="I like to write code and take photos. I'm not a huge fan of writing but needed somewhere to post my ramblings."
         title="My blog"
       />
 

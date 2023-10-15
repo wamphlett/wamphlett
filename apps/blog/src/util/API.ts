@@ -1,10 +1,12 @@
 class RequestCache {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private cache: Record<string, { json: any; expires: Date }>;
 
   constructor() {
     this.cache = {};
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   get(route: string): any | undefined {
     if (this.cache[route]) {
       if (this.cache[route].expires.getTime() < new Date().getTime()) {
@@ -16,6 +18,7 @@ class RequestCache {
     return undefined;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   set(route: string, json: any, cacheSeconds: number = 180): void {
     const expiryTime = new Date(new Date().getTime() + cacheSeconds * 1000);
     console.log(`setting cache for ${route} to expire at ${expiryTime}`);
@@ -43,9 +46,7 @@ export const callApi = (route: string, cacheSeconds: number = 180) => {
       if (res.ok) {
         return res.json();
       }
-      const e = new Error('error calling the api');
-      e.code = res.status;
-      throw e;
+      throw new Error('error calling the api');
     })
     .then(json => {
       cache.set(route, json, cacheSeconds);

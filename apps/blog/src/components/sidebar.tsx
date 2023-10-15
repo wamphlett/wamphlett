@@ -28,14 +28,14 @@ async function getSidebarData(url: string) {
 
 async function buildSidebar(topic: string | null): Promise<SidebarData> {
   const res = await getSidebarData('/topics');
-  const data: SidebarData = { articles: [], topics: [] };
+  const data: SidebarData = { articles: [], topics: [], current: null };
   await Promise.all(
     res.topics.map(async (t: SidebarLink) => {
       if (t.slug === topic) {
         data.current = {
           title: t.title,
           url: `/${t.slug}`,
-          priority: t.priority,
+          priority: t.priority || 0,
           slug: t.slug,
         };
 
@@ -45,7 +45,7 @@ async function buildSidebar(topic: string | null): Promise<SidebarData> {
             data.articles.push({
               title: a.title,
               url: `/${t.slug}/${a.slug}`,
-              priority: a.priority,
+              priority: a.priority || 0,
               slug: a.slug,
             });
           }),
@@ -54,12 +54,15 @@ async function buildSidebar(topic: string | null): Promise<SidebarData> {
         data.topics.push({
           title: t.title,
           url: `/${t.slug}`,
-          priority: t.priority,
+          priority: t.priority || 0,
           slug: t.slug,
         });
       }
     }),
   );
+
+  data.topics.sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+  data.articles.sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
 
   return data;
 }

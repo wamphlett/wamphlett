@@ -31,10 +31,16 @@ export default function PrimaryLayout({
     setMaxScroll(window.innerHeight * 0.3);
     window.addEventListener('scroll', handleScroll);
 
-    const handleClickOutside = event => {
+    const handleClickOutside = (event: MouseEvent) => {
       // If the menu is open and the click was outside the menu, close it
-      if (open && menuRef.current && !menuRef.current.contains(event.target)) {
-        setOpen(false);
+      if (open && menuRef.current) {
+        // Check if event.target is a Node
+        if (
+          !(event.target instanceof Node) ||
+          !menuRef.current.contains(event.target)
+        ) {
+          setOpen(false);
+        }
       }
     };
 
