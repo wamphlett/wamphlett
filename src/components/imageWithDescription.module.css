@@ -1,0 +1,63 @@
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left:0;
+  right: 0;
+  top: 0;
+}
+.content {
+  position: absolute;
+  bottom: 0;
+  left:0;
+  right: 0;
+  padding: 60px 30px 30px 30px;
+  overflow: hidden;
+}
+
+.content > span {
+  display: block;
+  position: relative;
+  font-size: 1.6em;
+  text-transform: uppercase;
+  font-weight: 900;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity .4s ease-out, transform .7s ease-out;
+  transform: translateX(-80px);
+}
+
+.overlay:hover .content > span {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.content > p {
+  position: relative;
+  font-weight: 100;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity .4s ease-out, transform .7s ease-out;
+  transform: translateX(-50px);
+}
+
+.overlay:hover .content > p {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.background {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  opacity: 0;
+  transition: opacity .4s ease-out, transform .7s ease-out;
+  transform: translateY(50px);
+}
+
+.overlay:hover .background {
+  opacity: 1;
+  transform: translateY(0);
+}

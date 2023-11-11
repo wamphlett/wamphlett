@@ -1,0 +1,150 @@
+.container {
+
+}
+
+.year {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1em;
+  padding: 10px 0px;
+}
+
+.year > span:first-of-type {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 40px;
+  border-radius: 50px;
+  border: solid 8px rgba(255, 255, 255, 0.4);
+}
+
+.year h2 {
+  font-weight: 900;
+  font-size: 4em;
+  line-height: 1.2em;
+}
+
+.event {
+  display: flex;
+
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+}
+
+.event .details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.event .intro {
+  font-size: 1em;
+  opacity: .5;
+  font-weight: 100;
+  text-transform: uppercase;
+  text-align: center;
+  width: 100%;
+}
+
+.event .title {
+  position: relative;
+}
+
+.event .title.withIntro {
+  margin-top: 20px;;
+}
+
+.event .title h3 {
+  font-weight: 900;
+  font-size: 1.8em;
+  text-transform: uppercase;
+} 
+
+.event .title svg {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  top:50%;
+  margin-top: -18px;
+  left: -40px;
+}
+
+.event .title svg path {
+  fill: #EC0025;
+}
+
+.event .tagline {
+  font-weight: 100;
+  display: block;
+  text-align: center;
+  opacity: 0.8;
+  max-width: 700px;
+  padding:0 8px
+}
+
+.event .images {
+  width: 100%
+}
+
+.note {
+  display: block;
+  font-size: 1em;
+  font-weight: 100;
+  text-align: center;
+  opacity: 0.8;
+  margin-top: 10px;
+}
+
+/* lines */
+.tail > span,
+.year > span:nth-of-type(2),
+.event::after {
+  content: '';
+  display: block;
+  height: 50px;
+  width: 4px;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 2px;
+  margin: 10px auto;
+}
+
+.year > span:nth-of-type(2) {
+  height: 25px;
+  margin-top: 0;
+  border-top-right-radius: 0%;
+  border-top-left-radius: 0%;
+}
+
+.event:last-child::after {
+  display: none;
+}
+
+.tail > span:nth-of-type(1) {
+  height:30px;
+}
+
+.tail > span:nth-of-type(2) {
+  height:16px;
+}
+
+.tail > span:nth-of-type(3) {
+  height:8px;
+}
+
+.tail > span:nth-of-type(4) {
+  height:4px;
+}
+
+@media only screen and (max-width: 480px) {
+  .year h2 {
+    font-size: 3em;
+  }
+  
+  .event .title h3 {
+    font-size: 1.4em;
+  }
+}
