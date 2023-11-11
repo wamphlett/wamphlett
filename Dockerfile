@@ -1,29 +1,23 @@
-FROM debian:latest AS build
+# Use an official Node.js runtime as the base image
+FROM node:18-alpine
 
-# Install flutter dependencies
-RUN apt-get update 
-RUN apt-get install -y curl git wget zip unzip libgconf-2-4 gdb libstdc++6 libglu1-mesa fonts-droid-fallback lib32stdc++6 python3
-RUN apt-get clean
+# Set the working directory in the container
+WORKDIR /app
 
-# Get Flutter
-RUN git clone https://github.com/flutter/flutter.git /usr/local/flutter
+# Copy package.json and package-lock.json (or yarn.lock) to the container
+COPY package*.json ./
 
-# Run flutter doctor and add to path
-RUN /usr/local/flutter/bin/flutter doctor -v
-ENV PATH="/usr/local/flutter/bin:/usr/local/flutter/bin/cache/dart-sdk/bin:${PATH}"
+# Install project dependencies
+RUN npm install
 
-# Enable flutter web
-RUN flutter channel master
-RUN flutter upgrade
-RUN flutter config --enable-web
+# Copy the rest of the application code
+COPY . .
 
-# Copy files to the container and build
-RUN mkdir /usr/local/wamphlett
-COPY . /usr/local/wamphlett
-WORKDIR /usr/local/wamphlett
-RUN /usr/local/flutter/bin/flutter build web
+# Build the Next.js application
+# RUN npm run build
 
-# Start a new Caddy container and copy the build files to the web root
-FROM caddy
-COPY ./Caddyfile /etc/caddy/Caddyfile
-COPY --from=build /usr/local/wamphlett/build/web /srv/wamphlett
+# Expose the application on port 3000
+EXPOSE 3000
+
+# Define the command to run the application
+CMD ["npm", "start"]
