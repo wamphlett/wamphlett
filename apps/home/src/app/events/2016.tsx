@@ -1,3 +1,4 @@
+import { images } from '../types';
 import { buildEvent } from '../data';
 import { EventType, Grids } from '../types';
 import fujiImages from '../images/2016mountFuji';
@@ -12,20 +13,20 @@ export const Tokyo16 = buildEvent({
   title: 'Tokyo',
   tagline: 'life-long dream to visit Japan, finally came true',
   images: [
-    {
+    images({
       grid: Grids.Row,
       aspectRatio: 16 / 9,
       images: [fujiImages.theBestAndHardestThingIveEverDone],
-    },
-    {
+    }),
+    images({
       grid: Grids.TriSquareInverted,
       images: [
         tokyoImages.allTheSake,
         tokyoImages.aNerdsHeaven,
         fujiImages.theWayDownIsDefinitelyEasier,
       ],
-    },
-    {
+    }),
+    images({
       grid: Grids.Row,
       aspectRatio: 1.3 / 1,
       images: [
@@ -34,7 +35,7 @@ export const Tokyo16 = buildEvent({
         tokyoImages.newFriends,
         tokyoImages.sumidaFireworks,
       ],
-    },
+    }),
   ],
 });
 
@@ -46,16 +47,16 @@ export const Antalya16 = buildEvent({
   title: 'Antalya',
   tagline: 'family holiday to an all-inclusive resort in Turkey',
   images: [
-    {
+    images({
       grid: Grids.Row,
       aspectRatio: 21 / 9,
       images: [turkeyImages.nearPerfection],
-    },
-    {
+    }),
+    images({
       grid: Grids.Offset,
       aspectRatio: 21 / 9,
       images: [turkeyImages.upUpAndAway, turkeyImages.theSeaBar],
-    },
+    }),
   ],
 });
 

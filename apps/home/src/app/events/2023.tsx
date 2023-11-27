@@ -1,5 +1,7 @@
+import { images } from '../types';
 import { buildEvent } from '../data';
 import { EventType, Grids } from '../types';
+
 import albaniaImages from '../images/2023albania';
 
 export const Japan = buildEvent({
@@ -34,28 +36,28 @@ export const Albania = buildEvent({
   tagline:
     'a long weekend in Albania, rented a car and drove south to stay in Sarande',
   images: [
-    {
+    images({
       grid: Grids.Row,
       aspectRatio: 16 / 9,
       images: [albaniaImages.lifesBetterByTheSea],
-    },
-    {
+    }),
+    images({
       grid: Grids.Row,
       aspectRatio: 16 / 10,
       images: [
         albaniaImages.whyTravelByRoadWhenYouCanGoBySea,
         albaniaImages.watchingTheSunDisapear,
       ],
-    },
-    {
+    }),
+    images({
       grid: Grids.TriSquareInverted,
       images: [
         albaniaImages.paradise,
         albaniaImages.letsFly,
         albaniaImages.priorities,
       ],
-    },
-    {
+    }),
+    images({
       grid: Grids.Row,
       aspectRatio: 4 / 5,
       images: [
@@ -63,11 +65,11 @@ export const Albania = buildEvent({
         albaniaImages.notACareInTheWorld,
         albaniaImages.aCrystalSea,
       ],
-    },
-    {
+    }),
+    images({
       grid: Grids.Row,
       aspectRatio: 21 / 9,
       images: [albaniaImages.justMeAndTheSea],
-    },
+    }),
   ],
 });

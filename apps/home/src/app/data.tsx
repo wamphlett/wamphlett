@@ -6,7 +6,13 @@ import { LakeComo18, Warsaw18 } from './events/2018';
 import { Austin17, NewYork17 } from './events/2017';
 import { Tokyo16, Antalya16, Xabia16 } from './events/2016';
 
-import { EventType, Grids, GalleryImages } from './types';
+import {
+  EventType,
+  Grids,
+  GalleryImages,
+  ImageGrid,
+  YoutubeVideo,
+} from './types';
 
 export type GalleryImage = {
   url: string;
@@ -18,12 +24,6 @@ export type GridData = {
   grid: Grids;
   aspectRatio?: number;
   skinny: boolean;
-  images: GalleryImage[];
-};
-
-export type ImageGrid = {
-  grid: Grids;
-  aspectRatio?: number;
   images: GalleryImage[];
 };
 
@@ -43,6 +43,8 @@ export type Albums = {
   [url: string]: AlbumData;
 };
 
+export type Content = ImageGrid | YoutubeVideo;
+
 export type EventData = {
   year: number;
   month: number;
@@ -51,7 +53,7 @@ export type EventData = {
   tagline?: string;
   intro?: string;
   small?: boolean;
-  images: ImageGrid[];
+  images: Content[];
 };
 
 export type Events = EventData[];
@@ -160,7 +162,7 @@ type buildEventsProps = {
   tagline?: string;
   intro?: string;
   small?: boolean;
-  images?: ImageGrid[];
+  images?: Content[];
 };
 
 export function buildEvent({
@@ -173,7 +175,7 @@ export function buildEvent({
   images,
   intro,
 }: buildEventsProps): EventData {
-  let imageGrids: ImageGrid[] = [];
+  let imageGrids: Content[] = [];
   if (images) {
     imageGrids = images;
   }
