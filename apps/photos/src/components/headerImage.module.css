@@ -1,0 +1,9 @@
+.container {
+  height: 80vh;
+}
+
+@media only screen and (max-width: 480px) {
+  .container {
+    height:95vh;
+  }
+}

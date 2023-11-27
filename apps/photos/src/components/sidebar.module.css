@@ -1,0 +1,62 @@
+.sidebar {
+  position: fixed;
+  right: -50%;
+  height: 100%;
+  width: 40%;
+  min-height: 100vh;
+  overflow-y: auto;
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+  background: linear-gradient(to right, transparent, black);
+  transition: right .5s ease-out;
+}
+
+.sidebar.open {
+  right: 0;
+}
+
+.sidebar::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, newer versions of Opera */
+}
+
+.list {
+  padding: 10px 50px;
+  text-align: right;
+}
+
+.year > span {
+  color: #67BBC2;
+  display: block;
+  margin-top: 20px;
+  font-size: 2em;
+  font-weight: 100;
+}
+
+.year > a {
+  display: block;
+  font-size: 1.4em;
+  font-weight: 300;
+  transition: font-size .3s ease;
+}
+
+.year > a:hover, .year > span.active {
+  font-size: 1.8em;
+}
+
+.year > span.active {
+  margin: 0;
+  font-weight: 900;
+  color: #fff;
+}
+
+.year {
+
+}
+
+@media only screen and (max-width: 480px) {
+  .sidebar {
+    width: 80%;
+    right: -90%;
+    background: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.8) 50%, black);
+  }
+}

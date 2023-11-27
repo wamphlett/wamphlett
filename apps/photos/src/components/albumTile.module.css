@@ -1,0 +1,57 @@
+.tile {
+  position: relative;
+  padding: 6px;
+  width: 100%;
+}
+
+.tile a {
+  display: block;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.title {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.title > span {
+  text-transform: uppercase;
+  font-weight: 900;
+  text-align: center;
+  font-size: 2em;
+  transition: font-size .5s ease;
+  line-height: 1em;
+}
+
+.title > span:nth-child(2) {
+  font-weight: 100;
+}
+
+.tile.small .title > span {
+  font-size: 1.4em;
+}
+
+.tile.small .title:hover > span {
+  font-size: 1.7em;
+}
+
+.tile.large .title {
+  background: rgba(0,0,0,0);
+  opacity: 1;
+  transition: opacity .5s ease, transform .5s ease, color .2s ease, background .5s ease;
+  color: white;
+}
+
+.tile.large .title:hover {
+  opacity: 1;
+  transform: scale(1.2);
+  background: #67bac2c8;
+  color: black
+}
