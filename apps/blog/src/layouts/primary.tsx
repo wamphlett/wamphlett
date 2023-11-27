@@ -21,6 +21,7 @@ export default function PrimaryLayout({
   const [scrollY, setScrollY] = useState(0);
   const [maxScroll, setMaxScroll] = useState(1);
   const [open, setOpen] = useState(false);
+  const [defaultPadding, setDefaultPadding] = useState(24);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -28,8 +29,15 @@ export default function PrimaryLayout({
       setScrollY(window.scrollY);
     };
 
+    const handleResize = () => {
+      setDefaultPadding(window.innerWidth < 768 ? 10 : 24);
+    };
+
     setMaxScroll(window.innerHeight * 0.3);
+    handleScroll();
+    handleResize();
     window.addEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleResize);
 
     const handleClickOutside = (event: MouseEvent) => {
       // If the menu is open and the click was outside the menu, close it
@@ -49,10 +57,11 @@ export default function PrimaryLayout({
     return () => {
       window.removeEventListener('scroll', handleScroll);
       document.removeEventListener('click', handleClickOutside);
+      window.removeEventListener('resize', handleResize);
     };
   }, [open]);
 
-  let padding = 24 - 24 * (scrollY / maxScroll);
+  let padding = defaultPadding - defaultPadding * (scrollY / maxScroll);
   if (padding < 0) {
     padding = 0;
   }

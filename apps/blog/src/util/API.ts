@@ -1,55 +1,103 @@
-class RequestCache {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private cache: Record<string, { json: any; expires: Date }>;
+type apiOptions = {
+  cacheSeconds?: number;
+  tags?: string[];
+};
 
-  constructor() {
-    this.cache = {};
-  }
+type ArticleDetails = {
+  title: string;
+  description: string;
+  image: string;
+  publishedAt: number;
+  updatedAt: number;
+  hidden: boolean;
+  topicSlug: string;
+  slug: string;
+  priority?: number;
+};
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  get(route: string): any | undefined {
-    if (this.cache[route]) {
-      if (this.cache[route].expires.getTime() < new Date().getTime()) {
-        delete this.cache[route];
-        return undefined;
-      }
-      return this.cache[route].json;
-    }
-    return undefined;
-  }
+type TopicDetails = {
+  title: string;
+  description: string;
+  image: string;
+  url: string;
+  slug: string;
+  priority?: number;
+  publishedAt: number;
+  updatedAt: number;
+  hidden: boolean;
+  publishedArticleCount: number;
+  articleUrl: string;
+};
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  set(route: string, json: any, cacheSeconds: number = 180): void {
-    const expiryTime = new Date(new Date().getTime() + cacheSeconds * 1000);
-    console.log(`setting cache for ${route} to expire at ${expiryTime}`);
-    this.cache[route] = {
-      json,
-      expires: expiryTime,
-    };
-  }
-}
-
-const cache = new RequestCache();
-
-export const callApi = (route: string, cacheSeconds: number = 180) => {
+const callApi = async (route: string, apiOptions: apiOptions = {}) => {
   if (process.env.REACT_APP_API_URL != '') {
     route = process.env.REACT_APP_API_URL + route;
   }
 
-  const cacheRes = cache.get(route);
-  if (cacheRes) {
-    return Promise.resolve(cacheRes);
+  const res = await fetch(route, {
+    next: {
+      // cache all requests for 30 days by default
+      revalidate: apiOptions.cacheSeconds || 86400 * 30,
+      tags: ['everything'].concat(apiOptions.tags || []),
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch data from server. path: ' + route);
   }
 
-  return fetch(route)
-    .then(res => {
-      if (res.ok) {
-        return res.json();
-      }
-      throw new Error('error calling the api');
-    })
-    .then(json => {
-      cache.set(route, json, cacheSeconds);
-      return json;
-    });
+  return await res.json();
 };
+
+export type GetOverviewResponse = ArticleDetails & {
+  html: string;
+};
+
+export const getOverview = async (): Promise<GetOverviewResponse> =>
+  await callApi('/overview');
+
+export type RecentResponse = {
+  articles: ArticleDetails[];
+};
+
+export const getRecent = async (limit = 3): Promise<RecentResponse> =>
+  await callApi('/recent?limit=' + limit, {
+    tags: ['sidebar', 'recent'],
+  });
+
+export type ListTopicsResponse = {
+  topics: TopicDetails[];
+};
+
+export const listTopics = async (): Promise<ListTopicsResponse> =>
+  await callApi('/topics', {
+    tags: ['sidebar'],
+  });
+
+export type GetTopicResponse = TopicDetails & {
+  html: string;
+};
+
+export const getTopic = async (topic: string): Promise<GetTopicResponse> =>
+  await callApi('/topics/' + topic);
+
+export type ListArticleResponse = {
+  articles: ArticleDetails[];
+};
+
+export const listArticles = async (
+  topic: string,
+): Promise<ListArticleResponse> =>
+  await callApi('/topics/' + topic + '/articles', {
+    tags: ['sidebar', 'recent'],
+  });
+
+export type GetArticleResponse = ArticleDetails & {
+  html: string;
+};
+
+export const getArticle = async (
+  topic: string,
+  article: string,
+): Promise<GetArticleResponse> =>
+  await callApi('/topics/' + topic + '/articles/' + article);

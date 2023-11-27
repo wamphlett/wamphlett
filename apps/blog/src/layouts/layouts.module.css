@@ -15,7 +15,7 @@
 
 .page .sidebar {
     width: 30%;
-    padding-top: 50vh;
+    padding-top: 60vh;
 }
 
 @media only screen and (max-width: 850px) {
@@ -48,5 +48,10 @@
 @media only screen and (max-width: 480px) {
     .defaultWidth {
         padding: 0 4px;
+    }
+
+    .page .sidebar {
+        width: 90%;
+        right: -90%;
     }
 }

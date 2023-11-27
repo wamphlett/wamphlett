@@ -1,0 +1,95 @@
+.container {
+  flex-direction: row;
+  width: 100%;
+
+  padding: 15px;
+  overflow: hidden;
+
+  border-radius: 10px;
+  transition: background 0.2s ease-in-out;
+}
+
+.container:hover {
+  background: #f7f7f7;
+}
+
+.details {
+  margin-top: 15px;
+  color: #000;
+}
+
+.details .date {
+  display: block;
+  text-transform: uppercase;
+  padding: 2px 0;
+  font-size: .8em;
+}
+
+.details .title {
+  display: block;
+  text-transform: uppercase;
+  font-weight: bold;
+  padding: 5px 0;
+}
+
+.details .date {
+  color: #9a9a9a;
+}
+
+.details p {
+  color: #4f4f4f;
+}
+
+.container.compact {
+  padding: 4px;
+}
+
+.compact .details {
+  margin-top: 5px;
+}
+
+.compact .details .title {
+  padding: 4px 0;
+}
+
+@media only screen and (min-width: 750px) {
+  /* showcase */
+  .showcase {
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  .showcase a {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .showcase .image {
+    width: 40%;
+  }
+
+  .showcase .details {
+    width: 60%;
+    margin: 0;
+    padding: 40px;
+  }
+
+  .showcase .details .title {
+    font-size: 1.5em;
+  }
+
+  .showcase .details .date {
+    font-size: 1em;
+    color: #2c2c2c;
+  }
+}
+
+@media only screen and (min-width: 1100px) { 
+  .showcase .image {
+    width: 55%;
+  }
+  .showcase .details {
+    width: 45%;
+  }
+}

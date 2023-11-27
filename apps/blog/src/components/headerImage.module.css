@@ -1,3 +1,15 @@
 .container {
-  height: 50vh;
+  height: 60vh;
+}
+
+@media only screen and (max-width: 850px) {
+  .container {
+    height: 75vh;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .container {
+    height: 85vh;
+  }
 }

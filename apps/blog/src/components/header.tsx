@@ -1,8 +1,10 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import styles from './header.module.css';
-import { GithubIcon, InstaLogo, LightroomLogo } from '@/components/svgs';
+import { FlickrLogo, GithubIcon, InstaLogo } from '@/components/svgs';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
 import FancyMenuIcon from './fancyMenuIcon';
 
 type HeaderProps = {
@@ -63,13 +65,22 @@ export default function Header({
               <InstaLogo />
             </Link>
           </div>
-          <div className={styles.icon}>
+          {/* <div className={styles.icon}>
             <Link
               href="https://lightroom.adobe.com/u/warrenamphlett"
               passHref
               target="_blank"
             >
               <LightroomLogo />
+            </Link>
+          </div> */}
+          <div className={styles.icon}>
+            <Link
+              href="https://www.flickr.com/photos/199526751@N07/"
+              passHref
+              target="_blank"
+            >
+              <FlickrLogo />
             </Link>
           </div>
           <div className={styles.icon}>
@@ -80,7 +91,9 @@ export default function Header({
         </div>
 
         <h1 className={styles.title}>
-          <Link href="/">
+          <Link
+            href={usePathname() == '/' ? 'https://warrenamphlett.co.uk' : '/'}
+          >
             Warren Amphlett<span>.</span>
           </Link>
         </h1>

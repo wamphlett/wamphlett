@@ -1,5 +1,5 @@
 .container {
-  height: 40vh;
+  height: 50vh;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -10,6 +10,7 @@
 .container h1 {
   text-transform: uppercase;
   font-size: 3em;
+  line-height: 1em;
   font-weight: 900;
 }
 
@@ -18,6 +19,19 @@
   font-weight: 100;
 }
 
-@media only screen and (max-width: 480px) {
+.date {
+  font-weight: bold;
+  text-transform: uppercase;
+}
 
+@media only screen and (max-width: 850px) {
+  .container {
+    height: 70vh;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .container {
+    height: 80vh;
+  }
 }

@@ -1,8 +1,8 @@
 'use client';
-import path from 'path';
-import React, { useEffect, useRef, useState } from 'react';
-import styles from './lazyimage.module.css';
 import Image from 'next/image';
+import React, { useEffect, useRef, useState } from 'react';
+
+import styles from './lazyimage.module.css';
 
 type LazyImageProps = {
   url: string;
@@ -29,10 +29,7 @@ const imageLoaderBuilder = (componentWidth: number) => {
       width = 640;
     }
 
-    const directory = path.dirname(src);
-    const fileName = path.basename(src);
-
-    return `${directory}/${width}/${fileName}`;
+    return `${src}?w=${width}`;
   };
 };
 

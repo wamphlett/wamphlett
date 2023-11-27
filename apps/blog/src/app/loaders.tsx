@@ -1,4 +1,3 @@
-import path from 'path';
 import { getPlaiceholder } from 'plaiceholder';
 
 type urlCacheType = {
@@ -8,7 +7,7 @@ type urlCacheType = {
 const urlCache: urlCacheType = {};
 
 export const getBlurUrl = async (url: string) => {
-  url = addSizeToUrl(url, 640);
+  url += '?w=640';
   if (urlCache[url]) {
     return urlCache[url];
   }
@@ -26,11 +25,4 @@ export const getBlurUrl = async (url: string) => {
   } catch (err) {
     err;
   }
-};
-
-const addSizeToUrl = (url: string, width: number) => {
-  const directory = path.dirname(url);
-  const fileName = path.basename(url);
-
-  return `${directory}/${width}/${fileName}`;
 };

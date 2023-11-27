@@ -1,28 +1,30 @@
 .container {
   color: #141414;
   padding: 20px;
-
-  opacity: 0.85;
 }
 
-.container .section span {
+.container .section > span {
   display: block;
   font-size: 1.5em;
   font-weight: 900;
   text-transform: uppercase;
   margin-bottom: 10px;
+
+  border-bottom: 1px #c1c1c1 solid;
 }
 
-.container .section span.more {
+.container .section > span.more {
   font-size: 1.1em;
   line-height: .9em;
   font-weight: 100;
   text-transform: none;
-  margin: 0;;
+  margin: 0;
+  border: none;
 }
 
 .container .section ul {
   margin-bottom: 30px;
+  padding: 4px;
 }
 
 .container .section ul li {
@@ -34,8 +36,16 @@
   font-weight: 900;
 }
 
+.container .recentList {
+  max-width: 250px
+}
+
 @media only screen and (max-width: 850px) {
   .container {
     text-align: right;
+  }
+
+  .nomobile {
+    display: none;
   }
 }

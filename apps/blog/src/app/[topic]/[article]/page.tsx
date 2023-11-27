@@ -2,10 +2,13 @@ import PrimaryLayout from '@/layouts/primary';
 import { getBlurUrl } from '../../loaders';
 import Title from '@/components/title';
 import Article from '@/components/article';
-import { callApi } from '@/util/API';
+import { getArticle } from '@/util/API';
 import Sidebar from '@/components/sidebar';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
+
+import styles from '../../page.module.css';
+import { defaultImage } from '@/app/constants';
 
 type PageProps = {
   params: {
@@ -14,22 +17,12 @@ type PageProps = {
   };
 };
 
-async function getData(topic: string, article: string) {
-  const res = await callApi(`/topics/${topic}/articles/${article}`, 600);
-
-  if (!res) {
-    throw new Error('Failed to fetch data');
-  }
-
-  return res;
-}
-
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   let data;
   try {
-    data = await getData(params.topic, params.article);
+    data = await getArticle(params.topic, params.article);
   } catch (e) {
     return {
       title: 'Not Found',
@@ -38,21 +31,31 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${data.title} | Warren Amphlett Blog`,
+    title: data.title,
+    description: data.description,
+    authors: { name: 'Warren Amphlett' },
+    openGraph: {
+      title: `${data.title} | Warren Amphlett Blog`,
+      description: data.description,
+      images: data.image || defaultImage,
+      locale: 'en_GB',
+      type: 'article',
+      publishedTime: new Date(data.publishedAt * 1000).toISOString(),
+      modifiedTime: new Date(data.updatedAt * 1000).toISOString(),
+      authors: 'Warren Amphlett',
+    },
   };
 }
 
 export default async function Page({ params }: PageProps) {
   let data;
   try {
-    data = await getData(params.topic, params.article);
+    data = await getArticle(params.topic, params.article);
   } catch (e) {
     return notFound();
   }
 
-  const headerURL =
-    data.image ||
-    'https://library.wamphlett.net/photos/website/2023/albania/ksamil.jpg';
+  const headerURL = data.image || defaultImage;
   const blurDataURL = await getBlurUrl(headerURL);
 
   return (
@@ -66,9 +69,15 @@ export default async function Page({ params }: PageProps) {
         />
       }
     >
-      <Title subtitle={data.description} title={data.title} />
+      <Title
+        publishedTimestamp={data.publishedAt}
+        subtitle={data.description}
+        title={data.title}
+      />
 
-      <Article html={data.html} />
+      <div className={styles.page}>
+        <Article html={data.html} />
+      </div>
     </PrimaryLayout>
   );
 }

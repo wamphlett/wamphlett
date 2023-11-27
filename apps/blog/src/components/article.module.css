@@ -9,3 +9,9 @@
 .container > h1:first-of-type {
   display: none;
 }
+
+@media only screen and (max-width: 480px) {
+  .container {
+      padding: 30px 5px;
+  }
+}
