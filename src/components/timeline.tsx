@@ -1,7 +1,7 @@
 import { Events } from '@/app/data';
 
 import styles from './timeline.module.css';
-import { Grids } from '@/app/types';
+import { ContentType, Grids } from '@/app/types';
 import { LocationIcon } from './svgs';
 import Row from './imagegrids/row';
 import Double from './imagegrids/double';
@@ -44,51 +44,53 @@ export default function Timeline({ events }: TimelineProps) {
                     style={{ maxWidth: event.small ? 800 : undefined }}
                   >
                     {event.images.map((image, index) => {
-                      switch (image.grid) {
-                        case Grids.Row:
-                          return (
-                            <Row
-                              key={index}
-                              images={image.images}
-                              aspectRatio={image.aspectRatio}
-                            />
-                          );
-                        case Grids.Double:
-                        case Grids.DoubleInverted:
-                          return (
-                            <Double
-                              key={index}
-                              inverted={image.grid == Grids.DoubleInverted}
-                              images={image.images}
-                            />
-                          );
-                        case Grids.TriWide:
-                        case Grids.TriWideInverted:
-                          return (
-                            <TriWide
-                              key={index}
-                              inverted={image.grid == Grids.TriWideInverted}
-                              images={image.images}
-                            />
-                          );
-                        case Grids.TriSquare:
-                        case Grids.TriSquareInverted:
-                          return (
-                            <TriSquare
-                              key={index}
-                              inverted={image.grid == Grids.TriSquareInverted}
-                              images={image.images}
-                            />
-                          );
-                        case Grids.Offset:
-                        case Grids.OffsetInverted:
-                          return (
-                            <Offset
-                              key={index}
-                              inverted={image.grid == Grids.OffsetInverted}
-                              images={image.images}
-                            />
-                          );
+                      if (image.kind == ContentType.ImageGrid) {
+                        switch (image.grid) {
+                          case Grids.Row:
+                            return (
+                              <Row
+                                key={index}
+                                images={image.images}
+                                aspectRatio={image.aspectRatio}
+                              />
+                            );
+                          case Grids.Double:
+                          case Grids.DoubleInverted:
+                            return (
+                              <Double
+                                key={index}
+                                inverted={image.grid == Grids.DoubleInverted}
+                                images={image.images}
+                              />
+                            );
+                          case Grids.TriWide:
+                          case Grids.TriWideInverted:
+                            return (
+                              <TriWide
+                                key={index}
+                                inverted={image.grid == Grids.TriWideInverted}
+                                images={image.images}
+                              />
+                            );
+                          case Grids.TriSquare:
+                          case Grids.TriSquareInverted:
+                            return (
+                              <TriSquare
+                                key={index}
+                                inverted={image.grid == Grids.TriSquareInverted}
+                                images={image.images}
+                              />
+                            );
+                          case Grids.Offset:
+                          case Grids.OffsetInverted:
+                            return (
+                              <Offset
+                                key={index}
+                                inverted={image.grid == Grids.OffsetInverted}
+                                images={image.images}
+                              />
+                            );
+                        }
                       }
                     })}
                   </div>

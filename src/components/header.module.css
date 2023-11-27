@@ -45,7 +45,7 @@
 
 .social > .icon a:hover svg path,
 .social > .icon a:hover svg circle {
-    fill: #67BBC2;
+    fill: #67BBC2 !important;
 }
 
 .links {

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link"
 
-import {InstaLogo, LightroomLogo} from "@/components/svgs"
+import {InstaLogo, FlickrLogo } from "@/components/svgs"
 
 import styles from "./header.module.css"
 
@@ -62,9 +62,18 @@ export default function Header({ position = 24}) {
               <InstaLogo />
             </Link>
           </div>
-          <div className={styles.icon}>
+          {/* <div className={styles.icon}>
             <Link href="https://lightroom.adobe.com/u/warrenamphlett" passHref target="_blank">
               <LightroomLogo />
+            </Link>
+          </div> */}
+          <div className={styles.icon}>
+            <Link
+              href="https://www.flickr.com/photos/199526751@N07/"
+              passHref
+              target="_blank"
+            >
+              <FlickrLogo />
             </Link>
           </div>
         </div>

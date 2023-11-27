@@ -1,3 +1,4 @@
+import { images } from '../types';
 import { buildEvent } from '../data';
 import { EventType } from '../types';
 import comoImages from '../images/2018lakeComo';
@@ -20,12 +21,12 @@ export const LakeComo18 = buildEvent({
   tagline:
     'one of my favourite places in the world, I will live there for a summer one day',
   images: [
-    {
+    images({
       grid: Grids.Row,
       aspectRatio: 16 / 10,
       images: [comoImages.howCanAnywhereLookThisGood],
-    },
-    {
+    }),
+    images({
       grid: Grids.Row,
       aspectRatio: 1.5 / 1,
       images: [
@@ -34,6 +35,6 @@ export const LakeComo18 = buildEvent({
         comoImages.aChurchOnTheWater,
         comoImages.cheeese,
       ],
-    },
+    }),
   ],
 });
