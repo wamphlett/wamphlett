@@ -1,3 +1,4 @@
+import { Japan24 } from './events/2024';
 import { Japan, Albania } from './events/2023';
 import { Italy22 } from './events/2022';
 import { Chisinau21 } from './events/2021';
@@ -208,6 +209,7 @@ export function libraryUrl(path: string) {
   return `https://library.wamphlett.net/photos/website/${path}`;
 }
 
+register(Japan24);
 register(Japan);
 register(Albania);
 register(Italy22);

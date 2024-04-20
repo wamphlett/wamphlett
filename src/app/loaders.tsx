@@ -31,8 +31,5 @@ export const getBlurUrl = async (url: string) => {
 };
 
 const addSizeToUrl = (url: string, width: number) => {
-  let directory = path.dirname(url);
-  let fileName = path.basename(url);
-
-  return `${directory}/${width}/${fileName}`;
+  return `${url}?w=${width}`;
 };
