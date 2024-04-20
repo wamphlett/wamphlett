@@ -3,6 +3,7 @@ import { buildEvent } from '../data';
 import { EventType, Grids } from '../types';
 
 import albaniaImages from '../images/2023albania';
+import fushimi23Images from '../images/2023fushimiInari';
 
 export const Japan = buildEvent({
   type: EventType.Travel,
@@ -10,20 +11,13 @@ export const Japan = buildEvent({
   month: 9,
   intro: 'Japan',
   title: 'Tokyo, Osaka & Kyoto',
-  tagline: 'coming up later this year... finally!',
-  small: true,
+  tagline: 'back again at last',
   images: [
-    // {
-    //   grid: Grids.Row,
-    //   aspectRatio: 1,
-    //   images: [
-    //     {
-    //       url: 'https://library.wamphlett.net/photos/website/2023/albania/lifes-better-by-the-sea.jpg',
-    //       title: 'Lifes better by the sea',
-    //       description: 'A day on Ksamil Beach',
-    //     },
-    //   ],
-    // },
+    images({
+      grid: Grids.Row,
+      aspectRatio: 16 / 9,
+      images: [fushimi23Images.walkingAncientPaths],
+    }),
   ],
 });
 
