@@ -1,0 +1,89 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+}
+
+.selector {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #000;
+  padding: 4px;
+  border-radius: 20px;
+}
+
+.container > div {
+  margin: 0 2px;
+}
+
+.icon {
+  display: flex;
+  padding: 6px 18px;
+  z-index: 99;
+  cursor: pointer;
+}
+
+.icon div {
+  display: flex;
+  height: 10px;
+}
+
+.icon > div > div {
+  margin: 0 1px;
+  background-color: #ffffff94;
+  transition: background-color .5s ease;
+}
+
+.icon.active > div > div {
+  background-color: #000;
+}
+
+.icon > .end {
+  width: 2px;
+  margin: 0 1px;
+  background-color: #ffffff94;
+  transition: background-color .5s ease;
+}
+
+.icon.active > .end {
+  background-color: #000;
+}
+
+.icon > .one > div {
+  width: 30px;
+}
+
+.icon > .two > div {
+  width: 14px;
+}
+
+.icon > .three > div {
+  width: 9px;
+}
+
+.slider {
+  position: absolute;
+  background-color: #fff;
+  height: 18px;
+  width: 70px;
+  border-radius: 9px;
+  transition: all .5s ease;
+  transform: translateX(0);
+}
+
+.slider.left {
+  transform: translateX(-110%);
+}
+
+.slider.right {
+  transform: translateX(108%);
+}
+
+@media screen and (max-width: 1200px){
+  .container {
+    display: none;
+  }
+}

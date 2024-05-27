@@ -1,5 +1,5 @@
 .container {
-  height: 65vh;
+  height: 55vh;
 }
 
 .title {
@@ -23,7 +23,7 @@
 }
 
 @media only screen and (max-width: 480px) {
-  .container {
+  .container.expandOnMobile {
     height:95vh;
   }
   

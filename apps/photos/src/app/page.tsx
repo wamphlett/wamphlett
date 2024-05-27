@@ -7,6 +7,7 @@ import { getBlurUrl } from './loaders';
 import AlbumTile, { AlbumTileStyle } from '@/components/albumTile';
 
 import albaniaImages from './images/2023albania';
+import Feed from '@/components/feed';
 
 export default async function Home() {
   const headerURL = albaniaImages.lifesBetterByTheSea.url;
@@ -28,15 +29,7 @@ export default async function Home() {
       headerImageUrl={albaniaImages.lifesBetterByTheSea.url}
       headerImageBlurDataURL={blurDataURL}
     >
-      {albumArray.map((album, index) => (
-        <AlbumTile
-          key={index}
-          type={AlbumTileStyle.Large}
-          album={album}
-          maxWidth="33.333%"
-          backgroundColor="#111"
-        />
-      ))}
+      <Feed />
     </OverviewLayout>
   );
 }

@@ -4,8 +4,10 @@ import React, { useState, useEffect } from 'react';
 import HeaderImage from '@/components/headerimage';
 import Header from '@/components/header';
 import GalleryTitle from '@/components/gallerytitle';
+import DimmingBackground from '@/components/dimmingBackground';
 
 import styles from './layouts.module.css';
+import Filter from '@/components/filter';
 
 type OverviewLayoutProps = {
   children: React.ReactNode;
@@ -51,22 +53,24 @@ export default function OverviewLayout({
 
   return (
     <div className="relative">
-      <Header position={padding} />
+      <DimmingBackground>
+        <Header position={padding} />
 
-      <HeaderImage
-        url={headerImageUrl}
-        blurDataURL={headerImageBlurDataURL}
-        padding={padding}
-      />
+        <HeaderImage
+          url={headerImageUrl}
+          blurDataURL={headerImageBlurDataURL}
+          padding={padding}
+        />
 
-      <div
-        className={`relative ${styles.defaultWidth}`}
-        style={{ zIndex: 20, paddingBottom: 50 }}
-      >
-        <GalleryTitle primary={title} description={description} />
+        <div
+          className={`relative ${styles.defaultWidth}`}
+          style={{ zIndex: 20, paddingBottom: 50 }}
+        >
+          <GalleryTitle primary={title} description={description} expandOnMobile={false} />
 
-        <div className={styles.albums}>{children}</div>
-      </div>
+          <div className={styles.albums}>{children}</div>
+        </div>
+      </DimmingBackground>
     </div>
   );
 }

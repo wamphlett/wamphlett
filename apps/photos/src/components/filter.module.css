@@ -1,0 +1,13 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  margin-bottom: 10vh;
+}
+
+.container > div {
+  margin: 4px 6px;
+}

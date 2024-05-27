@@ -9,10 +9,16 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/lab": "^5.0.0-alpha.170",
+    "@mui/material": "^5.15.18",
+    "@mui/material-nextjs": "^5.15.11",
     "@plaiceholder/next": "^3.0.0",
     "next": "13.5.4",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-intersection-observer": "^9.10.2"
   },
   "devDependencies": {
     "@types/node": "^20",
