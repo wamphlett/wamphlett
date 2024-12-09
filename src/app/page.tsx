@@ -17,7 +17,7 @@ export default async function Page() {
       headerImageUrl={headerURL}
       headerImageBlurDataURL={blurDataURL!}
     >
-      <Introduction />
+      <Introduction locale='en' />
       <Timeline events={events} />
       <More
         tiles={[
