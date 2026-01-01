@@ -18,8 +18,8 @@ export default function Introduction({ locale }: { locale: string } ) {
             THE KANJI
             <span>.</span>
           </h1>
-          <span className={styles.desc}>My journey through James Heisigs book.</span>
-          <span className={styles.sub}>This page documents the stories, comments and keywords that helped me on my path to remembering the kanji. This page documents the stories, comments and keywords that helped me on my path to remembering the kanji.</span>
+          <span className={styles.desc}>How I remembered the Kanji.</span>
+          <span className={styles.sub}>This page documents the stories, keywords, and personal notes that helped me remember kanji while studying James Heisig’s Remembering the Kanji.</span>
         </div>
       </div>
     </div>

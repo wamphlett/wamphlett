@@ -55,7 +55,7 @@ export default function PrimaryLayout({
           blurDataURL={headerImageBlurDataURL}
           padding={padding}
         /> */}
-        <HeaderVideo url="/background.mp4" />
+        <HeaderVideo url="/background.mp4" padding={padding} />
         <div
           className={`relative ${styles.defaultWidth}`}
           style={{ zIndex: 20, paddingBottom: 50 }}
