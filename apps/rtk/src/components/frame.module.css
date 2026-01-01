@@ -1,7 +1,7 @@
 .container {
   background-color: #fff;
   margin-bottom: 10px;
-  padding: 20px;
+  padding: 20px 30px;
 }
 
 .container p, .container h2, .container span {
@@ -47,6 +47,10 @@
   margin-top: 5px;
 }
 
+.story span.components {
+  opacity: 0.6;
+}
+
 .details {
 
 }
@@ -69,7 +73,7 @@
 
 }
 
-.primitives {
+.primitives, .components {
   display: inline-block;
   font-style: italic;
   opacity: 0.6;

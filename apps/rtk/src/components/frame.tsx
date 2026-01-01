@@ -55,6 +55,9 @@ export default function Frame({
       <div className='flex flex-column content-center'>
         <span className={styles.kanji}>{data.kanji}</span>
         <div className={styles.story}>
+          { data.components && data.components.length > 0 &&
+            <span className={styles.components}>{data.components?.join("... ")}</span>
+          }
           {data.story ? <p dangerouslySetInnerHTML={{ __html: formatStory(data.story, data.keyword, data.components) }} /> : <p><i>No story provided yet.</i></p>}
           {data.comment && <span>{data.comment}</span>}
         </div>
