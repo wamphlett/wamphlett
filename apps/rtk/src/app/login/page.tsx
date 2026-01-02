@@ -1,5 +1,6 @@
 "use client"
 
+import { useRuntimeConfig } from "@/lib/config/useRuntimeConfig"
 import { useState } from "react"
 
 export default function LoginPage() {
@@ -8,13 +9,15 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
+  const { apiUrl, baseUrl } = useRuntimeConfig();
+
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError(null)
     setLoading(true)
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/token`, {
+      const res = await fetch(`${apiUrl}/token`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -54,7 +57,7 @@ export default function LoginPage() {
       ].join("; ")
 
       // Redirect
-      window.location.href = process.env.NEXT_PUBLIC_BASE_URL || "/"
+      window.location.href = baseUrl || "/"
     } catch (err) {
       setError("Network error. Try again.")
     } finally {

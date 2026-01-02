@@ -1,6 +1,7 @@
 
 'use client';
 import { useRef, useState, useEffect } from 'react';
+import { useRuntimeConfig } from "@/lib/config/useRuntimeConfig";
 import styles from './frame.module.css'
 
 type FrameData = {
@@ -29,6 +30,8 @@ export default function Frame({
   token
 }: FrameProps) {
   const editable = !!token;
+  const { apiUrl } = useRuntimeConfig();
+
   return (
     <div className={styles.container}>
       <div className='flex flex-column justify-between items-center'>
@@ -43,7 +46,7 @@ export default function Frame({
               placeholder="primitives..." 
               className={styles.right} 
               initialValue={data.primitives?.join("... ")} 
-              onCommit={update(data.keyword, "primitives", token, split)}
+              onCommit={update(data.keyword, "primitives", apiUrl!, token, split)}
             />
           : <span className={styles.primitives}><b>primitives</b>: {data.primitives?.join("... ")}</span>
           } 
@@ -59,7 +62,7 @@ export default function Frame({
                 small 
                 placeholder="components..." 
                 initialValue={data.components?.join("... ")} 
-                onCommit={update(data.keyword, "components", token, split)}
+                onCommit={update(data.keyword, "components", apiUrl!, token, split)}
               />
             : <span className={styles.components}>{data.components?.join("... ")}</span>)
           }
@@ -68,7 +71,7 @@ export default function Frame({
           ? <TextBox 
               placeholder="story..." 
               initialValue={data.story} 
-              onCommit={update(data.keyword, "story", token)}
+              onCommit={update(data.keyword, "story", apiUrl!, token)}
             />
           : data.story ? <p dangerouslySetInnerHTML={{ __html: formatStory(data.story, data.keyword, data.components) }} /> : <p><i>No story provided yet.</i></p>
           }
@@ -79,7 +82,7 @@ export default function Frame({
                 small 
                 placeholder="comments..." 
                 initialValue={data.comment} 
-                onCommit={update(data.keyword, "comment", token)}
+                onCommit={update(data.keyword, "comment", apiUrl!, token)}
               />
             : <span>{data.comment}</span>
           }
@@ -222,7 +225,7 @@ function formatStory(
   return result;
 }
 
-function update(keyword: string, updateMask: string, token: string, transformFunc?: (value: string) => string|string[]): (value: string) => void {
+function update(keyword: string, updateMask: string, apiUrl: string, token: string, transformFunc?: (value: string) => string|string[]): (value: string) => void {
   return async function (input: string): Promise<void> {
     let updatedValue: string | string[] = input;
     if (transformFunc) {
@@ -233,7 +236,7 @@ function update(keyword: string, updateMask: string, token: string, transformFun
     }
     
     try {
-      const url = `http://localhost:3001/frames/${encodeURIComponent(keyword)}`;
+      const url = `${apiUrl}/frames/${encodeURIComponent(keyword)}`;
       console.log(`Updating ${keyword} at ${url} with`, payload);
 
       const res = await fetch(url, {
