@@ -36,14 +36,16 @@ type FrameData = {
 
 type FrameProps = {
   frames: FrameData[];
+  token?: string;
 };
 
 export default function FrameList({
   frames,
+  token,
 }: FrameProps) {
   return (
     <div className={styles.container}>
-      {frames.map((frame) => <Frame key={frame.id} data={frame} />)}
+      {frames.map((frame) => <Frame key={frame.id} data={frame} token={token} />)}
     </div>
   )
 }

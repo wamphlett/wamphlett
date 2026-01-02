@@ -29,6 +29,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  flex-grow: 1;
 }
 
 .story p {
@@ -107,4 +108,44 @@
 
 .jlpt.level_N1 {
   color: #cd0505;
+}
+
+.inputBox {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  transition: background-color 0.15s ease;
+  padding: 4px 6px;
+  border-radius: 3px;
+  font-style: italic;
+  opacity: 0.6;
+  color: #000;
+}
+
+/* hover OR focus */
+.inputBox:hover,
+.inputBox:focus {
+  opacity: 1;
+  background: #f2f2f2;
+}
+
+.inputBox::placeholder {
+  color: #888;
+}
+
+.inputBox.right {
+  text-align: right;
+}
+
+.inputBox.small {
+  font-size: 0.9em;
+}
+
+.textBox {
+  resize: none;
+  overflow: hidden;
+  line-height: 1.6;
+  font-style: normal;
+  font-size: 1.2em;
 }

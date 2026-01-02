@@ -1,20 +1,7 @@
 
+'use client';
+import { useRef, useState, useEffect } from 'react';
 import styles from './frame.module.css'
-// {
-// 			"id": "6955999aa2579eaa06caf090",
-// 			"frame_number": 1,
-// 			"keyword": "one",
-// 			"primitives": [
-// 				"floor",
-// 				"ceiling"
-// 			],
-// 			"stroke_count": 1,
-// 			"kanji": "一",
-// 			"components": [],
-// 			"story": "",
-// 			"is_primitive_only": false,
-// 			"chapter": 1
-// 		},
 
 type FrameData = {
   id: string;
@@ -34,11 +21,14 @@ type FrameData = {
 
 type FrameProps = {
   data: FrameData;
+  token?: string;
 };
 
 export default function Frame({
   data,
+  token
 }: FrameProps) {
+  const editable = !!token;
   return (
     <div className={styles.container}>
       <div className='flex flex-column justify-between items-center'>
@@ -46,20 +36,53 @@ export default function Frame({
         <h2>{data.keyword}</h2>
       </div>
 
-      { data.primitives && data.primitives.length > 0 &&
+      { (editable || (data.primitives && data.primitives.length > 0)) &&
         <div className='flex flex-column justify-end items-center'>
-          <span className={styles.primitives}><b>primitives</b>: {data.primitives?.join("... ")}</span>
+          { editable 
+          ? <InputBox 
+              placeholder="primitives..." 
+              className={styles.right} 
+              initialValue={data.primitives?.join("... ")} 
+              onCommit={update(data.keyword, "primitives", token, split)}
+            />
+          : <span className={styles.primitives}><b>primitives</b>: {data.primitives?.join("... ")}</span>
+          } 
         </div>
       }
 
       <div className='flex flex-column content-center'>
         <span className={styles.kanji}>{data.kanji}</span>
         <div className={styles.story}>
-          { data.components && data.components.length > 0 &&
-            <span className={styles.components}>{data.components?.join("... ")}</span>
+          { (editable || (data.components && data.components.length > 0)) &&
+            (editable
+            ? <InputBox 
+                small 
+                placeholder="components..." 
+                initialValue={data.components?.join("... ")} 
+                onCommit={update(data.keyword, "components", token, split)}
+              />
+            : <span className={styles.components}>{data.components?.join("... ")}</span>)
           }
-          {data.story ? <p dangerouslySetInnerHTML={{ __html: formatStory(data.story, data.keyword, data.components) }} /> : <p><i>No story provided yet.</i></p>}
-          {data.comment && <span>{data.comment}</span>}
+          
+          { editable
+          ? <TextBox 
+              placeholder="story..." 
+              initialValue={data.story} 
+              onCommit={update(data.keyword, "story", token)}
+            />
+          : data.story ? <p dangerouslySetInnerHTML={{ __html: formatStory(data.story, data.keyword, data.components) }} /> : <p><i>No story provided yet.</i></p>
+          }
+
+          {(editable || data.comment) && 
+          editable
+            ? <InputBox 
+                small 
+                placeholder="comments..." 
+                initialValue={data.comment} 
+                onCommit={update(data.keyword, "comment", token)}
+              />
+            : <span>{data.comment}</span>
+          }
         </div>
       </div>
 
@@ -76,6 +99,83 @@ export default function Frame({
       </div>
     </div>
   )
+}
+
+type InputBoxProps = {
+  initialValue?: string;
+  placeholder?: string;
+  onCommit?: (value: string) => void;
+  className?: string;
+  small?: boolean;
+};
+
+
+export function InputBox({
+  initialValue = "",
+  placeholder = "primitives...",
+  onCommit,
+  className,
+  small = false,
+}: InputBoxProps) {
+  const [value, setValue] = useState("");
+
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
+
+  return (
+    <input
+      type="text"
+      value={value}
+      placeholder={placeholder}
+      onChange={(e) => setValue(e.target.value)}
+      onBlur={() => {
+        onCommit?.(value);
+      }}
+      className={`${styles.inputBox} ${className} ${small ? styles.small : ""}`}
+    />
+  );
+}
+
+type TextBoxProps = {
+  initialValue?: string;
+  placeholder?: string;
+  onCommit?: (value: string) => void;
+  className?: string;
+};
+
+export function TextBox({
+  initialValue = "",
+  placeholder = "story...",
+  onCommit,
+  className,
+}: TextBoxProps) {
+  const [value, setValue] = useState("");
+  const ref = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
+
+  // Auto-grow when content changes
+  useEffect(() => {
+    if (!ref.current) return;
+
+    ref.current.style.height = "auto";
+    ref.current.style.height = `${ref.current.scrollHeight}px`;
+  }, [value]);
+
+  return (
+    <textarea
+      ref={ref}
+      value={value}
+      placeholder={placeholder}
+      rows={1}
+      onChange={(e) => setValue(e.target.value)}
+      onBlur={() => onCommit?.(value)}
+      className={`${styles.inputBox} ${styles.textBox} ${className}`}
+    />
+  );
 }
 
 function formatStory(
@@ -120,4 +220,44 @@ function formatStory(
   }
 
   return result;
+}
+
+function update(keyword: string, updateMask: string, token: string, transformFunc?: (value: string) => string|string[]): (value: string) => void {
+  return async function (input: string): Promise<void> {
+    let updatedValue: string | string[] = input;
+    if (transformFunc) {
+      updatedValue = transformFunc(input);
+    }
+    const payload = {
+      [updateMask]: updatedValue
+    }
+    
+    try {
+      const url = `http://localhost:3001/frames/${encodeURIComponent(keyword)}`;
+      console.log(`Updating ${keyword} at ${url} with`, payload);
+
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || `Request failed (${res.status})`);
+      }
+
+      const data = await res.json();
+      console.log(`Updated ${keyword}:`, data);
+    } catch (err) {
+      console.error(`Failed to update ${keyword}:`, err);
+    }
+  }
+}
+
+function split(input: string): string[] {
+  return input.split('...').map(s => s.trim());
 }
