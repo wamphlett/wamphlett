@@ -7,9 +7,19 @@ const CONFIG_PATH = process.env.CONFIG_PATH
   ? path.resolve(process.env.CONFIG_PATH)
   : path.resolve(process.cwd(), 'events.config.json');
 
+const EMPTY_CONFIG: Config = { updated_ts: 0, events: [] };
+
 export async function readConfig(): Promise<Config> {
-  const content = await fs.readFile(CONFIG_PATH, 'utf-8');
-  return JSON.parse(content) as Config;
+  try {
+    const content = await fs.readFile(CONFIG_PATH, 'utf-8');
+    return JSON.parse(content) as Config;
+  } catch (e: unknown) {
+    if ((e as NodeJS.ErrnoException).code === 'ENOENT') {
+      await fs.writeFile(CONFIG_PATH, JSON.stringify(EMPTY_CONFIG, null, 4), 'utf-8');
+      return { ...EMPTY_CONFIG };
+    }
+    throw e;
+  }
 }
 
 export async function writeConfig(incoming: Config): Promise<Config> {
