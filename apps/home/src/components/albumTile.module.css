@@ -1,0 +1,32 @@
+.tile {
+  position: relative;
+  padding: 6px;
+  width: 100%;
+}
+
+.title {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.title > span {
+  text-transform: uppercase;
+  font-weight: 900;
+  text-align: center;
+  font-size: 1.4em;
+  transition: font-size .5s ease;
+}
+
+.title > span:nth-child(2) {
+  font-weight: 100;
+}
+
+.title:hover > span {
+  font-size: 1.7em;
+}
