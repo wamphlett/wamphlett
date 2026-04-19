@@ -34,4 +34,4 @@ next-env.d.ts
 /.affinity/
 
 # config file
-events.config.json
+/events.config.json
