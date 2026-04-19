@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import PrimaryLayout from '@/layouts/primary';
 import Timeline from '@/components/timeline';
 import { getOrderedEventsFromConfig } from '@/app/config-events';
