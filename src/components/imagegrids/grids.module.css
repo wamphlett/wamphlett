@@ -1,0 +1,45 @@
+.grid {
+  margin: 0 auto;
+}
+
+.grid > div {
+  min-width: 150px;
+}
+
+.double > div:nth-of-type(1) {
+  width: 60%;
+}
+
+.double > div:nth-of-type(2) {
+  width: 40%;
+}
+
+.offset > div:nth-of-type(1) {
+  width: 40%;
+}
+
+.offset > div:nth-of-type(2) {
+  width: 60%;
+}
+
+.triSquare > div:nth-of-type(1) {
+  width: 60%;
+}
+
+.triSquare > div:nth-of-type(2) {
+  width: 40%;
+}
+
+.triWide > div:nth-of-type(1) {
+  width: 35%;
+}
+
+.triWide > div:nth-of-type(2) {
+  width: 65%;
+}
+
+@media only screen and (max-width: 480px) {
+  .grid > div {
+    width: 100% !important;
+  }
+}

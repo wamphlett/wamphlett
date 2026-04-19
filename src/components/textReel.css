@@ -1,0 +1,22 @@
+.text-reel {
+  transition: opacity 400ms;
+  opacity: 1;
+}
+
+.text-reel-fade-out {
+  opacity: 0;
+}
+
+.text-reel-fade-in {
+  opacity: 1;
+  animation: slideUp 800ms forwards;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
