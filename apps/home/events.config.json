@@ -1,0 +1,36 @@
+{
+    "updated_ts": 1776631585,
+    "events": [
+        {
+            "date_ts": 1775001600,
+            "type": "work",
+            "title": "Grafana",
+            "sub_title": "Dream job",
+            "tagline": ""
+        },
+        {
+            "date_ts": 1775779200,
+            "type": "travel",
+            "sub_title": "some sub title",
+            "title": "Some title",
+            "tagline": "some tagline",
+            "image_grid": [
+                {
+                    "grid_type": "row",
+                    "images": [
+                        {
+                            "url": "https://example.com",
+                            "title": "Image 2",
+                            "tagline": "Image 2 Tagline"
+                        },
+                        {
+                            "url": "https://example.com",
+                            "title": "Image Title ",
+                            "tagline": "Image Tagline"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
