@@ -1,4 +1,4 @@
-import { Events } from '@/app/data';
+import type { Events } from '@/app/data';
 
 import styles from './timeline.module.css';
 import { ContentType, Grids } from '@/app/types';
