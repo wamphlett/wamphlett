@@ -80,6 +80,10 @@
   left: -40px;
 }
 
+.event .title svg circle {
+  stroke: #EC0025;
+}
+
 .event .title svg path {
   fill: #EC0025;
 }
