@@ -5,6 +5,7 @@ import Timeline from '@/components/timeline';
 import { getOrderedEventsFromConfig } from '@/app/config-events';
 import Introduction from '@/components/introduction';
 import More from '@/components/more';
+import RecentPostPopup from '@/components/recentPostPopup';
 import { getBlurUrl } from './loaders';
 
 export default async function Page() {
@@ -15,6 +16,7 @@ export default async function Page() {
     getOrderedEventsFromConfig(),
   ]);
   return (
+    <>
     <PrimaryLayout
       headerImageUrl={headerURL}
       headerImageBlurDataURL={blurDataURL ?? ''}
@@ -46,5 +48,7 @@ export default async function Page() {
         ]}
       />
     </PrimaryLayout>
+    <RecentPostPopup />
+    </>
   );
 }
