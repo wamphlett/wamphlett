@@ -1,8 +1,8 @@
 import type { Events } from '@/app/data';
 
 import styles from './timeline.module.css';
-import { ContentType, Grids } from '@/app/types';
-import { LocationIcon } from './svgs';
+import { ContentType, EventType, Grids } from '@/app/types';
+import { LocationIcon, CareerIcon } from './svgs';
 import Row from './imagegrids/row';
 import Double from './imagegrids/double';
 import TriWide from './imagegrids/triWide';
@@ -45,7 +45,7 @@ export default function Timeline({ events }: TimelineProps) {
                     )}
                     <div className={styles.title}>
                       <h3>{event.title}</h3>
-                      <LocationIcon />
+                      { event.type == EventType.Travel ? <LocationIcon /> : <CareerIcon /> }
                     </div>
                     {event.tagline && (
                       <span className={styles.tagline}>{event.tagline}</span>
