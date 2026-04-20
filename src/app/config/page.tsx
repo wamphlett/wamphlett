@@ -28,8 +28,9 @@ interface UIImage extends ConfigImage {
   _id: string;
 }
 
-interface UIGridRow extends Omit<ImageGridRow, 'images'> {
+interface UIGridRow extends Omit<ImageGridRow, 'images' | 'ratio'> {
   _id: string;
+  ratio: [number, number];
   images: UIImage[];
 }
 
@@ -59,6 +60,7 @@ function toUI(config: Config): UIConfig {
       image_grid: (e.image_grid ?? []).map(row => ({
         ...row,
         _id: nextId(),
+        ratio: (row.ratio ?? [4, 3]) as [number, number],
         images: row.images.map(img => ({ ...img, _id: nextId() })),
       })),
     })),
@@ -88,6 +90,7 @@ function newEvent(): UIEvent {
     title: '',
     sub_title: '',
     tagline: '',
+    icon: '',
     image_grid: [],
   };
 }
@@ -96,6 +99,7 @@ function newGridRow(): UIGridRow {
   return {
     _id: nextId(),
     grid_type: 'row',
+    ratio: [4, 3],
     images: [newImage()],
   };
 }
@@ -114,6 +118,7 @@ function validate(config: UIConfig): ValidationErrors {
     if (!ev.date_ts) errs[`e${ei}.date_ts`] = 'Date is required';
     if (!ev.title.trim()) errs[`e${ei}.title`] = 'Title is required';
     ev.image_grid.forEach((row, ri) => {
+      if (!row.ratio[0] || !row.ratio[1]) errs[`e${ei}.r${ri}.ratio`] = 'Ratio required';
       row.images.forEach((img, ii) => {
         if (!img.url.trim()) errs[`e${ei}.r${ri}.i${ii}.url`] = 'URL is required';
       });
@@ -349,7 +354,7 @@ function SortableGridRow({
     <div ref={setNodeRef} style={style} className="border border-gray-200 rounded-lg p-4 bg-gray-50 space-y-3">
       <div className="flex items-center gap-2">
         <DragHandle listeners={listeners} attributes={attributes} />
-        <div className="flex-1 max-w-xs">
+        <div className="w-44">
           <Field label="Grid type">
             <Select<GridType>
               value={row.grid_type}
@@ -358,6 +363,27 @@ function SortableGridRow({
             />
           </Field>
         </div>
+        <Field label="Ratio" error={errors[`${errPrefix}.ratio`]}>
+          <div className="flex items-center gap-1">
+            <input
+              type="number"
+              min={1}
+              step={1}
+              value={row.ratio[0]}
+              onChange={e => onChange({ ratio: [Math.max(1, parseInt(e.target.value) || 1), row.ratio[1]] })}
+              className={`w-14 px-2 py-1.5 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 ${errors[`${errPrefix}.ratio`] ? 'border-red-400 bg-red-50' : 'border-gray-300'}`}
+            />
+            <span className="text-gray-400 text-sm">:</span>
+            <input
+              type="number"
+              min={1}
+              step={1}
+              value={row.ratio[1]}
+              onChange={e => onChange({ ratio: [row.ratio[0], Math.max(1, parseInt(e.target.value) || 1)] })}
+              className={`w-14 px-2 py-1.5 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 ${errors[`${errPrefix}.ratio`] ? 'border-red-400 bg-red-50' : 'border-gray-300'}`}
+            />
+          </div>
+        </Field>
         <button
           type="button"
           onClick={onRemove}
@@ -533,13 +559,22 @@ function SortableEventCard({
               />
             </Field>
           </div>
-          <Field label="Tagline">
-            <Input
-              value={event.tagline ?? ''}
-              onChange={v => onChange({ tagline: v })}
-              placeholder="Optional tagline"
-            />
-          </Field>
+          <div className="grid grid-cols-2 gap-4">
+            <Field label="Tagline">
+              <Input
+                value={event.tagline ?? ''}
+                onChange={v => onChange({ tagline: v })}
+                placeholder="Optional tagline"
+              />
+            </Field>
+            <Field label="Icon">
+              <Input
+                value={event.icon ?? ''}
+                onChange={v => onChange({ icon: v })}
+                placeholder="Optional icon string"
+              />
+            </Field>
+          </div>
 
           {/* Image grid */}
           <div>

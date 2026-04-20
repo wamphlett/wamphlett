@@ -74,6 +74,7 @@ function validateEvent(e: unknown): e is ConfigEvent {
   if (typeof ev.title !== 'string' || ev.title.trim() === '') return false;
   if (ev.sub_title !== undefined && typeof ev.sub_title !== 'string') return false;
   if (ev.tagline !== undefined && typeof ev.tagline !== 'string') return false;
+  if (ev.icon !== undefined && typeof ev.icon !== 'string') return false;
   if (ev.image_grid !== undefined) {
     if (!Array.isArray(ev.image_grid)) return false;
     for (const row of ev.image_grid) {
@@ -87,6 +88,13 @@ function validateGridRow(r: unknown): r is ImageGridRow {
   if (typeof r !== 'object' || r === null) return false;
   const row = r as Record<string, unknown>;
   if (!GRID_TYPES.includes(row.grid_type as never)) return false;
+  if (
+    !Array.isArray(row.ratio) ||
+    row.ratio.length !== 2 ||
+    !Number.isInteger(row.ratio[0]) ||
+    !Number.isInteger(row.ratio[1]) ||
+    (row.ratio[1] as number) === 0
+  ) return false;
   if (!Array.isArray(row.images) || row.images.length < 1) return false;
   for (const img of row.images) {
     if (!validateImage(img)) return false;

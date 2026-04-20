@@ -25,10 +25,12 @@ export async function getOrderedEventsFromConfig(): Promise<Map<number, Events>>
         type: event.type as EventType,
         title: event.title,
         tagline: event.tagline,
+        icon: event.icon,
         intro: event.sub_title,
         images: (event.image_grid ?? []).map(row => ({
           kind: ContentType.ImageGrid as const,
           grid: row.grid_type as Grids,
+          aspectRatio: row.ratio ? row.ratio[0] / row.ratio[1] : undefined,
           images: row.images.map(img => ({
             url: img.url,
             title: img.title,

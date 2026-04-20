@@ -8,6 +8,9 @@ import Double from './imagegrids/double';
 import TriWide from './imagegrids/triWide';
 import TriSquare from './imagegrids/triSquare';
 import Offset from './imagegrids/offset';
+import Image from 'next/image';
+import LazyImage from './lazyimage';
+import AspectRatioBox from './aspectRatioBox';
 
 type TimelineProps = {
   events: Map<number, Events>;
@@ -28,6 +31,15 @@ export default function Timeline({ events }: TimelineProps) {
               return (
                 <div key={index} className={styles.event}>
                   <div className={styles.details}>
+                    {event.icon && (
+                      <div className={styles.icon}>
+                        <AspectRatioBox aspectRatio={1}>
+                          <LazyImage
+                            url={event.icon}
+                          />
+                        </AspectRatioBox>
+                      </div>
+                    )}
                     {event.intro && (
                       <span className={styles.intro}>{event.intro}</span>
                     )}

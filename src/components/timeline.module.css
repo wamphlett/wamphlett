@@ -41,6 +41,13 @@
   margin-bottom: 20px;
 }
 
+.event .details .icon {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  margin-bottom: 20px;
+}
+
 .event .intro {
   font-size: 1em;
   opacity: .5;

@@ -23,6 +23,7 @@ export interface ConfigImage {
 
 export interface ImageGridRow {
   grid_type: GridType;
+  ratio: [number, number];
   images: ConfigImage[];
 }
 
@@ -32,6 +33,7 @@ export interface ConfigEvent {
   title: string;
   sub_title?: string;
   tagline?: string;
+  icon?: string;
   image_grid?: ImageGridRow[];
 }
 
