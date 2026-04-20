@@ -75,6 +75,7 @@ function validateEvent(e: unknown): e is ConfigEvent {
   if (ev.sub_title !== undefined && typeof ev.sub_title !== 'string') return false;
   if (ev.tagline !== undefined && typeof ev.tagline !== 'string') return false;
   if (ev.icon !== undefined && typeof ev.icon !== 'string') return false;
+  if (ev.small !== undefined && typeof ev.small !== 'boolean') return false;
   if (ev.image_grid !== undefined) {
     if (!Array.isArray(ev.image_grid)) return false;
     for (const row of ev.image_grid) {

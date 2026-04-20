@@ -34,6 +34,7 @@ export interface ConfigEvent {
   sub_title?: string;
   tagline?: string;
   icon?: string;
+  small?: boolean;
   image_grid?: ImageGridRow[];
 }
 

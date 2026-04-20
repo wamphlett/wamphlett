@@ -91,6 +91,7 @@ function newEvent(): UIEvent {
     sub_title: '',
     tagline: '',
     icon: '',
+    small: false,
     image_grid: [],
   };
 }
@@ -574,6 +575,18 @@ function SortableEventCard({
                 placeholder="Optional icon string"
               />
             </Field>
+            <div className="flex items-center gap-2 pt-5">
+              <input
+                id={`small-${event._id}`}
+                type="checkbox"
+                checked={event.small ?? false}
+                onChange={e => onChange({ small: e.target.checked })}
+                className="w-4 h-4 rounded border-gray-300 accent-gray-900"
+              />
+              <label htmlFor={`small-${event._id}`} className="text-xs font-medium text-gray-600 select-none cursor-pointer">
+                Small layout
+              </label>
+            </div>
           </div>
 
           {/* Image grid */}
