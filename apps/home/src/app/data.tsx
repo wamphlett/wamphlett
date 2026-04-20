@@ -54,6 +54,7 @@ export type EventData = {
   title: string;
   tagline?: string;
   intro?: string;
+  icon?: string;
   small?: boolean;
   images: Content[];
 };

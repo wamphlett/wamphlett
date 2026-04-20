@@ -1,21 +1,23 @@
+export const dynamic = 'force-dynamic';
+
 import PrimaryLayout from '@/layouts/primary';
 import Timeline from '@/components/timeline';
-import { getOrderedEventsGroupedByYear } from '@/app/data';
+import { getOrderedEventsFromConfig } from '@/app/config-events';
 import Introduction from '@/components/introduction';
 import More from '@/components/more';
 import { getBlurUrl } from './loaders';
-import comoImages from './images/2018lakeComo';
-
-const events = getOrderedEventsGroupedByYear();
 
 export default async function Page() {
   const headerURL =
     'https://library.wamphlett.net/photos/website/2023/albania/three-of-a-kind.jpg';
-  const blurDataURL = await getBlurUrl(headerURL);
+  const [blurDataURL, events] = await Promise.all([
+    getBlurUrl(headerURL),
+    getOrderedEventsFromConfig(),
+  ]);
   return (
     <PrimaryLayout
       headerImageUrl={headerURL}
-      headerImageBlurDataURL={blurDataURL!}
+      headerImageBlurDataURL={blurDataURL ?? ''}
     >
       <Introduction locale='en' />
       <Timeline events={events} />
@@ -39,7 +41,7 @@ export default async function Page() {
             title: 'Lake Como',
             year: 2018,
             url: 'https://photos.warrenamphlett.co.uk/2018/lakecomo',
-            tileImageUrl: comoImages.howCanAnywhereLookThisGood.url,
+            tileImageUrl: 'https://library.wamphlett.net/photos/website/2018/lakecomo/how-can-anywhere-look-this-good.jpg',
           },
         ]}
       />

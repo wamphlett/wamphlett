@@ -92,6 +92,12 @@ export const LocationIcon = () => (
   </svg>
 );
 
+export const CareerIcon = () => (
+  <svg width="100%" height="100%" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="32" cy="32" r="28" fill="none" stroke="currentColor" strokeWidth="8" />
+  </svg>
+);
+
 export const FlickrLogo = () => (
   <svg
     height="100%"

@@ -1,14 +1,13 @@
 type PageProps = {
-  locale: string
   params: {
     locale: string
   }
 }
 
-export default function Page({params, locale}: PageProps) {
+export default function Page({ params }: PageProps) {
   return (
     <div>
-      <h1 style={{color: "black"}}>{params.locale} : {locale}</h1>
+      <h1 style={{ color: 'black' }}>{params.locale}</h1>
     </div>
   )
 }
