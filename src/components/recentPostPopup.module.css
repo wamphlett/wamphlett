@@ -1,0 +1,125 @@
+@media (max-width: 640px) {
+  .popup {
+    display: none;
+  }
+}
+
+.popup {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 320px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.22), 0 4px 16px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  z-index: 1000;
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 2s ease-out, transform 2s ease-out;
+  pointer-events: none;
+}
+
+.popup.visible {
+  opacity: 0.9;
+  transform: translateY(0);
+  pointer-events: auto;
+  transition: opacity 2s ease-out, transform 2s ease-out;
+}
+
+.popup.visible:hover {
+  opacity: 1;
+  transition: opacity 0.3s ease-out;
+}
+
+.link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  height: 176px;
+  overflow: hidden;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.link:hover .image {
+  transform: scale(1.04);
+}
+
+.body {
+  padding: 18px 20px 20px;
+}
+
+.label {
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #6366f1;
+  margin: 0 0 6px;
+}
+
+.title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111;
+  line-height: 1.35;
+  margin: 0 0 8px;
+}
+
+.description {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.55;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.readMore {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6366f1;
+  text-decoration: none;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.45);
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #fff;
+  font-size: 13px;
+  line-height: 1;
+  z-index: 10;
+  transition: background 0.2s;
+  padding: 0;
+}
+
+.close:hover {
+  background: rgba(0, 0, 0, 0.65);
+}
