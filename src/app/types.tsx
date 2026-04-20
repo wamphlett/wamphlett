@@ -18,6 +18,7 @@ export enum Grids {
 
 export enum EventType {
   Travel = 'travel',
+  Work = 'work'
 }
 
 export type GalleryImages = {
