@@ -125,7 +125,7 @@ export default async function Sidebar({ topic, currentUrl }: SidebarProps) {
           <span className={styles.current}>
             <Link href={data.current.url}>{data.current.title}</Link>
           </span>
-          <ul>
+          <ul className={styles.articleList}>
             {data.articles
               .filter(a => a.publishedAt !== 0)
               .sort((a, b) => b.publishedAt - a.publishedAt)
@@ -143,7 +143,7 @@ export default async function Sidebar({ topic, currentUrl }: SidebarProps) {
 
       <div className={styles.section}>
         <span className={styles.other}>{topicTitle}</span>
-        <ul>
+        <ul className={styles.chipList}>
           {data.topics.map((t, i) => (
             <li key={i}>
               <Link href={t.url}>{t.title}</Link>
