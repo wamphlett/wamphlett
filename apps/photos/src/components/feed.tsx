@@ -9,17 +9,7 @@ import useWindowWidth from '../hooks/useWindowWidth';
 import Filter from "./filter";
 import DisplayTypeSelector from "./displayTypeSelector";
 
-
-
-enum DisplayType {
-  FullWidth,
-  Split,
-  Thirds,
-}
-
-interface FeedProps {
-  display?: DisplayType;
-}
+interface FeedProps {}
 
 type photo = {
   url: string;
@@ -27,7 +17,7 @@ type photo = {
 };
 
 
-export default function Feed({ display = DisplayType.Thirds }: FeedProps) {
+export default function Feed({}: FeedProps) {
   const [feed, setFeed] = useState<photo[]>([]);
   const [tags, setTags] = useState<string[]>([]);
   const [desiredColumns, setDesiredColumns] = useState(3);
@@ -38,7 +28,6 @@ export default function Feed({ display = DisplayType.Thirds }: FeedProps) {
   const pageRef = useRef(0);
 
   const loadMore = useCallback(async () => {
-    console.log('loading more');
     if (loadingRef.current || endRef.current) return;
     loadingRef.current = true
     const pageToLoad = pageRef.current + 1;
@@ -78,7 +67,6 @@ export default function Feed({ display = DisplayType.Thirds }: FeedProps) {
       const pageHeight = document.documentElement.scrollHeight;
 
       if (scrollPosition >= pageHeight * 0.95) {
-        console.log('load more');
         loadMore();
       }
     };
@@ -104,7 +92,6 @@ export default function Feed({ display = DisplayType.Thirds }: FeedProps) {
   }, [width]);
 
   const resetFeed = useCallback((newTags: string[]) => {
-    console.log('resetting feed with tags:', newTags);
     setTags(newTags);
     setFeed([]);
     pageRef.current = 0;
@@ -114,14 +101,12 @@ export default function Feed({ display = DisplayType.Thirds }: FeedProps) {
 
   // load more when tags change
   useEffect(() => {
-      console.log("tags changed, loading more photos")
       loadMore();
   }, [tags, desiredColumns]);
 
   return (
     <div className={styles.container}>
       <Filter onUpdate={(newTags) => {
-        console.log('filter updated', newTags);
         resetFeed(newTags);
       }}/>
       <DisplayTypeSelector onUpdate={(columnNumber) => setDesiredColumns(columnNumber)}/>

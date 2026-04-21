@@ -5,17 +5,19 @@ type GalleryTitleProps = {
   secondary?: string;
   description: string;
   expandOnMobile?: boolean;
+  smaller?: boolean;
 };
 
 export default function GalleryTitle({
   primary,
   secondary,
   description,
-  expandOnMobile = true
+  expandOnMobile = true,
+  smaller = false
 }: GalleryTitleProps) {
   return (
     <div
-      className={`flex flex-row items-center justify-between ${styles.container} ${expandOnMobile ? styles.expandOnMobile : ''}`}
+      className={`flex flex-row items-center justify-between ${styles.container} ${expandOnMobile ? styles.expandOnMobile : ''} ${smaller ? styles.smaller : ''}`}
       style={{
         // marginTop: 124,
         paddingTop: 124,

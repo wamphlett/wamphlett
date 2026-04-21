@@ -22,6 +22,7 @@ type Tag = {
 const tags: Tag[] = [
   { name: "people", values: ["people"] },
   { name: "street", values: ["street"] },
+  { name: "architectural", values: ["architectural"] },
   { name: "landscapes", values: ["landscape"] },
   { name: "my favourites", values: ["favourite"] },
 ];

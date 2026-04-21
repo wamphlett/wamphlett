@@ -66,7 +66,7 @@ export default function OverviewLayout({
           className={`relative ${styles.defaultWidth}`}
           style={{ zIndex: 20, paddingBottom: 50 }}
         >
-          <GalleryTitle primary={title} description={description} expandOnMobile={false} />
+          <GalleryTitle primary={title} description={description} expandOnMobile={false} smaller />
 
           <div className={styles.albums}>{children}</div>
         </div>
