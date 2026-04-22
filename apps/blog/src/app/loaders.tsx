@@ -13,9 +13,9 @@ export const getBlurUrl = async (url: string) => {
   }
 
   try {
-    const buffer = await fetch(url).then(async res =>
-      Buffer.from(await res.arrayBuffer()),
-    );
+    const buffer = await fetch(url, {
+      next: { revalidate: 3600, tags: ['images'] },
+    }).then(async res => Buffer.from(await res.arrayBuffer()));
 
     const { base64 } = await getPlaiceholder(buffer);
 

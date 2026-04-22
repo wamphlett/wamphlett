@@ -1,23 +1,25 @@
-# Use an official Node.js runtime as the base image
-FROM node:19-alpine
+FROM node:22-alpine AS builder
 
-# Set the working directory in the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json (or yarn.lock) to the container
 COPY package*.json ./
+RUN npm ci
 
-# Install project dependencies
-RUN npm install
-
-# Copy the rest of the application code
 COPY . .
+RUN npm run build
 
-# # Build the Next.js application
-# RUN npm run build
+FROM node:22-alpine AS runner
 
-# Expose the application on port 3000
+WORKDIR /app
+
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
+USER appuser
+
 EXPOSE 3000
 
-# Define the command to run the application
-CMD ["npm", "start"]
+CMD ["node", "server.js"]

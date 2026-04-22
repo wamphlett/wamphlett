@@ -30,14 +30,13 @@ type TopicDetails = {
 };
 
 const callApi = async (route: string, apiOptions: apiOptions = {}) => {
-  if (process.env.REACT_APP_API_URL != '') {
+  if (process.env.REACT_APP_API_URL) {
     route = process.env.REACT_APP_API_URL + route;
   }
 
   const res = await fetch(route, {
     next: {
-      // cache all requests for 30 days by default
-      revalidate: apiOptions.cacheSeconds || 86400 * 30,
+      revalidate: apiOptions.cacheSeconds || 3600,
       tags: ['everything'].concat(apiOptions.tags || []),
     },
   });
