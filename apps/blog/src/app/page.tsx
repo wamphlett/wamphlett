@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import PrimaryLayout from '@/layouts/primary';
 import { getBlurUrl } from './loaders';
 import Title from '@/components/title';
