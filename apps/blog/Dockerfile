@@ -1,14 +1,23 @@
-FROM node:13.12.0-alpine as builder
-WORKDIR /app
-ENV PATH /app/node_modules/.bin:$PATH
-COPY package.json ./
-COPY package-lock.json ./
-RUN npm ci --silent
-RUN npm install react-scripts@3.4.1 -g --silent
-COPY . ./
-RUN npm run build
+# Use an official Node.js runtime as the base image
+FROM node:19-alpine
 
-# Start a new Caddy container and copy the build files to the web root
-FROM caddy
-COPY ./Caddyfile /etc/caddy/Caddyfile
-COPY --from=builder /app/build /srv/blog
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy package.json and package-lock.json (or yarn.lock) to the container
+COPY package*.json ./
+
+# Install project dependencies
+RUN npm install
+
+# Copy the rest of the application code
+COPY . .
+
+# # Build the Next.js application
+# RUN npm run build
+
+# Expose the application on port 3000
+EXPOSE 3000
+
+# Define the command to run the application
+CMD ["npm", "start"]

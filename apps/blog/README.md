@@ -1,70 +1,70 @@
-# Getting Started with Create React App
+# Blog Site
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A Next.js blog platform that fetches and renders content from a headless API backend. Deployed at [blog.wamphlett.net](https://blog.wamphlett.net).
 
-## Available Scripts
+## Stack
 
-In the project directory, you can run:
+- **Next.js 13** with TypeScript and the App Router
+- **Tailwind CSS** for styling
+- **Highlight.js** for code block syntax highlighting (JavaScript, Go)
+- **Plaiceholder** for server-side blur image placeholders
+- **Docker** for containerised deployment
 
-### `npm start`
+## Content
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Content is not stored in this repo. The site fetches articles and topics from a separate backend API configured via `REACT_APP_API_URL`. Pages are cached for 30 days using Next.js Incremental Static Regeneration (ISR) and can be revalidated on demand via the `/api/revalidate` endpoint.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Getting Started
 
-### `npm test`
+```bash
+npm install
+npm run dev
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Open [http://localhost:3000](http://localhost:3000).
 
-### `npm run build`
+By default the app points at the live API. To use a local backend, update `REACT_APP_API_URL` in `.env.local`.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Environment Variables
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+| Variable | Description | Required |
+|---|---|---|
+| `REACT_APP_API_URL` | Base URL of the content API | No (defaults to empty string) |
+| `REVALIDATE_SECRET` | Secret token for cache revalidation webhook | Yes, for ISR revalidation |
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Scripts
 
-### `npm run eject`
+| Command | Description |
+|---|---|
+| `npm run dev` | Development server with hot reload |
+| `npm run build` | Production build |
+| `npm start` | Start production server |
+| `npm run lint` | Run ESLint |
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Docker
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Build and run with Docker:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```bash
+make build
+docker run -p 3000:3000 wamphlett-blog
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Deployment
 
-## Learn More
+Pushing a git tag triggers the GitHub Actions workflow, which builds a Docker image and pushes it to the GitHub Container Registry (`ghcr.io`):
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Cache Revalidation
 
-### Code Splitting
+To invalidate cached pages, call:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```
+GET /api/revalidate?secret=<REVALIDATE_SECRET>&path=<path>
+```
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+The backend can use this as a webhook to bust the cache after content changes.
