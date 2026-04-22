@@ -32,7 +32,8 @@ article h3 {
 article > h1,
 article > h2,
 article > p,
-article > ul, 
+article > ul,
+article > ol,
 article > blockquote {
   margin: 10px 0;
 }
@@ -48,13 +49,15 @@ article > h2 {
 
 article > p,
 article > ul,
+article > ol,
 article > blockquote {
   padding: 0 20px;
 }
 
 article > p,
 article > blockquote p,
-article > ul li {
+article > ul li,
+article > ol li {
   font-size: 1.1em;
   line-height: 1.4em;
   font-weight: 300;
@@ -71,7 +74,21 @@ article > p a {
   text-decoration: underline;
 }
 
-article > ul li {
+article > ul,
+article > ol {
+  padding-left: 40px;
+}
+
+article > ul {
+  list-style-type: disc;
+}
+
+article > ol {
+  list-style-type: decimal;
+}
+
+article > ul li,
+article > ol li {
   margin: 10px 0;
 }
 
