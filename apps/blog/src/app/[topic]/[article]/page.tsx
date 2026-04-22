@@ -2,7 +2,9 @@ import PrimaryLayout from '@/layouts/primary';
 import { getBlurUrl } from '../../loaders';
 import Title from '@/components/title';
 import Article from '@/components/article';
-import { getArticle } from '@/util/API';
+import Breadcrumb from '@/components/breadcrumb';
+import ArticleFooter from '@/components/articleFooter';
+import { getArticle, getTopic, listArticles } from '@/util/API';
 import Sidebar from '@/components/sidebar';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
@@ -48,12 +50,37 @@ export async function generateMetadata({
 }
 
 export default async function Page({ params }: PageProps) {
-  let data;
+  let data, topicData, articlesData;
   try {
-    data = await getArticle(params.topic, params.article);
+    [data, topicData, articlesData] = await Promise.all([
+      getArticle(params.topic, params.article),
+      getTopic(params.topic),
+      listArticles(params.topic),
+    ]);
   } catch (e) {
     return notFound();
   }
+
+  // Build prev/next from articles sorted newest-first by publishedAt
+  const articles = articlesData.articles
+    .filter(a => a.publishedAt > 0 && !a.hidden)
+    .sort((a, b) => b.publishedAt - a.publishedAt);
+
+  const currentIndex = articles.findIndex(a => a.slug === params.article);
+  const prevArticle =
+    currentIndex < articles.length - 1
+      ? {
+          title: articles[currentIndex + 1].title,
+          url: `/${params.topic}/${articles[currentIndex + 1].slug}`,
+        }
+      : null;
+  const nextArticle =
+    currentIndex > 0
+      ? {
+          title: articles[currentIndex - 1].title,
+          url: `/${params.topic}/${articles[currentIndex - 1].slug}`,
+        }
+      : null;
 
   const headerURL = data.image || defaultImage;
   const blurDataURL = await getBlurUrl(headerURL);
@@ -75,9 +102,22 @@ export default async function Page({ params }: PageProps) {
         title={data.title}
       />
 
+      <Breadcrumb
+        article={data.title}
+        topic={topicData.title}
+        topicSlug={params.topic}
+      />
+
       <div className={styles.page}>
         <Article html={data.html} />
       </div>
+
+      <ArticleFooter
+        next={nextArticle}
+        prev={prevArticle}
+        publishedAt={data.publishedAt}
+        updatedAt={data.updatedAt}
+      />
     </PrimaryLayout>
   );
 }
