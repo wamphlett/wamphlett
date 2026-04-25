@@ -24,11 +24,15 @@ const callApi = async (route: string, apiOptions: apiOptions = {}) => {
   url += apiOptions.page ? `&page=${apiOptions.page}` : '';
   url += apiOptions.tags ? `&tags=${apiOptions.tags}` : '';
 
+  const tagList = apiOptions.tags
+    ? apiOptions.tags.split(',').filter(Boolean)
+    : ['everything'];
+
   const res = await fetch(url, {
     next: {
       // cache all requests for 30 days by default
       revalidate: apiOptions.cacheSeconds || 1000,
-      tags: ['everything'].concat(apiOptions.tags || []),
+      tags: tagList,
     },
   });
 
