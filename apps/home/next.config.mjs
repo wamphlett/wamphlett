@@ -2,6 +2,9 @@ import withPlaiceholder from "@plaiceholder/next";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    serverComponentsExternalPackages: ['pino', 'pino-pretty'],
+  },
   i18n: {
     locales: ['en', 'ja-JP'], // Define 'jp' as a locale
     defaultLocale: 'en',

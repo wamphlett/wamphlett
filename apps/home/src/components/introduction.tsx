@@ -5,7 +5,6 @@ import styles from './introduction.module.css';
 import CircleIconLink from './circleIconLink';
 
 export default function Introduction({ locale }: { locale: string } ) {
-  console.log('locale:', locale);
   return (
     <div
       className={`flex flex-row items-center justify-between ${styles.container}`}

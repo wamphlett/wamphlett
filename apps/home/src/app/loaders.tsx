@@ -1,5 +1,6 @@
 import path from 'path';
 import { getPlaiceholder } from 'plaiceholder';
+import logger from '@/lib/logger';
 
 type urlCacheType = {
   [url: string]: string;
@@ -25,7 +26,7 @@ export const getBlurUrl = async (url: string) => {
 
     return base64;
   } catch (err) {
-    console.error(err);
+    logger.error({ url, err }, 'failed to generate blur url');
     return '';
   }
 };
