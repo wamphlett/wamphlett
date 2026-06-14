@@ -6,6 +6,10 @@ const logger = pino({
     service: 'wamphlett',
     env: process.env.NODE_ENV,
   },
+  formatters: {
+    level: (label) => ({ level: label }),
+  },
+  timestamp: pino.stdTimeFunctions.isoTime,
 });
 
 export default logger;
