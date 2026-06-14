@@ -4,6 +4,7 @@ import withPlaiceholder from "@plaiceholder/next";
 const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['pino', 'pino-pretty'],
+    instrumentationHook: true,
   },
   i18n: {
     locales: ['en', 'ja-JP'], // Define 'jp' as a locale
