@@ -2,8 +2,14 @@ import PrimaryLayout from '@/layouts/primary';
 import { getBlurUrl } from '../loaders';
 import Title from '@/components/title';
 import Article from '@/components/article';
-import { getTopic, GetTopicResponse, listArticles } from '@/util/API';
+import {
+  getTopic,
+  GetTopicResponse,
+  ListArticleResponse,
+  listArticles,
+} from '@/util/API';
 import Sidebar from '@/components/sidebar';
+import logger from '@/lib/logger';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import PostList from '@/components/postList';
@@ -49,14 +55,34 @@ export async function generateMetadata({
 }
 
 export default async function Page({ params }: PageProps) {
+  const start = Date.now();
   let data: GetTopicResponse;
+  let articles: ListArticleResponse;
   try {
     data = await getTopic(params.topic);
+    articles = await listArticles(params.topic);
   } catch (e) {
+    logger.warn(
+      {
+        method: 'GET',
+        path: `/${params.topic}`,
+        statusCode: 404,
+        durationMs: Date.now() - start,
+        err: e,
+      },
+      'page request',
+    );
     return notFound();
   }
-
-  const articles = await listArticles(params.topic);
+  logger.info(
+    {
+      method: 'GET',
+      path: `/${params.topic}`,
+      statusCode: 200,
+      durationMs: Date.now() - start,
+    },
+    'page request',
+  );
 
   const headerURL = data.image || defaultImage;
   const blurDataURL = await getBlurUrl(headerURL);

@@ -1,3 +1,5 @@
+import logger from '@/lib/logger';
+
 type apiOptions = {
   cacheSeconds?: number;
   tags?: string[];
@@ -30,20 +32,48 @@ type TopicDetails = {
 };
 
 const callApi = async (route: string, apiOptions: apiOptions = {}) => {
-  if (process.env.REACT_APP_API_URL) {
-    route = process.env.REACT_APP_API_URL + route;
-  }
+  const baseUrl = process.env.REACT_APP_API_URL ?? '';
+  const url = baseUrl + route;
+  const start = Date.now();
 
-  const res = await fetch(route, {
-    next: {
-      revalidate: apiOptions.cacheSeconds || 3600,
-      tags: ['everything'].concat(apiOptions.tags || []),
-    },
-  });
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      next: {
+        revalidate: apiOptions.cacheSeconds || 3600,
+        tags: ['everything'].concat(apiOptions.tags || []),
+      },
+    });
+  } catch (err) {
+    logger.error(
+      { method: 'GET', url, durationMs: Date.now() - start, err },
+      'upstream api request failed',
+    );
+    throw err;
+  }
 
   if (!res.ok) {
-    throw new Error('Failed to fetch data from server. path: ' + route);
+    logger.error(
+      {
+        method: 'GET',
+        url,
+        statusCode: res.status,
+        durationMs: Date.now() - start,
+      },
+      'upstream api error',
+    );
+    throw new Error('Failed to fetch data from server. path: ' + url);
   }
+
+  logger.info(
+    {
+      method: 'GET',
+      url,
+      statusCode: res.status,
+      durationMs: Date.now() - start,
+    },
+    'upstream api call',
+  );
 
   return await res.json();
 };

@@ -6,6 +6,7 @@ import Breadcrumb from '@/components/breadcrumb';
 import ArticleFooter from '@/components/articleFooter';
 import { getArticle, getTopic, listArticles } from '@/util/API';
 import Sidebar from '@/components/sidebar';
+import logger from '@/lib/logger';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 
@@ -50,6 +51,7 @@ export async function generateMetadata({
 }
 
 export default async function Page({ params }: PageProps) {
+  const start = Date.now();
   let data, topicData, articlesData;
   try {
     [data, topicData, articlesData] = await Promise.all([
@@ -58,8 +60,27 @@ export default async function Page({ params }: PageProps) {
       listArticles(params.topic),
     ]);
   } catch (e) {
+    logger.warn(
+      {
+        method: 'GET',
+        path: `/${params.topic}/${params.article}`,
+        statusCode: 404,
+        durationMs: Date.now() - start,
+        err: e,
+      },
+      'page request',
+    );
     return notFound();
   }
+  logger.info(
+    {
+      method: 'GET',
+      path: `/${params.topic}/${params.article}`,
+      statusCode: 200,
+      durationMs: Date.now() - start,
+    },
+    'page request',
+  );
 
   // Build prev/next from articles sorted newest-first by publishedAt
   const articles = articlesData.articles

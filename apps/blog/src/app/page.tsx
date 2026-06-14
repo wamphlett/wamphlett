@@ -6,6 +6,7 @@ import Title from '@/components/title';
 import Article from '@/components/article';
 import { getOverview, getRecent } from '@/util/API';
 import Sidebar from '@/components/sidebar';
+import logger from '@/lib/logger';
 import { notFound } from 'next/navigation';
 import { defaultImage } from './constants';
 import PostList from '@/components/postList';
@@ -36,29 +37,44 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Page() {
+  const start = Date.now();
   let data;
+  let recentPosts: RecentPost[] = [];
   try {
     data = await getOverview();
+    const recentRes = await getRecent(7);
+    recentPosts = recentRes.articles.map(a => ({
+      title: a.title,
+      description: a.description,
+      publishedAt: a.publishedAt,
+      image: a.image,
+      url: `/${a.topicSlug}/${a.slug}`,
+    }));
   } catch (e) {
+    logger.warn(
+      {
+        method: 'GET',
+        path: '/',
+        statusCode: 404,
+        durationMs: Date.now() - start,
+        err: e,
+      },
+      'page request',
+    );
     return notFound();
   }
+  logger.info(
+    {
+      method: 'GET',
+      path: '/',
+      statusCode: 200,
+      durationMs: Date.now() - start,
+    },
+    'page request',
+  );
 
   const headerURL = defaultImage;
   const blurDataURL = await getBlurUrl(headerURL);
-
-  const recentPosts: RecentPost[] = [];
-  const recentRes = await getRecent(7);
-  await Promise.all(
-    recentRes.articles.map(async a => {
-      recentPosts.push({
-        title: a.title,
-        description: a.description,
-        publishedAt: a.publishedAt,
-        image: a.image,
-        url: `/${a.topicSlug}/${a.slug}`,
-      });
-    }),
-  );
 
   return (
     <PrimaryLayout
