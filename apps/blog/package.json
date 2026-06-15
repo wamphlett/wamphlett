@@ -10,8 +10,10 @@
   },
   "dependencies": {
     "@opentelemetry/auto-instrumentations-node": "^0.77.0",
+    "@opentelemetry/exporter-metrics-otlp-http": "^0.219.0",
     "@opentelemetry/exporter-trace-otlp-http": "^0.219.0",
     "@opentelemetry/resources": "^2.8.0",
+    "@opentelemetry/sdk-metrics": "^2.8.0",
     "@opentelemetry/sdk-node": "^0.219.0",
     "@opentelemetry/semantic-conventions": "^1.41.1",
     "@plaiceholder/next": "^3.0.0",

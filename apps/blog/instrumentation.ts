@@ -5,23 +5,26 @@ export async function register() {
   const { OTLPTraceExporter } = await import(
     '@opentelemetry/exporter-trace-otlp-http'
   );
+  const { OTLPMetricExporter } = await import(
+    '@opentelemetry/exporter-metrics-otlp-http'
+  );
+  const { PeriodicExportingMetricReader } = await import(
+    '@opentelemetry/sdk-metrics'
+  );
   const { getNodeAutoInstrumentations } = await import(
     '@opentelemetry/auto-instrumentations-node'
   );
-  const { resourceFromAttributes } = await import('@opentelemetry/resources');
-  const { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } = await import(
-    '@opentelemetry/semantic-conventions'
-  );
+  const otlpBase =
+    process.env.OTEL_EXPORTER_OTLP_ENDPOINT ?? 'http://localhost:4318';
 
   const sdk = new NodeSDK({
-    resource: resourceFromAttributes({
-      [ATTR_SERVICE_NAME]: 'blog-site',
-      [ATTR_SERVICE_VERSION]: process.env.APP_VERSION || 'unknown',
-    }),
     traceExporter: new OTLPTraceExporter({
-      url:
-        (process.env.OTEL_EXPORTER_OTLP_ENDPOINT ??
-          'http://localhost:4318') + '/v1/traces',
+      url: otlpBase + '/v1/traces',
+    }),
+    metricReader: new PeriodicExportingMetricReader({
+      exporter: new OTLPMetricExporter({
+        url: otlpBase + '/v1/metrics',
+      }),
     }),
     instrumentations: [
       getNodeAutoInstrumentations({

@@ -1,4 +1,5 @@
 import logger from '@/lib/logger';
+import { upstreamRequestDuration, upstreamRequestErrors } from '@/lib/metrics';
 
 type apiOptions = {
   cacheSeconds?: number;
@@ -34,6 +35,7 @@ type TopicDetails = {
 const callApi = async (route: string, apiOptions: apiOptions = {}) => {
   const baseUrl = process.env.REACT_APP_API_URL ?? '';
   const url = baseUrl + route;
+  const routePath = route.split('?')[0];
   const start = Date.now();
 
   let res: Response;
@@ -45,35 +47,33 @@ const callApi = async (route: string, apiOptions: apiOptions = {}) => {
       },
     });
   } catch (err) {
+    const durationMs = Date.now() - start;
     logger.error(
-      { method: 'GET', url, durationMs: Date.now() - start, err },
+      { method: 'GET', url, durationMs, err },
       'upstream api request failed',
     );
+    upstreamRequestErrors.add(1, { route: routePath, error: 'network' });
+    upstreamRequestDuration.record(durationMs, { route: routePath, error: 'network' });
     throw err;
   }
 
+  const durationMs = Date.now() - start;
+
   if (!res.ok) {
     logger.error(
-      {
-        method: 'GET',
-        url,
-        statusCode: res.status,
-        durationMs: Date.now() - start,
-      },
+      { method: 'GET', url, statusCode: res.status, durationMs },
       'upstream api error',
     );
+    upstreamRequestErrors.add(1, { route: routePath, status_code: res.status });
+    upstreamRequestDuration.record(durationMs, { route: routePath, status_code: res.status });
     throw new Error('Failed to fetch data from server. path: ' + url);
   }
 
   logger.info(
-    {
-      method: 'GET',
-      url,
-      statusCode: res.status,
-      durationMs: Date.now() - start,
-    },
+    { method: 'GET', url, statusCode: res.status, durationMs },
     'upstream api call',
   );
+  upstreamRequestDuration.record(durationMs, { route: routePath, status_code: res.status });
 
   return await res.json();
 };
