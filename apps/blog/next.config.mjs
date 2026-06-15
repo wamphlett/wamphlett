@@ -3,7 +3,15 @@ import withPlaiceholder from '@plaiceholder/next';
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    serverComponentsExternalPackages: ['pino', 'pino-pretty'],
+    serverComponentsExternalPackages: [
+      'pino',
+      'pino-pretty',
+      '@opentelemetry/sdk-node',
+      '@opentelemetry/auto-instrumentations-node',
+      '@opentelemetry/exporter-trace-otlp-http',
+      '@opentelemetry/resources',
+      '@opentelemetry/semantic-conventions',
+    ],
     instrumentationHook: true,
   },
   output: 'standalone',
