@@ -18,7 +18,7 @@
     "@opentelemetry/semantic-conventions": "^1.41.1",
     "@plaiceholder/next": "^3.0.0",
     "highlight.js": "^11.9.0",
-    "next": "13.5.4",
+    "next": "^14.2.35",
     "pino": "^10.3.1",
     "react": "^18",
     "react-dom": "^18"

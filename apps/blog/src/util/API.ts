@@ -53,7 +53,10 @@ const callApi = async (route: string, apiOptions: apiOptions = {}) => {
       'upstream api request failed',
     );
     upstreamRequestErrors.add(1, { route: routePath, error: 'network' });
-    upstreamRequestDuration.record(durationMs, { route: routePath, error: 'network' });
+    upstreamRequestDuration.record(durationMs, {
+      route: routePath,
+      error: 'network',
+    });
     throw err;
   }
 
@@ -65,7 +68,10 @@ const callApi = async (route: string, apiOptions: apiOptions = {}) => {
       'upstream api error',
     );
     upstreamRequestErrors.add(1, { route: routePath, status_code: res.status });
-    upstreamRequestDuration.record(durationMs, { route: routePath, status_code: res.status });
+    upstreamRequestDuration.record(durationMs, {
+      route: routePath,
+      status_code: res.status,
+    });
     throw new Error('Failed to fetch data from server. path: ' + url);
   }
 
@@ -73,7 +79,10 @@ const callApi = async (route: string, apiOptions: apiOptions = {}) => {
     { method: 'GET', url, statusCode: res.status, durationMs },
     'upstream api call',
   );
-  upstreamRequestDuration.record(durationMs, { route: routePath, status_code: res.status });
+  upstreamRequestDuration.record(durationMs, {
+    route: routePath,
+    status_code: res.status,
+  });
 
   return await res.json();
 };
