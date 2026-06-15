@@ -17,6 +17,7 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/node_modules/@opentelemetry ./node_modules/@opentelemetry
 
 RUN mkdir -p .next/cache && chown -R appuser:appgroup .next
 

@@ -34,6 +34,11 @@ export async function register() {
 
   const { default: logger } = await import('@/lib/logger');
 
+  logger.info(
+    { endpoint: process.env.OTEL_EXPORTER_OTLP_ENDPOINT ?? 'http://localhost:4318' },
+    'otel sdk started',
+  );
+
   process.on('unhandledRejection', (err) => {
     logger.error({ err }, 'unhandled rejection');
   });
