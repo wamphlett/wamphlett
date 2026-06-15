@@ -1,3 +1,4 @@
+import { context, propagation } from '@opentelemetry/api';
 import logger from '@/lib/logger';
 import { upstreamRequestDuration, upstreamRequestErrors } from '@/lib/metrics';
 
@@ -38,9 +39,13 @@ const callApi = async (route: string, apiOptions: apiOptions = {}) => {
   const routePath = route.split('?')[0];
   const start = Date.now();
 
+  const traceHeaders: Record<string, string> = {};
+  propagation.inject(context.active(), traceHeaders);
+
   let res: Response;
   try {
     res = await fetch(url, {
+      headers: traceHeaders,
       next: {
         revalidate: apiOptions.cacheSeconds || 3600,
         tags: ['everything'].concat(apiOptions.tags || []),
