@@ -19,17 +19,18 @@ import styles from '../page.module.css';
 import { defaultImage } from '../constants';
 
 type PageProps = {
-  params: {
+  params: Promise<{
     topic: string;
-  };
+  }>;
 };
 
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
+  const { topic } = await params;
   let data;
   try {
-    data = await getTopic(params.topic);
+    data = await getTopic(topic);
   } catch (e) {
     return {
       title: 'Not Found',
@@ -55,17 +56,18 @@ export async function generateMetadata({
 }
 
 export default async function Page({ params }: PageProps) {
+  const { topic } = await params;
   const start = Date.now();
   let data: GetTopicResponse;
   let articles: ListArticleResponse;
   try {
-    data = await getTopic(params.topic);
-    articles = await listArticles(params.topic);
+    data = await getTopic(topic);
+    articles = await listArticles(topic);
   } catch (e) {
     logger.warn(
       {
         method: 'GET',
-        path: `/${params.topic}`,
+        path: `/${topic}`,
         statusCode: 404,
         durationMs: Date.now() - start,
         err: e,
@@ -77,7 +79,7 @@ export default async function Page({ params }: PageProps) {
   logger.info(
     {
       method: 'GET',
-      path: `/${params.topic}`,
+      path: `/${topic}`,
       statusCode: 200,
       durationMs: Date.now() - start,
     },
@@ -91,7 +93,7 @@ export default async function Page({ params }: PageProps) {
     <PrimaryLayout
       headerImageBlurDataURL={blurDataURL!}
       headerImageUrl={headerURL}
-      sidebar={<Sidebar currentUrl={`/${params.topic}`} topic={params.topic} />}
+      sidebar={<Sidebar currentUrl={`/${topic}`} topic={topic} />}
     >
       <Title subtitle={data.description} title={data.title} />
 

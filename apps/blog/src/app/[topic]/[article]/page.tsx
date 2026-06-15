@@ -14,18 +14,19 @@ import styles from '../../page.module.css';
 import { defaultImage } from '@/app/constants';
 
 type PageProps = {
-  params: {
+  params: Promise<{
     topic: string;
     article: string;
-  };
+  }>;
 };
 
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
+  const { topic, article } = await params;
   let data;
   try {
-    data = await getArticle(params.topic, params.article);
+    data = await getArticle(topic, article);
   } catch (e) {
     return {
       title: 'Not Found',
@@ -51,19 +52,20 @@ export async function generateMetadata({
 }
 
 export default async function Page({ params }: PageProps) {
+  const { topic, article } = await params;
   const start = Date.now();
   let data, topicData, articlesData;
   try {
     [data, topicData, articlesData] = await Promise.all([
-      getArticle(params.topic, params.article),
-      getTopic(params.topic),
-      listArticles(params.topic),
+      getArticle(topic, article),
+      getTopic(topic),
+      listArticles(topic),
     ]);
   } catch (e) {
     logger.warn(
       {
         method: 'GET',
-        path: `/${params.topic}/${params.article}`,
+        path: `/${topic}/${article}`,
         statusCode: 404,
         durationMs: Date.now() - start,
         err: e,
@@ -75,7 +77,7 @@ export default async function Page({ params }: PageProps) {
   logger.info(
     {
       method: 'GET',
-      path: `/${params.topic}/${params.article}`,
+      path: `/${topic}/${article}`,
       statusCode: 200,
       durationMs: Date.now() - start,
     },
@@ -87,19 +89,19 @@ export default async function Page({ params }: PageProps) {
     .filter(a => a.publishedAt > 0 && !a.hidden)
     .sort((a, b) => b.publishedAt - a.publishedAt);
 
-  const currentIndex = articles.findIndex(a => a.slug === params.article);
+  const currentIndex = articles.findIndex(a => a.slug === article);
   const prevArticle =
     currentIndex < articles.length - 1
       ? {
           title: articles[currentIndex + 1].title,
-          url: `/${params.topic}/${articles[currentIndex + 1].slug}`,
+          url: `/${topic}/${articles[currentIndex + 1].slug}`,
         }
       : null;
   const nextArticle =
     currentIndex > 0
       ? {
           title: articles[currentIndex - 1].title,
-          url: `/${params.topic}/${articles[currentIndex - 1].slug}`,
+          url: `/${topic}/${articles[currentIndex - 1].slug}`,
         }
       : null;
 
@@ -110,12 +112,7 @@ export default async function Page({ params }: PageProps) {
     <PrimaryLayout
       headerImageBlurDataURL={blurDataURL!}
       headerImageUrl={headerURL}
-      sidebar={
-        <Sidebar
-          currentUrl={`/${params.topic}/${params.article}`}
-          topic={params.topic}
-        />
-      }
+      sidebar={<Sidebar currentUrl={`/${topic}/${article}`} topic={topic} />}
     >
       <Title
         publishedTimestamp={data.publishedAt}
@@ -126,7 +123,7 @@ export default async function Page({ params }: PageProps) {
       <Breadcrumb
         article={data.title}
         topic={topicData.title}
-        topicSlug={params.topic}
+        topicSlug={topic}
       />
 
       <div className={styles.page}>
