@@ -21,5 +21,7 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t ghcr.io/${{ github.repository }}:${{ github.ref_name }} .
+          docker build \
+            --build-arg VERSION=${{ github.ref_name }} \
+            -t ghcr.io/${{ github.repository }}:${{ github.ref_name }} .
           docker push ghcr.io/${{ github.repository }}:${{ github.ref_name }}

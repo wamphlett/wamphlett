@@ -22,6 +22,9 @@ RUN mkdir -p .next/cache && chown -R appuser:appgroup .next
 
 USER appuser
 
+ARG VERSION=unknown
+ENV OTEL_RESOURCE_ATTRIBUTES=service.version=${VERSION}
+
 EXPOSE 3000
 
 CMD ["node", "server.js"]
