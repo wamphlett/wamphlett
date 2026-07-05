@@ -1,4 +1,6 @@
+'use client';
 
+import { useMemo, useState } from 'react';
 import styles from './frameList.module.css';
 // {
 // 			"id": "6955999aa2579eaa06caf090",
@@ -43,9 +45,35 @@ export default function FrameList({
   frames,
   token,
 }: FrameProps) {
+  const [query, setQuery] = useState('');
+
+  const filteredFrames = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return frames;
+
+    return frames.filter((frame) =>
+      frame.kanji.includes(query.trim()) ||
+      frame.keyword.toLowerCase().includes(q) ||
+      String(frame.frame_number).includes(q)
+    );
+  }, [frames, query]);
+
   return (
     <div className={styles.container}>
-      {frames.map((frame) => <Frame key={frame.id} data={frame} token={token} />)}
+      <div className={styles.searchBar}>
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search by kanji, number, or keyword..."
+          className={styles.searchInput}
+        />
+      </div>
+
+      {filteredFrames.length > 0
+        ? filteredFrames.map((frame) => <Frame key={frame.id} data={frame} token={token} />)
+        : <p className={styles.noResults}>No kanji match &quot;{query}&quot;.</p>
+      }
     </div>
   )
 }
