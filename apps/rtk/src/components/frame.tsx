@@ -1,6 +1,6 @@
 
 'use client';
-import { useRef, useState, useEffect } from 'react';
+import { memo, useRef, useState, useEffect } from 'react';
 import { useRuntimeConfig } from "@/lib/config/useRuntimeConfig";
 import styles from './frame.module.css'
 
@@ -25,7 +25,7 @@ type FrameProps = {
   token?: string;
 };
 
-export default function Frame({
+function Frame({
   data,
   token
 }: FrameProps) {
@@ -264,3 +264,5 @@ function update(keyword: string, updateMask: string, apiUrl: string, token: stri
 function split(input: string): string[] {
   return input.split('...').map(s => s.trim());
 }
+
+export default memo(Frame);
