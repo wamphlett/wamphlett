@@ -1,6 +1,6 @@
 
 'use client';
-import { useRef, useState, useEffect } from 'react';
+import { Fragment, memo, useRef, useState, useEffect } from 'react';
 import { useRuntimeConfig } from "@/lib/config/useRuntimeConfig";
 import styles from './frame.module.css'
 
@@ -23,11 +23,13 @@ type FrameData = {
 type FrameProps = {
   data: FrameData;
   token?: string;
+  onComponentClick?: (component: string) => void;
 };
 
-export default function Frame({
+function Frame({
   data,
-  token
+  token,
+  onComponentClick
 }: FrameProps) {
   const editable = !!token;
   const { apiUrl } = useRuntimeConfig();
@@ -64,7 +66,21 @@ export default function Frame({
                 initialValue={data.components?.join("... ")} 
                 onCommit={update(data.keyword, "components", apiUrl!, token, split)}
               />
-            : <span className={styles.components}>{data.components?.join("... ")}</span>)
+            : <span className={styles.components}>
+                {data.components?.map((component, i) => (
+                  <Fragment key={component + i}>
+                    {i > 0 && "... "}
+                    <span
+                      role="button"
+                      tabIndex={0}
+                      className={styles.componentLink}
+                      onClick={() => onComponentClick?.(component)}
+                    >
+                      {component}
+                    </span>
+                  </Fragment>
+                ))}
+              </span>)
           }
           
           { editable
@@ -264,3 +280,5 @@ function update(keyword: string, updateMask: string, apiUrl: string, token: stri
 function split(input: string): string[] {
   return input.split('...').map(s => s.trim());
 }
+
+export default memo(Frame);

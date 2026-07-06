@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@plaiceholder/next": "^3.0.0",
+    "@tanstack/react-virtual": "^3.14.5",
     "next": "16.1.1",
     "react": "19.2.3",
     "react-dom": "19.2.3"
