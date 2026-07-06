@@ -116,7 +116,9 @@ export default async function Page({ params }: PageProps) {
       sidebar={<Sidebar currentUrl={`/${topic}/${article}`} topic={topic} />}
     >
       <Title
+        currentSlug={article}
         publishedTimestamp={data.publishedAt}
+        series={data.series}
         subtitle={data.description}
         title={data.title}
       />
