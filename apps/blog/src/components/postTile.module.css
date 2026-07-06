@@ -10,7 +10,7 @@
 }
 
 .container:hover {
-  background: #f7f7f7;
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .image {
@@ -64,7 +64,8 @@
 }
 
 .compact .details .date {
-  color: #67BBC2;
+  color: #141414;
+  font-weight: 800;
 }
 
 .compact .details .title {
