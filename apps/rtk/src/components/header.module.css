@@ -2,14 +2,9 @@
     position: fixed;
     z-index: 100;
     border-bottom: 1px rgba(255, 255, 255, .2) solid;
-    transition: background-color .5s ease-in-out;
     align-items: center;
     justify-content: space-between;
     flex: 1 1 0px;
-}
-
-.container:hover {
-    background-color: rgba(0, 0, 0, 0.6);
 }
 
 .title {
@@ -71,9 +66,6 @@
 }
 
 @media only screen and (max-width: 480px) {
-    .container {
-        background-color: rgba(0, 0, 0, 0.2);
-    }
     .title {
         font-size: 1em;
         line-height: .8em;

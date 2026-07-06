@@ -27,14 +27,18 @@ export default function Header({ position = 24}) {
   const endTransition = .9 * windowHeight; // 110vh
 
   let namePosition;
+  let bgOpacity;
   if (scrollY <= startTransition) {
     namePosition = 100;
+    bgOpacity = 0;
   } else if (scrollY >= endTransition) {
     namePosition = 0;
+    bgOpacity = 0.6;
   } else {
     const transitionRange = endTransition - startTransition;
     const scrollProgress = scrollY - startTransition;
     namePosition = 100 - (scrollProgress / transitionRange) * 100;
+    bgOpacity = (scrollProgress / transitionRange) * 0.6;
   }
 
   const handleClick = (event) => {
@@ -54,6 +58,7 @@ export default function Header({ position = 24}) {
           left: position,
           top: position,
           right: position,
+          backgroundColor: `rgba(0, 0, 0, ${bgOpacity})`,
         }}
       >
         <div className={ `flex flex-row ${styles.social}` }>
