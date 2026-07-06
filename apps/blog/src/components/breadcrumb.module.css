@@ -1,13 +1,18 @@
 .container {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 6px;
   padding: 0 20px 20px;
   font-size: 0.8em;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
+}
+
+.container a,
+.container .sep {
+  flex-shrink: 0;
 }
 
 .container a {
@@ -29,5 +34,6 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 300px;
+  min-width: 0;
+  flex-shrink: 1;
 }

@@ -152,7 +152,7 @@ export default async function Sidebar({ topic, currentUrl }: SidebarProps) {
         </ul>
       </div>
 
-      <div className={`${styles.section} ${styles.nomobile}`}>
+      <div className={styles.section}>
         <span className={styles.other}>Recent posts</span>
         <div className={styles.recentList}>
           {data.recent.map((a, i) => (
