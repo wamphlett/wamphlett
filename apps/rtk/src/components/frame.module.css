@@ -84,6 +84,15 @@
   font-weight: 400;
 }
 
+.story .componentLink {
+  display: inline;
+  cursor: pointer;
+}
+
+.componentLink:hover {
+  text-decoration: underline;
+}
+
 .jlpt {
   font-size: 1.6em;
   font-weight: 800 !important;

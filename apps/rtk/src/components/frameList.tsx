@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
 import styles from './frameList.module.css';
 // {
@@ -61,16 +62,24 @@ export default function FrameList({
     return frames.filter((frame) =>
       frame.kanji.includes(query.trim()) ||
       frame.keyword.toLowerCase().split(/[\s-]+/).some((word) => word.startsWith(q)) ||
+      frame.primitives?.some((primitive) => primitive.toLowerCase().split(/[\s-]+/).some((word) => word.startsWith(q))) ||
       String(frame.frame_number) === q
     );
   }, [frames, query]);
 
   const listRef = useRef<HTMLDivElement>(null);
   const listOffsetRef = useRef(0);
+  const searchBarRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     listOffsetRef.current = listRef.current?.offsetTop ?? 0;
   });
+
+  const getObstructionHeight = useCallback(() => {
+    if (!searchBarRef.current) return 0;
+    const stickyTop = parseFloat(getComputedStyle(searchBarRef.current).top) || 0;
+    return stickyTop + searchBarRef.current.offsetHeight;
+  }, []);
 
   const virtualizer = useWindowVirtualizer({
     count: filteredFrames.length,
@@ -80,9 +89,63 @@ export default function FrameList({
     getItemKey: (index) => filteredFrames[index].id,
   });
 
+  const handleComponentClick = useCallback((component: string) => {
+    const normalized = component.trim().toLowerCase();
+
+    let index = frames.findIndex((frame) => frame.keyword.toLowerCase() === normalized);
+    if (index === -1) {
+      index = frames.findIndex((frame) =>
+        frame.primitives?.some((primitive) => primitive.toLowerCase() === normalized)
+      );
+    }
+    if (index === -1) return;
+
+    flushSync(() => {
+      setInputValue('');
+      setQuery('');
+    });
+
+    // react-virtual only self-corrects its target for rows that were still
+    // at an estimated (unmeasured) height while a scroll is "auto" — that
+    // correction is explicitly skipped once behavior is "smooth", since
+    // adjusting the destination mid-CSS-animation would look glitchy. So a
+    // plain smooth scrollToIndex/scrollToOffset can land short by however
+    // many rows between here and the target hadn't been measured yet.
+    //
+    // Instead, drive the animation ourselves: each frame, recompute the true
+    // target via an instant (self-correcting) jump and ease window.scrollTo
+    // toward it. As the animation gets physically closer to the target, more
+    // of the intervening rows render and get measured for real, so the
+    // computed target keeps converging on the accurate value — the same
+    // self-correction "auto" mode gets, just spread continuously across a
+    // smooth-looking motion instead of applied once.
+    const startY = window.scrollY;
+    const startTime = performance.now();
+    const DURATION = 500;
+    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+
+    const getTarget = () => {
+      virtualizer.scrollToIndex(index, { align: 'start', behavior: 'auto' });
+      const y = Math.max(window.scrollY - getObstructionHeight(), 0);
+      window.scrollTo(0, startY);
+      return y;
+    };
+
+    const step = () => {
+      const t = Math.min((performance.now() - startTime) / DURATION, 1);
+      const target = getTarget();
+      window.scrollTo(0, startY + (target - startY) * easeOutCubic(t));
+
+      if (t < 1) {
+        requestAnimationFrame(step);
+      }
+    };
+    requestAnimationFrame(step);
+  }, [frames, virtualizer, getObstructionHeight]);
+
   return (
     <div className={styles.container}>
-      <div className={styles.searchBar}>
+      <div ref={searchBarRef} className={styles.searchBar}>
         <input
           type="text"
           value={inputValue}
@@ -108,7 +171,7 @@ export default function FrameList({
                 transform: `translateY(${virtualRow.start - virtualizer.options.scrollMargin}px)`,
               }}
             >
-              <Frame data={filteredFrames[virtualRow.index]} token={token} />
+              <Frame data={filteredFrames[virtualRow.index]} token={token} onComponentClick={handleComponentClick} />
             </div>
           ))}
         </div>
