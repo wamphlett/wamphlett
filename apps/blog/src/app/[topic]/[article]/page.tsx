@@ -4,6 +4,7 @@ import Title from '@/components/title';
 import Article from '@/components/article';
 import Breadcrumb from '@/components/breadcrumb';
 import ArticleFooter from '@/components/articleFooter';
+import SeriesSection from '@/components/seriesSection';
 import { getArticle, getTopic, listArticles } from '@/util/API';
 import Sidebar from '@/components/sidebar';
 import logger from '@/lib/logger';
@@ -129,6 +130,10 @@ export default async function Page({ params }: PageProps) {
       <div className={styles.page}>
         <Article html={data.html} />
       </div>
+
+      {data.series && (
+        <SeriesSection currentSlug={article} series={data.series} />
+      )}
 
       <ArticleFooter
         next={nextArticle}
