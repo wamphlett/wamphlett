@@ -8,6 +8,7 @@ article pre code {
 
 article h1, article h2, article h3, article h4, article h5, article h6 {
   font-weight: bold;
+  color: #202020;
 }
 
 article h1,
@@ -35,7 +36,7 @@ article > p,
 article > ul,
 article > ol,
 article > blockquote {
-  margin: 10px 0;
+  margin: 16px 0;
 }
 
 article > .images {
@@ -58,7 +59,7 @@ article > p,
 article > blockquote p,
 article > ul li,
 article > ol li {
-  font-size: 1.1em;
+  font-size: 1em;
   line-height: 1.4em;
   font-weight: 300;
   color: #4a4a4a;

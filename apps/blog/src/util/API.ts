@@ -135,8 +135,23 @@ export const listArticles = async (
     tags: ['sidebar', 'recent'],
   });
 
+export type SeriesArticle = {
+  title: string;
+  slug: string;
+  topicSlug: string;
+  url: string;
+  publishedAt: number;
+  published: boolean;
+};
+
+export type Series = {
+  name: string;
+  articles: SeriesArticle[];
+};
+
 export type GetArticleResponse = ArticleDetails & {
   html: string;
+  series?: Series;
 };
 
 export const getArticle = async (

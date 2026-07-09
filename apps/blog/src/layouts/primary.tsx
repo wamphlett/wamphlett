@@ -82,6 +82,10 @@ export default function PrimaryLayout({
       />
 
       <div
+        className={`${styles.backdrop} ${open ? styles.backdropOpen : ''}`}
+      />
+
+      <div
         className={`relative ${styles.page} ${styles.defaultWidth}`}
         style={{ zIndex: 20, paddingBottom: 50 }}
       >

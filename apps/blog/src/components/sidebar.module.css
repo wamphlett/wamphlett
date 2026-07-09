@@ -71,20 +71,32 @@
 }
 
 .container .chipList li a {
+  position: relative;
+  z-index: 0;
   display: inline-block;
   padding: 5px 14px;
   border-radius: 20px;
-  background: #efefef;
+  background: linear-gradient(135deg, #67bbc2 0%, #7086c0 100%);
+  color: #fff;
   font-size: 0.82em;
   font-weight: 700;
   letter-spacing: 0.03em;
   text-transform: uppercase;
-  transition: background-color 0.2s, color 0.2s;
 }
 
-.container .chipList li a:hover {
-  background: #67BBC2;
-  color: #fff;
+.container .chipList li a::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 20px;
+  background: #67bbc2;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.container .chipList li a:hover::before {
+  opacity: 1;
 }
 
 .container .recentList {
@@ -94,6 +106,9 @@
 @media only screen and (max-width: 850px) {
   .container {
     text-align: right;
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .container .articleList li {
@@ -111,7 +126,8 @@
     justify-content: flex-end;
   }
 
-  .nomobile {
-    display: none;
+  .container .recentList {
+    max-width: 100%;
+    text-align: left;
   }
 }

@@ -25,3 +25,23 @@ jobs:
             --build-arg VERSION=${{ github.ref_name }} \
             -t ghcr.io/${{ github.repository }}:${{ github.ref_name }} .
           docker push ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+  
+  update-lab:
+    needs: build-and-push-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out lab
+        uses: actions/checkout@v4
+        with:
+          repository: wamphlett/lab
+          token: ${{ secrets.LAB_REPO_TOKEN }}
+
+      - name: Bump versions.json
+        run: |
+          IMAGE=ghcr.io/${{ github.repository }}
+          jq --arg k "$IMAGE" --arg v "${{ github.ref_name }}" '.[$k] = $v' \
+            tanka/versions.json > tmp && mv tmp tanka/versions.json
+          git config user.name "release-bot"
+          git config user.email "bot@wamphlett.net"
+          git commit -am "build: $IMAGE ${{ github.ref_name }}"
+          git pull --rebase && git push

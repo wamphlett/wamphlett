@@ -24,6 +24,21 @@
   text-transform: uppercase;
 }
 
+.seriesPill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.7em;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #fff;
+  background: linear-gradient(135deg, #67bbc2 0%, #7086c0 100%);
+  border-radius: 20px;
+  padding: 5px 14px;
+  margin-top: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
 @media only screen and (max-width: 850px) {
   .container {
     height: 70vh;
