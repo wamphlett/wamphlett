@@ -1,11 +1,22 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import Script from 'next/script';
-import { Heebo } from 'next/font/google';
+import { Heebo, Oswald, Inter } from 'next/font/google';
 
 const heebo = Heebo({
   weight: ['100', '300', '900'],
   subsets: ['latin'],
+  variable: '--font-brand',
+});
+
+const oswald = Oswald({
+  subsets: ['latin'],
+  variable: '--font-heading',
+});
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-body',
 });
 
 export const metadata: Metadata = {
@@ -25,7 +36,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={heebo.className}>
+      <body className={`${heebo.variable} ${oswald.variable} ${inter.variable}`}>
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-DLXPGV6ZK1" />
         <Script id="google-analytics">
           {`

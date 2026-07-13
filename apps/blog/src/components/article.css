@@ -124,3 +124,20 @@ article .images > a:hover img {
   scale: 1.015;
   outline: 5px solid #67BBC2;
 }
+
+article > h2 {
+  position: relative;
+  padding-top: 15px;
+  letter-spacing: 0.035em;
+}
+
+article > h2::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20px;
+  width: 54px;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #67bbc2, #7086c0);
+}
