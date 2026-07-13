@@ -14,7 +14,7 @@ article h1, article h2, article h3, article h4, article h5, article h6 {
 article h1,
 article h2,
 article h3 {
-  font-size: 1.4em;
+  font-size: 1.6em;
   line-height: 1em;
   text-transform: uppercase;
 }
@@ -25,7 +25,7 @@ article h1 {
 }
 
 article h3 {
-  font-size: 1.2em;
+  font-size: 1.4em;
   margin-bottom: -6px;
   margin-top: 15px;
 }
@@ -116,11 +116,28 @@ article .images {
 
 article .images > a img {
   transition: scale .4s ease, outline .4s ease;
-  outline: 0px solid #67BBC2;
+  outline: 0px solid #5fa3d6;
   ;
 }
 
 article .images > a:hover img {
   scale: 1.015;
-  outline: 5px solid #67BBC2;
+  outline: 5px solid #5fa3d6;
+}
+
+article > h2 {
+  position: relative;
+  padding-top: 15px;
+  letter-spacing: 0.035em;
+}
+
+article > h2::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20px;
+  width: 54px;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #5fa3d6, #8b6fc4);
 }

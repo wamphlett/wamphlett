@@ -5,6 +5,7 @@
     align-items: center;
     justify-content: space-between;
     flex: 1 1 0px;
+    font-family: var(--font-brand), sans-serif;
 }
 
 .container:hover {
@@ -20,10 +21,11 @@
     font-size: 1.2em;
     text-align: center;
     flex: 1 1 0px;
+    font-family: var(--font-brand), sans-serif;
 }
 
 .title a > span {
-    color: #67BBC2;
+    color: #5fa3d6;
     font-size: 2em;
 }
 
@@ -45,7 +47,7 @@
 
 .social > .icon a:hover svg path,
 .social > .icon a:hover svg circle {
-    fill: #67BBC2 !important;
+    fill: #5fa3d6 !important;
 }
 
 .links {
@@ -71,7 +73,7 @@
 }
 
 .links a:hover {
-    color: #67BBC2;
+    color: #5fa3d6;
 }
 
 @media only screen and (max-width: 850px) {

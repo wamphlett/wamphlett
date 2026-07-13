@@ -43,6 +43,8 @@ export default function Header({
     };
   }, []);
 
+  const blurAmount = 4 * (scrollPercentage / 100); // Max blur of 3px
+
   return (
     <div>
       <div
@@ -53,6 +55,8 @@ export default function Header({
           top: position,
           right: position,
           backgroundColor: `rgba(0, 0, 0, ${0.2 * (scrollPercentage / 100)})`,
+          backdropFilter: `blur(${blurAmount}px)`,
+          WebkitBackdropFilter: `blur(${blurAmount}px)`,
         }}
       >
         <div className={`flex flex-row ${styles.social}`}>

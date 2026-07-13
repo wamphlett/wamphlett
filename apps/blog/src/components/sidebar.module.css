@@ -10,7 +10,7 @@
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #67BBC2;
+  color: #5fa3d6;
   margin: 0 0 4px;
   padding: 0;
   border: none;
@@ -22,14 +22,19 @@
   font-size: 1.4em;
   font-weight: 900;
   text-transform: uppercase;
-  margin-bottom: 12px;
   padding-bottom: 8px;
-  border-bottom: 1px #c1c1c1 solid;
 }
 
 /* Section spacing */
 .container .section {
+  padding-bottom: 30px;
   margin-bottom: 30px;
+  border-bottom: 1px solid;
+  border-image: linear-gradient(90deg, #0000003d, #00000000) 1;
+}
+
+.container .section:last-child {
+  border-bottom: none;;
 }
 
 /* Article list — no bullet, left border accent on hover */
@@ -48,12 +53,12 @@
 }
 
 .container .articleList li:hover {
-  border-left-color: #67BBC2;
+  border-left-color: #5fa3d6;
 }
 
 .container .articleList li.active {
   font-weight: 900;
-  border-left-color: #67BBC2;
+  border-left-color: #5fa3d6;
 }
 
 /* Topic chips — pill buttons */
@@ -76,7 +81,7 @@
   display: inline-block;
   padding: 5px 14px;
   border-radius: 20px;
-  background: linear-gradient(135deg, #67bbc2 0%, #7086c0 100%);
+  background: linear-gradient(135deg, #5fa3d6 0%, #8b6fc4 100%);
   color: #fff;
   font-size: 0.82em;
   font-weight: 700;
@@ -90,7 +95,7 @@
   inset: 0;
   z-index: -1;
   border-radius: 20px;
-  background: #67bbc2;
+  background: #5fa3d6;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -119,7 +124,7 @@
 
   .container .articleList li:hover,
   .container .articleList li.active {
-    border-right-color: #67BBC2;
+    border-right-color: #5fa3d6;
   }
 
   .container .chipList {

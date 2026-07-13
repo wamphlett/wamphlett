@@ -32,7 +32,7 @@
 
 .prev a:hover,
 .next a:hover {
-  color: #67BBC2;
+  color: #5fa3d6;
 }
 
 .label {
@@ -47,7 +47,7 @@
 
 .prev a:hover .label,
 .next a:hover .label {
-  color: #67BBC2;
+  color: #5fa3d6;
 }
 
 .title {
@@ -60,7 +60,7 @@
 
 .prev a:hover .title,
 .next a:hover .title {
-  color: #67BBC2;
+  color: #5fa3d6;
 }
 
 .updated {

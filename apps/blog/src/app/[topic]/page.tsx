@@ -101,7 +101,7 @@ export default async function Page({ params }: PageProps) {
         <Article html={data.html} />
       </div>
 
-      <PostList heading="Posts in this topic">
+      <PostList heading="Posts in this topic" accentBar>
         {articles.articles
           .filter(a => a.publishedAt !== 0)
           .sort((a, b) => b.publishedAt - a.publishedAt)

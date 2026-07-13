@@ -20,6 +20,23 @@
   font-weight: 300;
 }
 
+.accentBar {
+  padding-top: 22px;
+  position: relative;
+}
+
+.accentBar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 72px;
+  height: 5px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #5fa3d6, #8b6fc4);
+}
+
 .container.sidebar {
   padding: 0;
 }
