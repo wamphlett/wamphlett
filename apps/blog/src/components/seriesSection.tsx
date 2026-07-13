@@ -44,7 +44,7 @@ export default function SeriesSection({
                     <span className={styles.currentBadge}>Reading now</span>
                   </>
                 ) : a.published ? (
-                  <Link className={styles.link} href={a.url}>
+                  <Link className={styles.link} href={`/${a.topicSlug}/${a.slug}`}>
                     {a.title}
                   </Link>
                 ) : (
