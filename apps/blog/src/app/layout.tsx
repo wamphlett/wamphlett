@@ -1,7 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import Script from 'next/script';
-import { Heebo, Oswald, Inter } from 'next/font/google';
+import { Heebo, Inter, Oswald } from 'next/font/google';
 
 const heebo = Heebo({
   weight: ['100', '300', '900'],
@@ -36,7 +36,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${heebo.variable} ${oswald.variable} ${inter.variable}`}>
+      <body
+        className={`${heebo.variable} ${oswald.variable} ${inter.variable}`}
+      >
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-DLXPGV6ZK1" />
         <Script id="google-analytics">
           {`
