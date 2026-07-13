@@ -47,7 +47,7 @@
         inset: 0;
         z-index: -1;
         background: linear-gradient(to right,
-            rgba(103, 187, 194, .3) 0%,
+            rgba(95, 163, 214, .3) 0%,
             rgba(255, 255, 255, 0.9) 100%);
         backdrop-filter: blur(16px) saturate(180%);
         -webkit-backdrop-filter: blur(16px) saturate(180%);

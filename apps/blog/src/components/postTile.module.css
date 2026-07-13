@@ -39,6 +39,7 @@
   text-transform: uppercase;
   font-weight: bold;
   padding: 5px 0;
+  font-family: var(--font-brand), sans-serif;
 }
 
 .details .date {

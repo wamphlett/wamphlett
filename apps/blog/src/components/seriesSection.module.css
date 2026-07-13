@@ -12,7 +12,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  background: linear-gradient(135deg, #67bbc2 0%, #7086c0 100%);
+  background: linear-gradient(135deg, #5fa3d6 0%, #8b6fc4 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -40,7 +40,7 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: #fff;
-  background: linear-gradient(135deg, #67bbc2 0%, #7086c0 100%);
+  background: linear-gradient(135deg, #5fa3d6 0%, #8b6fc4 100%);
   border-radius: 20px;
   padding: 5px 14px;
   white-space: nowrap;
@@ -52,7 +52,7 @@
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  background: linear-gradient(135deg, #67bbc2 0%, #7086c0 100%);
+  background: linear-gradient(135deg, #5fa3d6 0%, #8b6fc4 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -106,15 +106,15 @@
 }
 
 .nodeCurrent {
-  background: linear-gradient(135deg, #67bbc2 0%, #7086c0 100%);
+  background: linear-gradient(135deg, #5fa3d6 0%, #8b6fc4 100%);
   border: none;
   color: #fff;
-  box-shadow: 0 0 0 4px rgba(103, 187, 194, 0.25);
+  box-shadow: 0 0 0 4px rgba(95, 163, 214, 0.25);
 }
 
 .nodePublished {
-  border-color: #67bbc2;
-  color: #67bbc2;
+  border-color: #5fa3d6;
+  color: #5fa3d6;
 }
 
 .nodeUpcoming {
@@ -141,7 +141,7 @@
 }
 
 .link:hover {
-  color: #67bbc2;
+  color: #5fa3d6;
 }
 
 .currentTitle {
@@ -156,7 +156,7 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: #fff;
-  background: linear-gradient(135deg, #67bbc2 0%, #7086c0 100%);
+  background: linear-gradient(135deg, #5fa3d6 0%, #8b6fc4 100%);
   border-radius: 10px;
   padding: 2px 9px;
 }
