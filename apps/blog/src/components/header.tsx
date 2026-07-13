@@ -53,6 +53,8 @@ export default function Header({
           top: position,
           right: position,
           backgroundColor: `rgba(0, 0, 0, ${0.2 * (scrollPercentage / 100)})`,
+          backdropFilter: `blur(${3 * (scrollPercentage / 100)}px)`,
+          WebkitBackdropFilter: `blur(${3 * (scrollPercentage / 100)}px)`,
         }}
       >
         <div className={`flex flex-row ${styles.social}`}>
