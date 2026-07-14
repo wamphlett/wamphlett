@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import styles from './seriesSection.module.css';
 import { Series } from '@/util/API';
+import { isStagingMode } from '@/util/staging';
 
 type SeriesSectionProps = {
   series: Series;
@@ -11,6 +12,8 @@ export default function SeriesSection({
   series,
   currentSlug,
 }: SeriesSectionProps) {
+  const staging = isStagingMode();
+  const isReadable = (published: boolean) => published || staging;
   const publishedCount = series.articles.filter(a => a.published).length;
 
   return (
@@ -30,7 +33,7 @@ export default function SeriesSection({
           const isCurrent = a.slug === currentSlug;
           const nodeClass = isCurrent
             ? styles.nodeCurrent
-            : a.published
+            : isReadable(a.published)
             ? styles.nodePublished
             : styles.nodeUpcoming;
 
@@ -43,7 +46,7 @@ export default function SeriesSection({
                     <span className={styles.currentTitle}>{a.title}</span>
                     <span className={styles.currentBadge}>Reading now</span>
                   </>
-                ) : a.published ? (
+                ) : isReadable(a.published) ? (
                   <Link
                     className={styles.link}
                     href={`/${a.topicSlug}/${a.slug}`}

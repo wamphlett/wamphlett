@@ -10,6 +10,7 @@ import Sidebar from '@/components/sidebar';
 import logger from '@/lib/logger';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
+import { isVisible } from '@/util/staging';
 
 import styles from '../../page.module.css';
 import { defaultImage } from '@/app/constants';
@@ -87,7 +88,7 @@ export default async function Page({ params }: PageProps) {
 
   // Build prev/next from articles sorted newest-first by publishedAt
   const articles = articlesData.articles
-    .filter(a => a.publishedAt > 0 && !a.hidden)
+    .filter(isVisible)
     .sort((a, b) => b.publishedAt - a.publishedAt);
 
   const currentIndex = articles.findIndex(a => a.slug === article);

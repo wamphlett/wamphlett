@@ -14,6 +14,7 @@ import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import PostList from '@/components/postList';
 import PostTile from '@/components/postTile';
+import { isVisible } from '@/util/staging';
 
 import styles from '../page.module.css';
 import { defaultImage } from '../constants';
@@ -103,7 +104,7 @@ export default async function Page({ params }: PageProps) {
 
       <PostList accentBar heading="Posts in this topic">
         {articles.articles
-          .filter(a => a.publishedAt !== 0)
+          .filter(isVisible)
           .sort((a, b) => b.publishedAt - a.publishedAt)
           .map(a => (
             <PostTile

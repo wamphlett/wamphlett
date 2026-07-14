@@ -4,6 +4,7 @@ import Link from 'next/link';
 import styles from './sidebar.module.css';
 import PostTile from './postTile';
 import { defaultImage } from '@/app/constants';
+import { isStagingMode, isVisible } from '@/util/staging';
 
 type SidebarLink = {
   title: string;
@@ -66,7 +67,13 @@ async function buildSidebar(topic: string | null): Promise<SidebarData> {
           }),
         );
       } else {
-        if (t.publishedAt == 0 || t.hidden || t.publishedArticleCount == 0) {
+        if (t.hidden) {
+          return;
+        }
+        if (
+          !isStagingMode() &&
+          (t.publishedAt == 0 || t.publishedArticleCount == 0)
+        ) {
           return;
         }
 
@@ -127,7 +134,7 @@ export default async function Sidebar({ topic, currentUrl }: SidebarProps) {
           </span>
           <ul className={styles.articleList}>
             {data.articles
-              .filter(a => a.publishedAt !== 0)
+              .filter(isVisible)
               .sort((a, b) => b.publishedAt - a.publishedAt)
               .map((a, i) => (
                 <li

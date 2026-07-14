@@ -31,6 +31,7 @@ By default the app points at the live API. To use a local backend, update `REACT
 |---|---|---|
 | `REACT_APP_API_URL` | Base URL of the content API | No (defaults to empty string) |
 | `REVALIDATE_SECRET` | Secret token for cache revalidation webhook | Yes, for ISR revalidation |
+| `STAGING_MODE` | When `true`, topic/sidebar listings include unpublished (future-dated or undated) posts, so they can be previewed before going live. Hidden posts are always excluded. | No (defaults to `false`) |
 
 ## Scripts
 
