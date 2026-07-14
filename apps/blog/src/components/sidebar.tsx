@@ -4,7 +4,7 @@ import Link from 'next/link';
 import styles from './sidebar.module.css';
 import PostTile from './postTile';
 import { defaultImage } from '@/app/constants';
-import { isStagingMode, isVisible } from '@/util/staging';
+import { isPublished, isStagingMode, isVisible } from '@/util/staging';
 
 type SidebarLink = {
   title: string;
@@ -72,7 +72,7 @@ async function buildSidebar(topic: string | null): Promise<SidebarData> {
         }
         if (
           !isStagingMode() &&
-          (t.publishedAt == 0 || t.publishedArticleCount == 0)
+          (!isPublished(t) || t.publishedArticleCount == 0)
         ) {
           return;
         }
