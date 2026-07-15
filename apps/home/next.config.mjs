@@ -1,10 +1,14 @@
+import path from 'node:path';
 import withPlaiceholder from "@plaiceholder/next";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   experimental: {
     serverComponentsExternalPackages: ['pino', 'pino-pretty'],
     instrumentationHook: true,
+    // trace deps from the monorepo root so standalone output is complete
+    outputFileTracingRoot: path.join(import.meta.dirname, '..', '..'),
   },
   i18n: {
     locales: ['en', 'ja-JP'], // Define 'jp' as a locale
@@ -19,7 +23,6 @@ const nextConfig = {
     ];
   },
   images: {
-    // deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     deviceSizes: [640, 1080, 1200, 1920, 2048, 3840],
     remotePatterns: [
       {

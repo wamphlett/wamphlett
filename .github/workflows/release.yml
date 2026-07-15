@@ -1,0 +1,66 @@
+name: Release
+
+# Per-app release. Tag format: <app>-v<semver>, e.g. blog-v0.3.0
+on:
+  push:
+    tags:
+      - '*-v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Parse tag
+        id: t
+        run: |
+          REF="${{ github.ref_name }}"          # e.g. blog-v0.3.0
+          APP="${REF%-v*}"                       # blog
+          VERSION="${REF##*-v}"                  # 0.3.0
+          echo "app=$APP"         >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        run: |
+          IMAGE=ghcr.io/${{ github.repository_owner }}/${{ steps.t.outputs.app }}
+          docker build \
+            --build-arg VERSION=${{ steps.t.outputs.version }} \
+            -f apps/${{ steps.t.outputs.app }}/Dockerfile \
+            -t $IMAGE:${{ steps.t.outputs.version }} \
+            -t $IMAGE:latest \
+            .
+          docker push $IMAGE:${{ steps.t.outputs.version }}
+          docker push $IMAGE:latest
+
+  update-lab:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out lab
+        uses: actions/checkout@v4
+        with:
+          repository: wamphlett/lab
+          token: ${{ secrets.LAB_REPO_TOKEN }}
+      - name: Bump versions.json
+        run: |
+          REF="${{ github.ref_name }}"
+          APP="${REF%-v*}"
+          VERSION="${REF##*-v}"
+          IMAGE=ghcr.io/${{ github.repository_owner }}/$APP
+          jq --arg k "$IMAGE" --arg v "$VERSION" '.[$k] = $v' \
+            tanka/versions.json > tmp && mv tmp tanka/versions.json
+          git config user.name "release-bot"
+          git config user.email "bot@wamphlett.net"
+          git commit -am "build: $IMAGE $VERSION"
+          git pull --rebase && git push
