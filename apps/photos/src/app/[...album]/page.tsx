@@ -65,13 +65,13 @@ export default async function Page({ params }: PageProps) {
 
   return (
     <PrimaryLayout
-      headerImageUrl={album.headerImageUrl}
       headerImageBlurDataURL={blurDataURL}
+      headerImageUrl={album.headerImageUrl}
     >
       <GalleryTitle
+        description={album.description}
         primary={album.title}
         secondary={album.year.toString()}
-        description={album.description}
       />
 
       {album.grids.map((image, index) => {
@@ -84,54 +84,54 @@ export default async function Page({ params }: PageProps) {
             case Grids.Row:
               return (
                 <Row
-                  key={index}
-                  images={image.images}
                   aspectRatio={image.aspectRatio}
+                  images={image.images}
+                  key={index}
                 />
               );
             case Grids.Double:
             case Grids.DoubleInverted:
               return (
                 <Double
-                  key={index}
-                  inverted={image.grid == Grids.DoubleInverted}
                   images={image.images}
+                  inverted={image.grid == Grids.DoubleInverted}
+                  key={index}
                 />
               );
             case Grids.TriWide:
             case Grids.TriWideInverted:
               return (
                 <TriWide
-                  key={index}
-                  inverted={image.grid == Grids.TriWideInverted}
                   images={image.images}
+                  inverted={image.grid == Grids.TriWideInverted}
+                  key={index}
                 />
               );
             case Grids.TriSquare:
             case Grids.TriSquareInverted:
               return (
                 <TriSquare
-                  key={index}
-                  inverted={image.grid == Grids.TriSquareInverted}
                   images={image.images}
+                  inverted={image.grid == Grids.TriSquareInverted}
+                  key={index}
                 />
               );
             case Grids.Offset:
             case Grids.OffsetInverted:
               return (
                 <Offset
-                  key={index}
-                  inverted={image.grid == Grids.OffsetInverted}
                   images={image.images}
+                  inverted={image.grid == Grids.OffsetInverted}
+                  key={index}
                 />
               );
             case Grids.OffsetTall:
             case Grids.OffsetTallInverted:
               return (
                 <Offset
-                  key={index}
-                  inverted={image.grid == Grids.OffsetTallInverted}
                   images={image.images}
+                  inverted={image.grid == Grids.OffsetTallInverted}
+                  key={index}
                   type={OffsetTypes.Tall}
                 />
               );

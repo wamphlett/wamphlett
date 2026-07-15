@@ -2,7 +2,7 @@ import type { Events } from '@/app/data';
 
 import styles from './timeline.module.css';
 import { ContentType, EventType, Grids } from '@/app/types';
-import { LocationIcon, CareerIcon } from './svgs';
+import { CareerIcon, LocationIcon } from './svgs';
 import Row from './imagegrids/row';
 import Double from './imagegrids/double';
 import TriWide from './imagegrids/triWide';
@@ -29,14 +29,12 @@ export default function Timeline({ events }: TimelineProps) {
             <span />
             {events.map((event, index) => {
               return (
-                <div key={index} className={styles.event}>
+                <div className={styles.event} key={index}>
                   <div className={styles.details}>
                     {event.icon && (
                       <div className={styles.icon}>
                         <AspectRatioBox aspectRatio={1}>
-                          <LazyImage
-                            url={event.icon}
-                          />
+                          <LazyImage url={event.icon} />
                         </AspectRatioBox>
                       </div>
                     )}
@@ -45,7 +43,11 @@ export default function Timeline({ events }: TimelineProps) {
                     )}
                     <div className={styles.title}>
                       <h3>{event.title}</h3>
-                      { event.type == EventType.Travel ? <LocationIcon /> : <CareerIcon /> }
+                      {event.type == EventType.Travel ? (
+                        <LocationIcon />
+                      ) : (
+                        <CareerIcon />
+                      )}
                     </div>
                     {event.tagline && (
                       <span className={styles.tagline}>{event.tagline}</span>
@@ -61,45 +63,45 @@ export default function Timeline({ events }: TimelineProps) {
                           case Grids.Row:
                             return (
                               <Row
-                                key={index}
-                                images={image.images}
                                 aspectRatio={image.aspectRatio}
+                                images={image.images}
+                                key={index}
                               />
                             );
                           case Grids.Double:
                           case Grids.DoubleInverted:
                             return (
                               <Double
-                                key={index}
-                                inverted={image.grid == Grids.DoubleInverted}
                                 images={image.images}
+                                inverted={image.grid == Grids.DoubleInverted}
+                                key={index}
                               />
                             );
                           case Grids.TriWide:
                           case Grids.TriWideInverted:
                             return (
                               <TriWide
-                                key={index}
-                                inverted={image.grid == Grids.TriWideInverted}
                                 images={image.images}
+                                inverted={image.grid == Grids.TriWideInverted}
+                                key={index}
                               />
                             );
                           case Grids.TriSquare:
                           case Grids.TriSquareInverted:
                             return (
                               <TriSquare
-                                key={index}
-                                inverted={image.grid == Grids.TriSquareInverted}
                                 images={image.images}
+                                inverted={image.grid == Grids.TriSquareInverted}
+                                key={index}
                               />
                             );
                           case Grids.Offset:
                           case Grids.OffsetInverted:
                             return (
                               <Offset
-                                key={index}
-                                inverted={image.grid == Grids.OffsetInverted}
                                 images={image.images}
+                                inverted={image.grid == Grids.OffsetInverted}
+                                key={index}
                               />
                             );
                         }

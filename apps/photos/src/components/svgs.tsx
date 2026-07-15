@@ -1,22 +1,22 @@
 export const InstaLogo = () => (
   <svg
-    width="100%"
-    height="100%"
-    viewBox="0 0 64 64"
-    xmlns="http://www.w3.org/2000/svg"
-    fillRule="evenodd"
     clipRule="evenodd"
+    fillRule="evenodd"
+    height="100%"
     strokeLinejoin="round"
     strokeMiterlimit={2}
+    viewBox="0 0 64 64"
+    width="100%"
+    xmlns="http://www.w3.org/2000/svg"
   >
-    <rect x="0" y="0" width="64" height="64" fill="none" />
+    <rect fill="none" height="64" width="64" x="0" y="0" />
     <g>
       <path
         d="M32,17.028C23.737,17.028 17.028,23.737 17.028,32C17.028,40.263 23.737,46.972 32,46.972C40.263,46.972 46.972,40.263 46.972,32C46.972,23.737 40.263,17.028 32,17.028ZM32,21.028C38.055,21.028 42.972,25.945 42.972,32C42.972,38.055 38.055,42.972 32,42.972C25.945,42.972 21.028,38.055 21.028,32C21.028,25.945 25.945,21.028 32,21.028Z"
         fill="white"
       />
       <g transform="matrix(1.20452,0,0,1.20452,-9.86213,-2.69136)">
-        <circle cx="48.987" cy="14.676" r="3.593" fill="white" />
+        <circle cx="48.987" cy="14.676" fill="white" r="3.593" />
       </g>
       <path
         d="M64,18.325C64,8.211 55.789,0 45.675,0L18.325,0C8.211,0 0,8.211 0,18.325L0,45.675C0,55.789 8.211,64 18.325,64L45.675,64C55.789,64 64,55.789 64,45.675L64,18.325ZM60,18.325L60,45.675C60,53.581 53.581,60 45.675,60L18.325,60C10.419,60 4,53.581 4,45.675L4,18.325C4,10.419 10.419,4 18.325,4L45.675,4C53.581,4 60,10.419 60,18.325Z"
@@ -28,17 +28,17 @@ export const InstaLogo = () => (
 
 export const LightroomLogo = () => (
   <svg
-    width="100%"
-    height="100%"
-    viewBox="0 0 64 64"
-    xmlns="http://www.w3.org/2000/svg"
-    fillRule="evenodd"
     clipRule="evenodd"
+    fillRule="evenodd"
+    height="100%"
     strokeLinejoin="round"
     strokeMiterlimit={2}
+    viewBox="0 0 64 64"
+    width="100%"
+    xmlns="http://www.w3.org/2000/svg"
   >
     <g transform="matrix(1,0,0,1,-114,0)">
-      <rect x="114" y="0" width="64" height="64" fill="none" />
+      <rect fill="none" height="64" width="64" x="114" y="0" />
       <g>
         <path
           d="M178,12.462C178,5.584 172.416,0 165.538,0L126.462,0C119.584,0 114,5.584 114,12.462L114,51.538C114,58.416 119.584,64 126.462,64L165.538,64C172.416,64 178,58.416 178,51.538L178,12.462ZM174,12.462L174,51.538C174,56.208 170.208,60 165.538,60L126.462,60C121.792,60 118,56.208 118,51.538C118,51.538 118,12.462 118,12.462C118,7.792 121.792,4 126.462,4L165.538,4C170.208,4 174,7.792 174,12.462Z"

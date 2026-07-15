@@ -27,8 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: 'Warren Amphlett Blog',
       description: 'The Ramblings of a software engineer',
-      images:
-        'https://library.wamphlett.net/photos/blog/headers/default.jpg?w=800',
+      images: `${defaultImage}?w=800`,
       locale: 'en_GB',
       type: 'article',
       authors: 'Warren Amphlett',
@@ -36,6 +35,11 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+// react-hooks/purity is disabled below for Date.now() request-duration
+// telemetry: this is an async Server Component that renders once per
+// request, not subject to the client-render memoization concerns the rule
+// guards against.
+/* eslint-disable react-hooks/purity */
 export default async function Page() {
   const start = Date.now();
   let data;

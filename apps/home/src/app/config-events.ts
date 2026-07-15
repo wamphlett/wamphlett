@@ -1,11 +1,13 @@
 import { readConfig } from '@/lib/config-io';
-import { ContentType, Grids, EventType } from './types';
+import { ContentType, EventType, Grids } from './types';
 import type { EventData, Events } from './data';
 
 // EventData and Events imported as types only — avoids pulling in data.tsx's
 // module-level register() side-effects which create a circular dependency.
 
-export async function getOrderedEventsFromConfig(): Promise<Map<number, Events>> {
+export async function getOrderedEventsFromConfig(): Promise<
+  Map<number, Events>
+> {
   let config;
   try {
     config = await readConfig();
@@ -43,7 +45,9 @@ export async function getOrderedEventsFromConfig(): Promise<Map<number, Events>>
 
   const grouped = new Map<number, Events>();
   for (const event of events) {
-    if (!grouped.has(event.year)) grouped.set(event.year, []);
+    if (!grouped.has(event.year)) {
+      grouped.set(event.year, []);
+    }
     grouped.get(event.year)!.push(event);
   }
   return grouped;

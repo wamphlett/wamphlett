@@ -56,6 +56,11 @@ export async function generateMetadata({
   };
 }
 
+// react-hooks/purity is disabled below for Date.now() request-duration
+// telemetry: this is an async Server Component that renders once per
+// request, not subject to the client-render memoization concerns the rule
+// guards against.
+/* eslint-disable react-hooks/purity */
 export default async function Page({ params }: PageProps) {
   const { topic } = await params;
   const start = Date.now();

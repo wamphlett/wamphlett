@@ -1,3 +1,4 @@
+import { CSSProperties } from 'react';
 import Link from 'next/link';
 
 import { AlbumData } from '@/app/types';
@@ -15,7 +16,7 @@ export enum AlbumTileStyle {
 
 type AlbumTileProps = {
   album: AlbumData;
-  maxWidth?: any;
+  maxWidth?: CSSProperties['maxWidth'];
   backgroundColor?: string;
   type?: AlbumTileStyle;
 };
@@ -35,10 +36,10 @@ export default async function AlbumTile({
       <Link href={album.url}>
         <AspectRatioBox aspectRatio={1}>
           <LazyImage
-            url={album.tileImageUrl}
+            backgroundColor={backgroundColor}
             blurDataURL={blurDataURL}
             opacity={AlbumTileStyle.Large == type ? 1 : 0.3}
-            backgroundColor={backgroundColor}
+            url={album.tileImageUrl}
           />
           <div className={styles.title}>
             <span>{album.title}</span>

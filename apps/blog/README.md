@@ -12,7 +12,7 @@ A Next.js blog platform that fetches and renders content from a headless API bac
 
 ## Content
 
-Content is not stored in this repo. The site fetches articles and topics from a separate backend API configured via `REACT_APP_API_URL`. Pages are cached for 30 days using Next.js Incremental Static Regeneration (ISR) and can be revalidated on demand via the `/api/revalidate` endpoint.
+Content is not stored in this repo. The site fetches articles and topics from a separate backend API configured via `BLOG_API_URL`. Pages are cached for 30 days using Next.js Incremental Static Regeneration (ISR) and can be revalidated on demand via the `/api/revalidate` endpoint.
 
 ## Getting Started
 
@@ -23,13 +23,13 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-By default the app points at the live API. To use a local backend, update `REACT_APP_API_URL` in `.env.local`.
+By default the app points at the live API. To use a local backend, update `BLOG_API_URL` in `.env.local`.
 
 ## Environment Variables
 
 | Variable | Description | Required |
 |---|---|---|
-| `REACT_APP_API_URL` | Base URL of the content API | No (defaults to empty string) |
+| `BLOG_API_URL` | Base URL of the content API | No (defaults to empty string) |
 | `REVALIDATE_SECRET` | Secret token for cache revalidation webhook | Yes, for ISR revalidation |
 | `STAGING_MODE` | When `true`, topic/sidebar listings include unpublished (future-dated or undated) posts, so they can be previewed before going live. Hidden posts are always excluded. | No (defaults to `false`) |
 

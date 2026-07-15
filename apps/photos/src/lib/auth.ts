@@ -17,27 +17,46 @@ const getKey = (secret: string): Promise<CryptoKey> =>
     new TextEncoder().encode(secret),
     { name: 'HMAC', hash: 'SHA-256' },
     false,
-    ['sign', 'verify']
+    ['sign', 'verify'],
   );
 
-export async function createSessionToken(username: string, secret: string): Promise<string> {
+export async function createSessionToken(
+  username: string,
+  secret: string,
+): Promise<string> {
   const exp = Date.now() + 24 * 60 * 60 * 1000;
   const payload = btoa(JSON.stringify({ username, exp }));
   const key = await getKey(secret);
-  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(payload));
+  const sig = await crypto.subtle.sign(
+    'HMAC',
+    key,
+    new TextEncoder().encode(payload),
+  );
   return `${payload}.${toHex(sig)}`;
 }
 
-export async function verifySessionToken(token: string, secret: string): Promise<boolean> {
+export async function verifySessionToken(
+  token: string,
+  secret: string,
+): Promise<boolean> {
   try {
     const dotIndex = token.lastIndexOf('.');
-    if (dotIndex === -1) return false;
+    if (dotIndex === -1) {
+      return false;
+    }
     const payload = token.substring(0, dotIndex);
     const sigHex = token.substring(dotIndex + 1);
     const { exp } = JSON.parse(atob(payload));
-    if (Date.now() > exp) return false;
+    if (Date.now() > exp) {
+      return false;
+    }
     const key = await getKey(secret);
-    return await crypto.subtle.verify('HMAC', key, fromHex(sigHex), new TextEncoder().encode(payload));
+    return await crypto.subtle.verify(
+      'HMAC',
+      key,
+      fromHex(sigHex),
+      new TextEncoder().encode(payload),
+    );
   } catch {
     return false;
   }

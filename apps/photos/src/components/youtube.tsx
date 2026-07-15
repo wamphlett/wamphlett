@@ -12,13 +12,13 @@ export default function YouTube({ link }: YouTubeProps) {
     <div className={styles.container}>
       <AspectRatioBox aspectRatio={16 / 9}>
         <iframe
-          width="1920"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+          frameBorder="0"
           height="1080"
           src={link}
           title="YouTube video player"
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowFullScreen
+          width="1920"
         ></iframe>
       </AspectRatioBox>
     </div>

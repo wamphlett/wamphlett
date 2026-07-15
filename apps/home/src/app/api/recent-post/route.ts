@@ -13,11 +13,28 @@ export async function GET(request: Request) {
   });
 
   if (!res.ok) {
-    logger.error({ method: 'GET', path: '/api/recent-post', statusCode: res.status, durationMs: Date.now() - start, upstream: baseUrl }, 'upstream blog api error');
+    logger.error(
+      {
+        method: 'GET',
+        path: '/api/recent-post',
+        statusCode: res.status,
+        durationMs: Date.now() - start,
+        upstream: baseUrl,
+      },
+      'upstream blog api error',
+    );
     return NextResponse.json({ articles: [] }, { status: res.status });
   }
 
   const data = await res.json();
-  logger.info({ method: 'GET', path: '/api/recent-post', statusCode: 200, durationMs: Date.now() - start }, 'recent posts fetched');
+  logger.info(
+    {
+      method: 'GET',
+      path: '/api/recent-post',
+      statusCode: 200,
+      durationMs: Date.now() - start,
+    },
+    'recent posts fetched',
+  );
   return NextResponse.json(data);
 }

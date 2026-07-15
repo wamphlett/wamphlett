@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { Albums, AlbumData } from '@/app/types';
+import { AlbumData, Albums } from '@/app/types';
 import { getAll } from '@/app/data';
 
 import styles from './sidebar.module.css';
@@ -69,22 +69,21 @@ export default function Sidebar({ open = false }: SidebarProps) {
     >
       <div className={styles.list}>
         {data.map((year, index) => (
-          <div key={index} className={styles.year}>
+          <div className={styles.year} key={index}>
             <span>{year.year}</span>
             {year.pages.map((page, index) => {
               if (page.url == currentPath) {
                 return (
-                  <span key={index} className={styles.active}>
+                  <span className={styles.active} key={index}>
                     {page.title}
                   </span>
                 );
-              } else {
-                return (
-                  <Link href={page.url} key={index}>
-                    {page.title}
-                  </Link>
-                );
               }
+              return (
+                <Link href={page.url} key={index}>
+                  {page.title}
+                </Link>
+              );
             })}
           </div>
         ))}

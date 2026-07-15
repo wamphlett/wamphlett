@@ -8,8 +8,11 @@ const heebo = Heebo({
   subsets: ['latin'],
 });
 
+const homeSiteUrl =
+  process.env.NEXT_PUBLIC_HOME_SITE_URL ?? 'https://warrenamphlett.co.uk';
+
 export const metadata: Metadata = {
-  metadataBase: new URL('https://warrenamphlett.co.uk'),
+  metadataBase: new URL(homeSiteUrl),
   title: {
     template: '%s | Warren Amphlett',
     default: 'Warren Amphlett',
@@ -19,9 +22,8 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_GB',
-    url: 'https://warrenamphlett.co.uk',
-    images:
-      'https://library.wamphlett.net/photos/website/2023/albania/three-of-a-kind.jpg',
+    url: homeSiteUrl,
+    images: `${process.env.NEXT_PUBLIC_LIBRARY_URL ?? 'https://library.wamphlett.net'}/photos/website/2023/albania/three-of-a-kind.jpg`,
     siteName: 'Warren Amphlett',
   },
 };

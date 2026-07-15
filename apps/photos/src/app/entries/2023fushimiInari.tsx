@@ -1,6 +1,6 @@
 import { buildAlbum } from '../data';
 import { images } from '../types';
-import { Grids, GridData } from '../types';
+import { GridData, Grids } from '../types';
 
 import fushimiInari2023Images from '../images/2023fushimiInari';
 
@@ -151,7 +151,8 @@ export default buildAlbum({
   year: 2023,
   month: 9,
   title: 'Fushimi Inari',
-  description: `Ever since I set my eyes on this place, I have wanted to visit. This year we finally got to walk the Fushimi Inari 「伏見稲荷大社」 trails. Thousands apon thousands of Torii gates 「鳥居」 line the paths up the 764 ft mountain, each one engraved with the name of the donor and the year it was placed. The trail is very popular with tourists so the crowds can be a bit much but the further you push up the mountain, the quieter it gets and this is where the trail really comes into its own. Established in the late 8th century, Fushimi Inari is one of the most historically significant shrines in Kyoto and I'd recommend anyone to visit.`,
+  description:
+    "Ever since I set my eyes on this place, I have wanted to visit. This year we finally got to walk the Fushimi Inari 「伏見稲荷大社」 trails. Thousands apon thousands of Torii gates 「鳥居」 line the paths up the 764 ft mountain, each one engraved with the name of the donor and the year it was placed. The trail is very popular with tourists so the crowds can be a bit much but the further you push up the mountain, the quieter it gets and this is where the trail really comes into its own. Established in the late 8th century, Fushimi Inari is one of the most historically significant shrines in Kyoto and I'd recommend anyone to visit.",
   headerImageUrl: fushimiInari2023Images.oldMeetsNew.url,
   grids: gridData,
 });

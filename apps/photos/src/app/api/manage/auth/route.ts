@@ -8,11 +8,15 @@ export async function POST(request: NextRequest) {
   const validPassword = process.env.MANAGE_PASSWORD;
 
   if (!validUsername || !validPassword) {
-    return new Response(JSON.stringify({ error: 'Auth not configured' }), { status: 500 });
+    return new Response(JSON.stringify({ error: 'Auth not configured' }), {
+      status: 500,
+    });
   }
 
   if (username !== validUsername || password !== validPassword) {
-    return new Response(JSON.stringify({ error: 'Invalid credentials' }), { status: 401 });
+    return new Response(JSON.stringify({ error: 'Invalid credentials' }), {
+      status: 401,
+    });
   }
 
   const secret = process.env.MANAGE_SESSION_SECRET ?? 'change-me-in-env';
@@ -32,7 +36,8 @@ export async function DELETE() {
     status: 200,
     headers: {
       'Content-Type': 'application/json',
-      'Set-Cookie': 'manage-session=; HttpOnly; Path=/; SameSite=Lax; Max-Age=0',
+      'Set-Cookie':
+        'manage-session=; HttpOnly; Path=/; SameSite=Lax; Max-Age=0',
     },
   });
 }

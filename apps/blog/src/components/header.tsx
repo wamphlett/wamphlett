@@ -96,14 +96,26 @@ export default function Header({
 
         <h1 className={styles.title}>
           <Link
-            href={usePathname() == '/' ? 'https://warrenamphlett.co.uk' : '/'}
+            href={
+              usePathname() == '/'
+                ? (process.env.NEXT_PUBLIC_HOME_SITE_URL ??
+                  'https://warrenamphlett.co.uk')
+                : '/'
+            }
           >
             Warren Amphlett<span>.</span>
           </Link>
         </h1>
 
         <div className={styles.links}>
-          <Link href={'https://photos.warrenamphlett.co.uk/'}>Photos</Link>
+          <Link
+            href={
+              process.env.NEXT_PUBLIC_PHOTOS_SITE_URL ??
+              'https://photos.warrenamphlett.co.uk'
+            }
+          >
+            Photos
+          </Link>
           <div onClick={onMenuClick} ref={menuRef}>
             <FancyMenuIcon open={menuIcon} />
           </div>

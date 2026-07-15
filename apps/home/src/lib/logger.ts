@@ -7,7 +7,7 @@ const logger = pino({
     env: process.env.NODE_ENV,
   },
   formatters: {
-    level: (label) => ({ level: label }),
+    level: label => ({ level: label }),
   },
   timestamp: pino.stdTimeFunctions.isoTime,
 });

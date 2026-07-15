@@ -5,22 +5,24 @@ export async function GET(request: NextRequest) {
   const page = request.nextUrl.searchParams.get('page');
   const tags = request.nextUrl.searchParams.get('tags');
 
-  return Response.json(await callApi("/photos", {
-    tags: tags ? tags : '',
-    page: page ? page : ''
-  }));
+  return Response.json(
+    await callApi('/photos', {
+      tags: tags ? tags : '',
+      page: page ? page : '',
+    }),
+  );
 }
 
 type apiOptions = {
   cacheSeconds?: number;
   tags?: string;
-  page?: string
+  page?: string;
 };
 
 const callApi = async (route: string, apiOptions: apiOptions = {}) => {
-  let url = process.env.REMOTE_API_URL || 'http://localhost:3000'
-  url += route
-  url += '?limit=100'
+  let url = process.env.PHOTOS_API_URL || 'http://localhost:3000';
+  url += route;
+  url += '?limit=100';
   url += apiOptions.page ? `&page=${apiOptions.page}` : '';
   url += apiOptions.tags ? `&tags=${apiOptions.tags}` : '';
 

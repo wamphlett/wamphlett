@@ -8,8 +8,11 @@ const heebo = Heebo({
   subsets: ['latin'],
 });
 
+const rtkSiteUrl =
+  process.env.NEXT_PUBLIC_RTK_SITE_URL ?? 'https://rtk.warrenamphlett.co.uk';
+
 export const metadata: Metadata = {
-  metadataBase: new URL('https://rtk.warrenamphlett.co.uk'),
+  metadataBase: new URL(rtkSiteUrl),
   title: {
     template: '%s | Warren Amphlett',
     default: 'Remembering the Kanji | Warren Amphlett',
@@ -19,9 +22,8 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_GB',
-    url: 'https://rtk.warrenamphlett.co.uk',
-    images:
-      'https://library.wamphlett.net/photos/website/2025/remembering-the-kanji.jpg',
+    url: rtkSiteUrl,
+    images: `${process.env.NEXT_PUBLIC_LIBRARY_URL ?? 'https://library.wamphlett.net'}/photos/website/2025/remembering-the-kanji.jpg`,
     siteName: 'Remembering the Kanji',
   },
 };
@@ -35,7 +37,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={heebo.className}>
         <Script id="google-tag-manager" strategy="afterInteractive">
-          { `
+          {`
           (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
           new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
           j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=

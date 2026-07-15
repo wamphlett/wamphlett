@@ -1,15 +1,15 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  DndContext,
   closestCenter,
-  PointerSensor,
+  DndContext,
+  type DragEndEvent,
   KeyboardSensor,
+  PointerSensor,
   useSensor,
   useSensors,
-  type DragEndEvent,
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -19,8 +19,15 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import type { Config, ConfigEvent, ImageGridRow, ConfigImage, GridType, EventType } from '@/lib/config-types';
-import { GRID_TYPES, EVENT_TYPES } from '@/lib/config-types';
+import type {
+  Config,
+  ConfigEvent,
+  ConfigImage,
+  EventType,
+  GridType,
+  ImageGridRow,
+} from '@/lib/config-types';
+import { EVENT_TYPES, GRID_TYPES } from '@/lib/config-types';
 
 // ─── Internal types with stable IDs for DnD ─────────────────────────────────
 
@@ -72,12 +79,13 @@ function fromUI(ui: UIConfig): Config {
     updated_ts: ui.updated_ts,
     events: ui.events.map(({ _id: _eid, image_grid, ...rest }) => ({
       ...rest,
-      image_grid: image_grid.length > 0
-        ? image_grid.map(({ _id: _rid, images, ...rowRest }) => ({
-            ...rowRest,
-            images: images.map(({ _id: _iid, ...imgRest }) => imgRest),
-          }))
-        : undefined,
+      image_grid:
+        image_grid.length > 0
+          ? image_grid.map(({ _id: _rid, images, ...rowRest }) => ({
+              ...rowRest,
+              images: images.map(({ _id: _iid, ...imgRest }) => imgRest),
+            }))
+          : undefined,
     })),
   };
 }
@@ -116,12 +124,20 @@ type ValidationErrors = Record<string, string>;
 function validate(config: UIConfig): ValidationErrors {
   const errs: ValidationErrors = {};
   config.events.forEach((ev, ei) => {
-    if (!ev.date_ts) errs[`e${ei}.date_ts`] = 'Date is required';
-    if (!ev.title.trim()) errs[`e${ei}.title`] = 'Title is required';
+    if (!ev.date_ts) {
+      errs[`e${ei}.date_ts`] = 'Date is required';
+    }
+    if (!ev.title.trim()) {
+      errs[`e${ei}.title`] = 'Title is required';
+    }
     ev.image_grid.forEach((row, ri) => {
-      if (!row.ratio[0] || !row.ratio[1]) errs[`e${ei}.r${ri}.ratio`] = 'Ratio required';
+      if (!row.ratio[0] || !row.ratio[1]) {
+        errs[`e${ei}.r${ri}.ratio`] = 'Ratio required';
+      }
       row.images.forEach((img, ii) => {
-        if (!img.url.trim()) errs[`e${ei}.r${ri}.i${ii}.url`] = 'URL is required';
+        if (!img.url.trim()) {
+          errs[`e${ei}.r${ri}.i${ii}.url`] = 'URL is required';
+        }
       });
     });
   });
@@ -131,12 +147,16 @@ function validate(config: UIConfig): ValidationErrors {
 // ─── Date helpers ─────────────────────────────────────────────────────────────
 
 function tsToDateInput(ts: number): string {
-  if (!ts) return '';
+  if (!ts) {
+    return '';
+  }
   return new Date(ts * 1000).toISOString().split('T')[0];
 }
 
 function dateInputToTs(s: string): number {
-  if (!s) return 0;
+  if (!s) {
+    return 0;
+  }
   return Math.floor(new Date(s + 'T00:00:00Z').getTime() / 1000);
 }
 
@@ -153,7 +173,9 @@ function Field({
 }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-gray-600 mb-1">{label}</label>
+      <label className="block text-xs font-medium text-gray-600 mb-1">
+        {label}
+      </label>
       {children}
       {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
     </div>
@@ -177,14 +199,14 @@ function Input({
 }) {
   return (
     <input
-      type={type}
-      value={value}
-      onChange={e => onChange(e.target.value)}
-      placeholder={placeholder}
-      required={required}
       className={`w-full px-2.5 py-1.5 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent ${
         error ? 'border-red-400 bg-red-50' : 'border-gray-300'
       }`}
+      onChange={e => onChange(e.target.value)}
+      placeholder={placeholder}
+      required={required}
+      type={type}
+      value={value}
     />
   );
 }
@@ -200,9 +222,9 @@ function Select<T extends string>({
 }) {
   return (
     <select
-      value={value}
-      onChange={e => onChange(e.target.value as T)}
       className="w-full px-2.5 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 bg-white"
+      onChange={e => onChange(e.target.value as T)}
+      value={value}
     >
       {options.map(o => (
         <option key={o} value={o}>
@@ -213,16 +235,22 @@ function Select<T extends string>({
   );
 }
 
-function DragHandle({ listeners, attributes }: { listeners?: object; attributes?: object }) {
+function DragHandle({
+  listeners,
+  attributes,
+}: {
+  listeners?: object;
+  attributes?: object;
+}) {
   return (
     <button
       type="button"
       {...listeners}
       {...attributes}
-      className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 px-1 py-0.5 rounded touch-none"
       aria-label="Drag to reorder"
+      className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 px-1 py-0.5 rounded touch-none"
     >
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+      <svg fill="currentColor" height="16" viewBox="0 0 16 16" width="16">
         <circle cx="5" cy="4" r="1.5" />
         <circle cx="11" cy="4" r="1.5" />
         <circle cx="5" cy="8" r="1.5" />
@@ -251,7 +279,14 @@ function SortableImageRow({
   errPrefix: string;
   errors: ValidationErrors;
 }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
     id: img._id,
   });
 
@@ -262,34 +297,40 @@ function SortableImageRow({
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="flex items-start gap-1">
+    <div className="flex items-start gap-1" ref={setNodeRef} style={style}>
       <div className="pt-5">
-        <DragHandle listeners={listeners} attributes={attributes} />
+        <DragHandle attributes={attributes} listeners={listeners} />
       </div>
       <div className="flex-1 grid grid-cols-3 gap-2 items-start">
-        <Field label="URL *" error={errors[`${errPrefix}.url`]}>
+        <Field error={errors[`${errPrefix}.url`]} label="URL *">
           <Input
-            value={img.url}
+            error={!!errors[`${errPrefix}.url`]}
             onChange={v => onChange({ url: v })}
             placeholder="https://…"
-            error={!!errors[`${errPrefix}.url`]}
+            value={img.url}
           />
         </Field>
         <Field label="Title">
-          <Input value={img.title ?? ''} onChange={v => onChange({ title: v })} />
+          <Input
+            onChange={v => onChange({ title: v })}
+            value={img.title ?? ''}
+          />
         </Field>
         <div className="flex items-end gap-2">
           <div className="flex-1">
             <Field label="Tagline">
-              <Input value={img.tagline ?? ''} onChange={v => onChange({ tagline: v })} />
+              <Input
+                onChange={v => onChange({ tagline: v })}
+                value={img.tagline ?? ''}
+              />
             </Field>
           </div>
           {canRemove && (
             <button
-              type="button"
-              onClick={onRemove}
               className="mb-0.5 p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+              onClick={onRemove}
               title="Remove image"
+              type="button"
             >
               ✕
             </button>
@@ -315,7 +356,14 @@ function SortableGridRow({
   errPrefix: string;
   errors: ValidationErrors;
 }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
     id: row._id,
   });
 
@@ -327,12 +375,16 @@ function SortableGridRow({
 
   const imageSensors = useSensors(
     useSensor(PointerSensor),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
   );
 
   function handleImageDragEnd(e: DragEndEvent) {
     const { active, over } = e;
-    if (!over || active.id === over.id) return;
+    if (!over || active.id === over.id) {
+      return;
+    }
     const ids = row.images.map(img => img._id);
     const oldIdx = ids.indexOf(active.id as string);
     const newIdx = ids.indexOf(over.id as string);
@@ -340,7 +392,11 @@ function SortableGridRow({
   }
 
   function patchImage(id: string, patch: Partial<UIImage>) {
-    onChange({ images: row.images.map(img => (img._id === id ? { ...img, ...patch } : img)) });
+    onChange({
+      images: row.images.map(img =>
+        img._id === id ? { ...img, ...patch } : img,
+      ),
+    });
   }
 
   function removeImage(id: string) {
@@ -352,52 +408,70 @@ function SortableGridRow({
   }
 
   return (
-    <div ref={setNodeRef} style={style} className="border border-gray-200 rounded-lg p-4 bg-gray-50 space-y-3">
+    <div
+      className="border border-gray-200 rounded-lg p-4 bg-gray-50 space-y-3"
+      ref={setNodeRef}
+      style={style}
+    >
       <div className="flex items-center gap-2">
-        <DragHandle listeners={listeners} attributes={attributes} />
+        <DragHandle attributes={attributes} listeners={listeners} />
         <div className="w-44">
           <Field label="Grid type">
             <Select<GridType>
-              value={row.grid_type}
               onChange={v => onChange({ grid_type: v })}
               options={GRID_TYPES}
+              value={row.grid_type}
             />
           </Field>
         </div>
-        <Field label="Ratio" error={errors[`${errPrefix}.ratio`]}>
+        <Field error={errors[`${errPrefix}.ratio`]} label="Ratio">
           <div className="flex items-center gap-1">
             <input
-              type="number"
-              min={1}
-              step={1}
-              value={row.ratio[0]}
-              onChange={e => onChange({ ratio: [Math.max(1, parseInt(e.target.value) || 1), row.ratio[1]] })}
               className={`w-14 px-2 py-1.5 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 ${errors[`${errPrefix}.ratio`] ? 'border-red-400 bg-red-50' : 'border-gray-300'}`}
+              min={1}
+              onChange={e =>
+                onChange({
+                  ratio: [
+                    Math.max(1, parseInt(e.target.value) || 1),
+                    row.ratio[1],
+                  ],
+                })
+              }
+              step={1}
+              type="number"
+              value={row.ratio[0]}
             />
             <span className="text-gray-400 text-sm">:</span>
             <input
-              type="number"
-              min={1}
-              step={1}
-              value={row.ratio[1]}
-              onChange={e => onChange({ ratio: [row.ratio[0], Math.max(1, parseInt(e.target.value) || 1)] })}
               className={`w-14 px-2 py-1.5 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-gray-400 ${errors[`${errPrefix}.ratio`] ? 'border-red-400 bg-red-50' : 'border-gray-300'}`}
+              min={1}
+              onChange={e =>
+                onChange({
+                  ratio: [
+                    row.ratio[0],
+                    Math.max(1, parseInt(e.target.value) || 1),
+                  ],
+                })
+              }
+              step={1}
+              type="number"
+              value={row.ratio[1]}
             />
           </div>
         </Field>
         <button
-          type="button"
-          onClick={onRemove}
           className="ml-auto text-xs text-red-500 hover:text-red-700 hover:underline"
+          onClick={onRemove}
+          type="button"
         >
           Remove row
         </button>
       </div>
 
       <DndContext
-        sensors={imageSensors}
         collisionDetection={closestCenter}
         onDragEnd={handleImageDragEnd}
+        sensors={imageSensors}
       >
         <SortableContext
           items={row.images.map(img => img._id)}
@@ -406,13 +480,13 @@ function SortableGridRow({
           <div className="space-y-2">
             {row.images.map((img, ii) => (
               <SortableImageRow
-                key={img._id}
+                canRemove={row.images.length > 1}
+                errors={errors}
+                errPrefix={`${errPrefix}.i${ii}`}
                 img={img}
+                key={img._id}
                 onChange={p => patchImage(img._id, p)}
                 onRemove={() => removeImage(img._id)}
-                canRemove={row.images.length > 1}
-                errPrefix={`${errPrefix}.i${ii}`}
-                errors={errors}
               />
             ))}
           </div>
@@ -420,9 +494,9 @@ function SortableGridRow({
       </DndContext>
 
       <button
-        type="button"
-        onClick={addImage}
         className="text-xs text-gray-500 hover:text-gray-700 hover:underline"
+        onClick={addImage}
+        type="button"
       >
         + Add image
       </button>
@@ -449,7 +523,14 @@ function SortableEventCard({
   onToggle: () => void;
   errors: ValidationErrors;
 }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
     id: event._id,
   });
 
@@ -464,12 +545,16 @@ function SortableEventCard({
 
   const sensors = useSensors(
     useSensor(PointerSensor),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
   );
 
   function handleGridDragEnd(e: DragEndEvent) {
     const { active, over } = e;
-    if (!over || active.id === over.id) return;
+    if (!over || active.id === over.id) {
+      return;
+    }
     const ids = event.image_grid.map(r => r._id);
     const oldIdx = ids.indexOf(active.id as string);
     const newIdx = ids.indexOf(over.id as string);
@@ -477,7 +562,9 @@ function SortableEventCard({
   }
 
   function patchGrid(ri: number, patch: Partial<UIGridRow>) {
-    const image_grid = event.image_grid.map((row, i) => (i === ri ? { ...row, ...patch } : row));
+    const image_grid = event.image_grid.map((row, i) =>
+      i === ri ? { ...row, ...patch } : row,
+    );
     onChange({ image_grid });
   }
 
@@ -490,7 +577,11 @@ function SortableEventCard({
   }
 
   return (
-    <div ref={setNodeRef} style={style} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+    <div
+      className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden"
+      ref={setNodeRef}
+      style={style}
+    >
       {/* Header row */}
       <div
         className={`flex items-center gap-2 px-4 py-3 cursor-pointer select-none ${
@@ -498,12 +589,11 @@ function SortableEventCard({
         }`}
         onClick={onToggle}
       >
-        <DragHandle
-          listeners={listeners}
-          attributes={attributes}
-        />
+        <DragHandle attributes={attributes} listeners={listeners} />
         <span className="flex-1 text-sm font-medium truncate">
-          {event.title || <span className="text-gray-400 italic">Untitled event</span>}
+          {event.title || (
+            <span className="text-gray-400 italic">Untitled event</span>
+          )}
         </span>
         {event.date_ts > 0 && (
           <span className="text-xs text-gray-400 shrink-0">
@@ -516,10 +606,10 @@ function SortableEventCard({
         <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 shrink-0">
           {event.type}
         </span>
-        {hasErrors && (
-          <span className="text-xs text-red-500 shrink-0">⚠</span>
-        )}
-        <span className="text-gray-400 text-xs shrink-0">{expanded ? '▲' : '▼'}</span>
+        {hasErrors && <span className="text-xs text-red-500 shrink-0">⚠</span>}
+        <span className="text-gray-400 text-xs shrink-0">
+          {expanded ? '▲' : '▼'}
+        </span>
       </div>
 
       {/* Body */}
@@ -527,63 +617,66 @@ function SortableEventCard({
         <div className="px-4 pb-4 pt-2 space-y-5 border-t border-gray-100">
           {/* Core fields */}
           <div className="grid grid-cols-2 gap-4">
-            <Field label="Date *" error={errors[`${errPrefix}.date_ts`]}>
+            <Field error={errors[`${errPrefix}.date_ts`]} label="Date *">
               <Input
+                error={!!errors[`${errPrefix}.date_ts`]}
+                onChange={v => onChange({ date_ts: dateInputToTs(v) })}
                 type="date"
                 value={tsToDateInput(event.date_ts)}
-                onChange={v => onChange({ date_ts: dateInputToTs(v) })}
-                error={!!errors[`${errPrefix}.date_ts`]}
               />
             </Field>
             <Field label="Type *">
               <Select<EventType>
-                value={event.type}
                 onChange={v => onChange({ type: v })}
                 options={EVENT_TYPES}
+                value={event.type}
               />
             </Field>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <Field label="Title *" error={errors[`${errPrefix}.title`]}>
+            <Field error={errors[`${errPrefix}.title`]} label="Title *">
               <Input
-                value={event.title}
+                error={!!errors[`${errPrefix}.title`]}
                 onChange={v => onChange({ title: v })}
                 placeholder="Event title"
-                error={!!errors[`${errPrefix}.title`]}
+                value={event.title}
               />
             </Field>
             <Field label="Sub-title">
               <Input
-                value={event.sub_title ?? ''}
                 onChange={v => onChange({ sub_title: v })}
                 placeholder="Optional sub-title"
+                value={event.sub_title ?? ''}
               />
             </Field>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <Field label="Tagline">
               <Input
-                value={event.tagline ?? ''}
                 onChange={v => onChange({ tagline: v })}
                 placeholder="Optional tagline"
+                value={event.tagline ?? ''}
               />
             </Field>
             <Field label="Icon">
               <Input
-                value={event.icon ?? ''}
                 onChange={v => onChange({ icon: v })}
                 placeholder="Optional icon string"
+                value={event.icon ?? ''}
               />
             </Field>
             <div className="flex items-center gap-2 pt-5">
               <input
-                id={`small-${event._id}`}
-                type="checkbox"
                 checked={event.small ?? false}
-                onChange={e => onChange({ small: e.target.checked })}
                 className="w-4 h-4 rounded border-gray-300 accent-gray-900"
+                id={`small-${event._id}`}
+                onChange={e => onChange({ small: e.target.checked })}
+                type="checkbox"
               />
-              <label htmlFor={`small-${event._id}`} className="text-xs font-medium text-gray-600 select-none cursor-pointer">
+              <label
+                className="text-xs font-medium text-gray-600 select-none cursor-pointer"
+                htmlFor={`small-${event._id}`}
+              >
                 Small layout
               </label>
             </div>
@@ -594,9 +687,9 @@ function SortableEventCard({
             <p className="text-xs font-medium text-gray-600 mb-2">Image grid</p>
             {event.image_grid.length > 0 ? (
               <DndContext
-                sensors={sensors}
                 collisionDetection={closestCenter}
                 onDragEnd={handleGridDragEnd}
+                sensors={sensors}
               >
                 <SortableContext
                   items={event.image_grid.map(r => r._id)}
@@ -605,12 +698,12 @@ function SortableEventCard({
                   <div className="space-y-2">
                     {event.image_grid.map((row, ri) => (
                       <SortableGridRow
+                        errors={errors}
+                        errPrefix={`${errPrefix}.r${ri}`}
                         key={row._id}
-                        row={row}
                         onChange={p => patchGrid(ri, p)}
                         onRemove={() => removeGridRow(ri)}
-                        errPrefix={`${errPrefix}.r${ri}`}
-                        errors={errors}
+                        row={row}
                       />
                     ))}
                   </div>
@@ -620,9 +713,9 @@ function SortableEventCard({
               <p className="text-xs text-gray-400 italic mb-2">No image rows</p>
             )}
             <button
-              type="button"
-              onClick={addGridRow}
               className="mt-2 text-xs text-gray-500 hover:text-gray-700 hover:underline"
+              onClick={addGridRow}
+              type="button"
             >
               + Add grid row
             </button>
@@ -631,11 +724,13 @@ function SortableEventCard({
           {/* Delete */}
           <div className="pt-2 border-t border-gray-100 flex justify-end">
             <button
-              type="button"
-              onClick={() => {
-                if (confirm('Delete this event?')) onRemove();
-              }}
               className="text-xs text-red-500 hover:text-red-700 hover:underline"
+              onClick={() => {
+                if (confirm('Delete this event?')) {
+                  onRemove();
+                }
+              }}
+              type="button"
             >
               Delete event
             </button>
@@ -657,7 +752,7 @@ export default function ConfigPage() {
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
   const [saveError, setSaveError] = useState('');
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
-  const [errors, setErrors] = useState<ValidationErrors>({});
+  const errors = config ? validate(config) : {};
 
   // ── Load ────────────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -667,30 +762,30 @@ export default function ConfigPage() {
           router.push('/config/login');
           return;
         }
-        if (!res.ok) throw new Error('Failed to load config');
+        if (!res.ok) {
+          throw new Error('Failed to load config');
+        }
         const data = await res.json();
         setConfig(toUI(data));
       })
       .catch(() => setLoadError('Failed to load config. Please refresh.'));
   }, [router]);
 
-  // ── Validate on change ──────────────────────────────────────────────────────
-  useEffect(() => {
-    if (config) setErrors(validate(config));
-  }, [config]);
-
   // ── Patch helpers ──────────────────────────────────────────────────────────
   const patchEvent = useCallback((id: string, patch: Partial<UIEvent>) => {
     setConfig(c =>
       c
-        ? { ...c, events: c.events.map(e => (e._id === id ? { ...e, ...patch } : e)) }
-        : c
+        ? {
+            ...c,
+            events: c.events.map(e => (e._id === id ? { ...e, ...patch } : e)),
+          }
+        : c,
     );
   }, []);
 
   const removeEvent = useCallback((id: string) => {
     setConfig(c =>
-      c ? { ...c, events: c.events.filter(e => e._id !== id) } : c
+      c ? { ...c, events: c.events.filter(e => e._id !== id) } : c,
     );
   }, []);
 
@@ -703,12 +798,16 @@ export default function ConfigPage() {
   // ── Event drag-and-drop ────────────────────────────────────────────────────
   const sensors = useSensors(
     useSensor(PointerSensor),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
   );
 
   function handleEventDragEnd(e: DragEndEvent) {
     const { active, over } = e;
-    if (!config || !over || active.id === over.id) return;
+    if (!config || !over || active.id === over.id) {
+      return;
+    }
     const ids = config.events.map(ev => ev._id);
     const oldIdx = ids.indexOf(active.id as string);
     const newIdx = ids.indexOf(over.id as string);
@@ -717,15 +816,17 @@ export default function ConfigPage() {
 
   // ── Save ────────────────────────────────────────────────────────────────────
   async function handleSave() {
-    if (!config) return;
-    const errs = validate(config);
-    if (Object.keys(errs).length > 0) {
-      setErrors(errs);
+    if (!config) {
+      return;
+    }
+    if (Object.keys(errors).length > 0) {
       // Expand all events that have errors
       const errorIds = new Set(
         config.events
-          .filter((_, i) => Object.keys(errs).some(k => k.startsWith(`e${i}.`)))
-          .map(e => e._id)
+          .filter((_, i) =>
+            Object.keys(errors).some(k => k.startsWith(`e${i}.`)),
+          )
+          .map(e => e._id),
       );
       setExpanded(s => {
         const next = new Set(Array.from(s));
@@ -753,7 +854,7 @@ export default function ConfigPage() {
       if (res.status === 409) {
         setSaveStatus('error');
         setSaveError(
-          'The config was updated elsewhere. Refresh to get the latest version before saving.'
+          'The config was updated elsewhere. Refresh to get the latest version before saving.',
         );
         return;
       }
@@ -805,38 +906,37 @@ export default function ConfigPage() {
           <h1 className="text-xl font-light tracking-wide">Events Config</h1>
           {config.updated_ts > 0 && (
             <p className="text-xs text-gray-400 mt-0.5">
-              Last saved:{' '}
-              {new Date(config.updated_ts * 1000).toLocaleString()}
+              Last saved: {new Date(config.updated_ts * 1000).toLocaleString()}
             </p>
           )}
         </div>
         <div className="flex items-center gap-3">
           <button
-            type="button"
-            onClick={handleLogout}
             className="text-xs text-gray-400 hover:text-gray-600 hover:underline"
+            onClick={handleLogout}
+            type="button"
           >
             Logout
           </button>
           <button
-            type="button"
-            onClick={handleSave}
-            disabled={saveStatus === 'saving'}
             className={`px-4 py-2 text-sm font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
               saveStatus === 'saved'
                 ? 'bg-green-600 text-white'
                 : saveStatus === 'error'
-                ? 'bg-red-600 text-white'
-                : 'bg-gray-900 text-white hover:bg-gray-700'
+                  ? 'bg-red-600 text-white'
+                  : 'bg-gray-900 text-white hover:bg-gray-700'
             }`}
+            disabled={saveStatus === 'saving'}
+            onClick={handleSave}
+            type="button"
           >
             {saveStatus === 'saving'
               ? 'Saving…'
               : saveStatus === 'saved'
-              ? 'Saved ✓'
-              : saveStatus === 'error'
-              ? 'Error'
-              : 'Save'}
+                ? 'Saved ✓'
+                : saveStatus === 'error'
+                  ? 'Error'
+                  : 'Save'}
           </button>
         </div>
       </div>
@@ -862,9 +962,9 @@ export default function ConfigPage() {
         </div>
       ) : (
         <DndContext
-          sensors={sensors}
           collisionDetection={closestCenter}
           onDragEnd={handleEventDragEnd}
+          sensors={sensors}
         >
           <SortableContext
             items={config.events.map(e => e._id)}
@@ -873,12 +973,13 @@ export default function ConfigPage() {
             <div className="space-y-3 mb-4">
               {config.events.map((ev, i) => (
                 <SortableEventCard
-                  key={ev._id}
+                  errors={errors}
                   event={ev}
+                  expanded={expanded.has(ev._id)}
                   index={i}
+                  key={ev._id}
                   onChange={p => patchEvent(ev._id, p)}
                   onRemove={() => removeEvent(ev._id)}
-                  expanded={expanded.has(ev._id)}
                   onToggle={() =>
                     setExpanded(s => {
                       const next = new Set(s);
@@ -886,7 +987,6 @@ export default function ConfigPage() {
                       return next;
                     })
                   }
-                  errors={errors}
                 />
               ))}
             </div>
@@ -895,9 +995,9 @@ export default function ConfigPage() {
       )}
 
       <button
-        type="button"
-        onClick={addEvent}
         className="w-full py-2.5 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-500 hover:border-gray-400 hover:text-gray-700 transition-colors"
+        onClick={addEvent}
+        type="button"
       >
         + Add event
       </button>

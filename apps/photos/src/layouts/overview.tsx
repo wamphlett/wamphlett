@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import HeaderImage from '@/components/headerimage';
 import Header from '@/components/header';
@@ -35,21 +35,23 @@ export default function OverviewLayout({
 
     const handleResize = () => {
       setDefaultPadding(window.innerWidth < 768 ? 10 : 24);
+      setMaxScroll(window.innerHeight * 0.8);
     };
 
-    setMaxScroll(window.innerHeight * 0.8);
     handleResize();
     handleScroll();
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('resize', handleResize);
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      window.addEventListener('resize', handleResize);
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
   let padding = defaultPadding - defaultPadding * (scrollY / maxScroll);
-  if (padding < 0) padding = 0;
+  if (padding < 0) {
+    padding = 0;
+  }
 
   return (
     <div className="relative">
@@ -57,16 +59,21 @@ export default function OverviewLayout({
         <Header position={padding} />
 
         <HeaderImage
-          url={headerImageUrl}
           blurDataURL={headerImageBlurDataURL}
           padding={padding}
+          url={headerImageUrl}
         />
 
         <div
           className={`relative ${styles.defaultWidth}`}
           style={{ zIndex: 20, paddingBottom: 50 }}
         >
-          <GalleryTitle primary={title} description={description} expandOnMobile={false} smaller />
+          <GalleryTitle
+            description={description}
+            expandOnMobile={false}
+            primary={title}
+            smaller
+          />
 
           <div className={styles.albums}>{children}</div>
         </div>

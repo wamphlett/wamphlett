@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './recentPostPopup.module.css';
 
 type Article = {
@@ -20,37 +20,54 @@ export default function RecentPostPopup() {
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
-    fetch(`/api/recent-post?limit=1`)
-      .then((r) => r.json())
-      .then((data) => {
+    fetch('/api/recent-post?limit=1')
+      .then(r => r.json())
+      .then(data => {
         const art: Article = data.articles?.[0];
-        if (!art) return;
+        if (!art) {
+          return;
+        }
         const ageMs = Date.now() - art.publishedAt * 1000;
-        if (ageMs > THREE_MONTHS_MS) return;
+        if (ageMs > THREE_MONTHS_MS) {
+          return;
+        }
         setArticle(art);
         setTimeout(() => setVisible(true), 2400);
       })
       .catch(() => {});
   }, []);
 
-  if (!article || dismissed) return null;
+  if (!article || dismissed) {
+    return null;
+  }
 
-  const blogBaseUrl = process.env.NEXT_PUBLIC_BLOG_SITE_URL ?? 'https://blog.warrenamphlett.co.uk';
+  const blogBaseUrl =
+    process.env.NEXT_PUBLIC_BLOG_SITE_URL ??
+    'https://blog.warrenamphlett.co.uk';
   const href = `${blogBaseUrl}/${article.topicSlug}/${article.slug}`;
 
   return (
     <div className={`${styles.popup} ${visible ? styles.visible : ''}`}>
       <button
+        aria-label="Dismiss"
         className={styles.close}
         onClick={() => setDismissed(true)}
-        aria-label="Dismiss"
       >
         ✕
       </button>
-      <a href={href} className={styles.link} target="_blank" rel="noopener noreferrer">
+      <a
+        className={styles.link}
+        href={href}
+        rel="noopener noreferrer"
+        target="_blank"
+      >
         <div className={styles.imageWrapper}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={article.image} alt={article.title} className={styles.image} />
+          <img
+            alt={article.title}
+            className={styles.image}
+            src={article.image}
+          />
         </div>
         <div className={styles.body}>
           <p className={styles.label}>Latest post</p>

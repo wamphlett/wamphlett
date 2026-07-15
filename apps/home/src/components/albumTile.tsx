@@ -1,3 +1,4 @@
+import { CSSProperties } from 'react';
 import AspectRatioBox from './aspectRatioBox';
 import LazyImage from './lazyimage';
 
@@ -8,7 +9,7 @@ import { getBlurUrl } from '@/app/loaders';
 
 type AlbumTileProps = {
   album: Album;
-  maxWidth?: any;
+  maxWidth?: CSSProperties['maxWidth'];
   backgroundColor?: string;
 };
 
@@ -23,10 +24,10 @@ export default async function AlbumTile({
       <Link href={album.url}>
         <AspectRatioBox aspectRatio={1}>
           <LazyImage
-            url={album.tileImageUrl}
+            backgroundColor={backgroundColor}
             blurDataURL={blurDataURL}
             opacity={0.3}
-            backgroundColor={backgroundColor}
+            url={album.tileImageUrl}
           />
           <div className={styles.title}>
             <span>{album.title}</span>

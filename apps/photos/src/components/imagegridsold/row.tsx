@@ -1,5 +1,5 @@
-import ImageWithDescription from "@/components/imageWithDescription";
-import { GalleryImage } from "@/app/types";
+import ImageWithDescription from '@/components/imageWithDescription';
+import { GalleryImage } from '@/app/types';
 
 type RowProps = {
   images: GalleryImage[];
@@ -8,18 +8,18 @@ type RowProps = {
 
 export default function Row({ images, aspectRatio = 1 }: RowProps) {
   return (
-    <div className={`flex flex-wrap`}>
+    <div className={'flex flex-wrap'}>
       {images.map((imageData, index) => (
         <div
-          key={index}
           className="flex-grow"
+          key={index}
           style={{ padding: 5, minWidth: 200 }}
         >
           <ImageWithDescription
-            url={imageData.url}
-            title={imageData.title}
-            description={imageData.description}
             aspectRatio={aspectRatio}
+            description={imageData.description}
+            title={imageData.title}
+            url={imageData.url}
           />
         </div>
       ))}

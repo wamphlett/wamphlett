@@ -22,11 +22,11 @@ export default function HeaderImage({
     >
       <div className="bg-black flex-grow overflow-hidden flex flex-col">
         <LazyImage
-          url={url}
-          opacity={0.5}
-          borderRadius={0}
           blurDataURL={blurDataURL}
+          borderRadius={0}
+          opacity={0.5}
           priority={true}
+          url={url}
         />
       </div>
     </div>

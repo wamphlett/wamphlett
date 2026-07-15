@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import HeaderImage from '@/components/headerimage';
 import HeaderVideo from '@/components/headerVideo';
 // import HeaderVideo from '@/components/videoBackground';
@@ -29,9 +29,9 @@ export default function PrimaryLayout({
 
     const handleResize = () => {
       setDefaultPadding(window.innerWidth < 768 ? 10 : 24);
+      setMaxScroll(window.innerHeight * 0.8);
     };
 
-    setMaxScroll(window.innerHeight * 0.8);
     handleResize();
     handleScroll();
     window.addEventListener('scroll', handleScroll);
@@ -43,7 +43,9 @@ export default function PrimaryLayout({
   }, []);
 
   let padding = defaultPadding - defaultPadding * (scrollY / maxScroll);
-  if (padding < 0) padding = 0;
+  if (padding < 0) {
+    padding = 0;
+  }
 
   return (
     <div className="relative">
@@ -55,7 +57,7 @@ export default function PrimaryLayout({
           blurDataURL={headerImageBlurDataURL}
           padding={padding}
         /> */}
-        <HeaderVideo url="/background.mp4" padding={padding} />
+        <HeaderVideo padding={padding} url="/background.mp4" />
         <div
           className={`relative ${styles.defaultWidth}`}
           style={{ zIndex: 20, paddingBottom: 50 }}

@@ -7,8 +7,12 @@ const inFlight = new Map<string, Promise<string>>();
 export const getBlurUrl = async (url: string): Promise<string> => {
   url = addSizeToUrl(url, 640);
 
-  if (urlCache[url]) return urlCache[url];
-  if (inFlight.has(url)) return inFlight.get(url)!;
+  if (urlCache[url]) {
+    return urlCache[url];
+  }
+  if (inFlight.has(url)) {
+    return inFlight.get(url)!;
+  }
 
   const promise = (async () => {
     try {

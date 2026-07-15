@@ -1,8 +1,8 @@
-'use client'
-import React, { useState, useRef, useEffect, useCallback } from "react";
+'use client';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import styles from './filter.module.css';
-import Pill from "./pill";
+import Pill from './pill';
 
 enum DisplayType {
   FullWidth,
@@ -20,11 +20,11 @@ type Tag = {
 };
 
 const tags: Tag[] = [
-  { name: "people", values: ["people"] },
-  { name: "street", values: ["street"] },
-  { name: "architectural", values: ["architectural"] },
-  { name: "landscapes", values: ["landscape"] },
-  { name: "my favourites", values: ["favourite"] },
+  { name: 'people', values: ['people'] },
+  { name: 'street', values: ['street'] },
+  { name: 'architectural', values: ['architectural'] },
+  { name: 'landscapes', values: ['landscape'] },
+  { name: 'my favourites', values: ['favourite'] },
 ];
 
 type activeTags = {
@@ -37,25 +37,35 @@ export default function Filter({ onUpdate }: FilterPros) {
   return (
     <div className={styles.container}>
       {tags.map((tag, i) => {
-        return <Pill key={i} name={tag.name} tags={tag.values} active={tag.name in activeTags} onClick={() => {
-          let newActiveTags
-          if (tag.name in activeTags) {
-            const { [tag.name]: _, ...rest } = activeTags;
-            newActiveTags = rest;
-          } else {
-            newActiveTags = { ...activeTags, [tag.name]: tag.values }
-          }
+        return (
+          <Pill
+            active={tag.name in activeTags}
+            key={i}
+            name={tag.name}
+            onClick={() => {
+              let newActiveTags;
+              if (tag.name in activeTags) {
+                const { [tag.name]: _, ...rest } = activeTags;
+                newActiveTags = rest;
+              } else {
+                newActiveTags = { ...activeTags, [tag.name]: tag.values };
+              }
 
-          setActiveTags(newActiveTags);
+              setActiveTags(newActiveTags);
 
-          if (onUpdate) {
-            const activeTagsArray = Object.values(newActiveTags).reduce((acc, val) => {
-              return [...acc, ...val];
-            }, [])
-            onUpdate(activeTagsArray)
-          }
-
-        }}/>;
+              if (onUpdate) {
+                const activeTagsArray = Object.values(newActiveTags).reduce(
+                  (acc, val) => {
+                    return [...acc, ...val];
+                  },
+                  [],
+                );
+                onUpdate(activeTagsArray);
+              }
+            }}
+            tags={tag.values}
+          />
+        );
       })}
     </div>
   );

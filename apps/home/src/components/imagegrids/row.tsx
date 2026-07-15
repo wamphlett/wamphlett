@@ -1,7 +1,7 @@
-import ImageWithDescription from "@/components/imageWithDescription";
-import { GalleryImage } from "@/app/types";
+import ImageWithDescription from '@/components/imageWithDescription';
+import { GalleryImage } from '@/app/types';
 
-import styles from "./grids.module.css";
+import styles from './grids.module.css';
 
 type RowProps = {
   images: GalleryImage[];
@@ -10,14 +10,14 @@ type RowProps = {
 
 export default function Row({ images, aspectRatio = 1 }: RowProps) {
   return (
-    <div className={`flex flex-wrap` + ` ${styles.grid} ${styles.row}`}>
+    <div className={'flex flex-wrap' + ` ${styles.grid} ${styles.row}`}>
       {images.map((imageData, index) => (
         <ImageWithDescription
-          key={index}
-          url={imageData.url}
-          title={imageData.title}
-          description={imageData.description}
           aspectRatio={aspectRatio}
+          description={imageData.description}
+          key={index}
+          title={imageData.title}
+          url={imageData.url}
           width="auto"
         />
       ))}

@@ -1,4 +1,4 @@
-import { GalleryImages, Content } from './types';
+import { Content, GalleryImages } from './types';
 
 import Albania2023 from './entries/2023albania';
 import LakeComo2018 from './entries/2018lakecomo';

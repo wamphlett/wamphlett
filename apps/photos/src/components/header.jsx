@@ -1,13 +1,13 @@
-'use client'
-import React, { useState, useRef, useEffect } from "react";
-import Link from "next/link";
-import { usePathname } from 'next/navigation'
+'use client';
+import React, { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
-import FancyMenuIcon from "@/components/fancyMenuIcon"
-import Sidebar from "./sidebar";
-import {InstaLogo, FlickrLogo } from "@/components/svgs"
+import FancyMenuIcon from '@/components/fancyMenuIcon';
+import Sidebar from './sidebar';
+import { FlickrLogo, InstaLogo } from '@/components/svgs';
 
-import styles from "./header.module.css"
+import styles from './header.module.css';
 
 export default function Header({ position = 24 }) {
   const [open, setOpen] = useState(false);
@@ -15,12 +15,12 @@ export default function Header({ position = 24 }) {
   const menuRef = useRef(null);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClickOutside = event => {
       // If the menu is open and the click was outside the menu, close it
       if (open && menuRef.current && !menuRef.current.contains(event.target)) {
         setOpen(false);
       }
-    }
+    };
 
     document.addEventListener('click', handleClickOutside);
 
@@ -33,7 +33,7 @@ export default function Header({ position = 24 }) {
   return (
     <div>
       <div
-        className={ `flex flex-column content-between ${styles.container}` }
+        className={`flex flex-column content-between ${styles.container}`}
         style={{
           height: 100,
           left: position,
@@ -41,9 +41,13 @@ export default function Header({ position = 24 }) {
           right: position,
         }}
       >
-        <div className={ `flex flex-row ${styles.social}` }>
+        <div className={`flex flex-row ${styles.social}`}>
           <div className={styles.icon}>
-            <Link href="https://www.instagram.com/warrenamphlett/" passHref target="_blank">
+            <Link
+              href="https://www.instagram.com/warrenamphlett/"
+              passHref
+              target="_blank"
+            >
               <InstaLogo />
             </Link>
           </div>
@@ -53,18 +57,32 @@ export default function Header({ position = 24 }) {
             </Link>
           </div> */}
           <div className={styles.icon}>
-            <Link href="https://www.flickr.com/photos/199526751@N07/" passHref target="_blank">
+            <Link
+              href="https://www.flickr.com/photos/199526751@N07/"
+              passHref
+              target="_blank"
+            >
               <FlickrLogo />
             </Link>
           </div>
         </div>
 
-        <h1 className={styles.title}><Link href={usePathname() == '/' ? 'https://warrenamphlett.co.uk' : '/'}>Warren Amphlett<span>.</span></Link></h1>
+        <h1 className={styles.title}>
+          <Link
+            href={
+              usePathname() == '/'
+                ? (process.env.NEXT_PUBLIC_HOME_SITE_URL ??
+                  'https://warrenamphlett.co.uk')
+                : '/'
+            }
+          >
+            Warren Amphlett<span>.</span>
+          </Link>
+        </h1>
 
         <div className="relative" onClick={() => setOpen(!open)} ref={menuRef}>
           <FancyMenuIcon open={open} />
         </div>
-
       </div>
 
       <Sidebar open={open} />

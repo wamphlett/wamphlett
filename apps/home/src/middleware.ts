@@ -10,10 +10,14 @@ function b64urlDecode(b64url: string): string {
 
 async function verifySessionToken(token: string): Promise<boolean> {
   const secret = process.env.SESSION_SECRET;
-  if (!secret || secret.length < 32) return false;
+  if (!secret || secret.length < 32) {
+    return false;
+  }
 
   const parts = token.split('.');
-  if (parts.length !== 2) return false;
+  if (parts.length !== 2) {
+    return false;
+  }
   const [encoded, hmacB64] = parts;
 
   try {
@@ -23,7 +27,7 @@ async function verifySessionToken(token: string): Promise<boolean> {
       enc.encode(secret),
       { name: 'HMAC', hash: 'SHA-256' },
       false,
-      ['verify']
+      ['verify'],
     );
 
     const hmacBinary = atob(b64urlDecode(hmacB64));
@@ -36,13 +40,18 @@ async function verifySessionToken(token: string): Promise<boolean> {
       'HMAC',
       key,
       hmacBytes,
-      enc.encode(encoded)
+      enc.encode(encoded),
     );
-    if (!isValid) return false;
+    if (!isValid) {
+      return false;
+    }
 
     const payloadStr = atob(b64urlDecode(encoded));
     const payload = JSON.parse(payloadStr) as { exp?: number };
-    return typeof payload.exp === 'number' && payload.exp > Math.floor(Date.now() / 1000);
+    return (
+      typeof payload.exp === 'number' &&
+      payload.exp > Math.floor(Date.now() / 1000)
+    );
   } catch {
     return false;
   }
@@ -52,7 +61,9 @@ export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const isLoginPage = pathname === '/config/login';
 
-  if (isLoginPage) return NextResponse.next();
+  if (isLoginPage) {
+    return NextResponse.next();
+  }
 
   const token = req.cookies.get(SESSION_COOKIE)?.value;
   const authenticated = token ? await verifySessionToken(token) : false;

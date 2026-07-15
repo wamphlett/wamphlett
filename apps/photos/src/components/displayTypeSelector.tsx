@@ -1,23 +1,24 @@
-'use client'
-import React, { useState, useRef, useEffect, useCallback } from "react";
+'use client';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import styles from './displayTypeSelector.module.css';
 
-interface  DisplayTypeSelectorPros {
+interface DisplayTypeSelectorPros {
   onUpdate?: (columnNumber: number) => void;
 }
 
-
-export default function DisplayTypeSelector({ onUpdate }: DisplayTypeSelectorPros) {
+export default function DisplayTypeSelector({
+  onUpdate,
+}: DisplayTypeSelectorPros) {
   const [current, setCurrent] = useState(3);
 
   let sliderClass = styles.slider;
   if (current == 1) {
-    sliderClass += ` ${styles.right}`
+    sliderClass += ` ${styles.right}`;
   }
 
   if (current == 3) {
-    sliderClass += ` ${styles.left}`
+    sliderClass += ` ${styles.left}`;
   }
 
   useEffect(() => {
@@ -25,13 +26,31 @@ export default function DisplayTypeSelector({ onUpdate }: DisplayTypeSelectorPro
       onUpdate(current);
     }
   }, [current]);
-  
+
   return (
     <div className={styles.container}>
       <div className={styles.selector}>
-        <Icon columns={3} active={current == 3} onClick={() => {setCurrent(3)}} />
-        <Icon columns={2} active={current == 2} onClick={() => {setCurrent(2)}} />
-        <Icon columns={1} active={current == 1} onClick={() => {setCurrent(1)}} />
+        <Icon
+          active={current == 3}
+          columns={3}
+          onClick={() => {
+            setCurrent(3);
+          }}
+        />
+        <Icon
+          active={current == 2}
+          columns={2}
+          onClick={() => {
+            setCurrent(2);
+          }}
+        />
+        <Icon
+          active={current == 1}
+          columns={1}
+          onClick={() => {
+            setCurrent(1);
+          }}
+        />
         <div className={sliderClass} />
       </div>
     </div>
@@ -44,16 +63,19 @@ interface iconProps {
   onClick: () => void;
 }
 
-function Icon({ columns, onClick, active }:  iconProps) {
+function Icon({ columns, onClick, active }: iconProps) {
   return (
-    <div className={ `${styles.icon} ${active ? styles.active : ''}` } onClick={onClick}>
+    <div
+      className={`${styles.icon} ${active ? styles.active : ''}`}
+      onClick={onClick}
+    >
       <div className={styles.end} />
       {columns == 1 && (
         <div className={styles.one}>
           <div />
         </div>
       )}
-      {columns == 2 &&  (
+      {columns == 2 && (
         <div className={styles.two}>
           <div />
           <div />

@@ -22,23 +22,23 @@ export default function Offset({
   return (
     <div
       className={
-        `flex flex-wrap ` +
-        (inverted ? `flex-row-reverse` : `flex-row`) +
+        'flex flex-wrap ' +
+        (inverted ? 'flex-row-reverse' : 'flex-row') +
         ` ${styles.grid} ${styles.offset} ${styles[type]}`
       }
     >
       <ImageWithDescription
-        url={images[0].url}
-        title={images[0].title}
-        description={images[0].description}
         aspectRatio={type == Type.Default ? 16 / 13.6 : 2 / 3}
+        description={images[0].description}
+        title={images[0].title}
+        url={images[0].url}
       />
 
       <ImageWithDescription
-        url={images[1].url}
-        title={images[1].title}
-        description={images[1].description}
         aspectRatio={type == Type.Default ? 16 / 9 : 5 / 4}
+        description={images[1].description}
+        title={images[1].title}
+        url={images[1].url}
       />
     </div>
   );

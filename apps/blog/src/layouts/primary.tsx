@@ -31,9 +31,9 @@ export default function PrimaryLayout({
 
     const handleResize = () => {
       setDefaultPadding(window.innerWidth < 768 ? 10 : 24);
+      setMaxScroll(window.innerHeight * 0.3);
     };
 
-    setMaxScroll(window.innerHeight * 0.3);
     handleScroll();
     handleResize();
     window.addEventListener('scroll', handleScroll);

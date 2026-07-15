@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, KeyboardEvent } from 'react';
+import { KeyboardEvent, useRef, useState } from 'react';
 
 interface TagInputProps {
   tags: string[];
@@ -13,7 +13,9 @@ export default function TagInput({ tags, onChange }: TagInputProps) {
 
   const addTag = (value: string) => {
     const tag = value.trim().toLowerCase();
-    if (tag && !tags.includes(tag)) onChange([...tags, tag]);
+    if (tag && !tags.includes(tag)) {
+      onChange([...tags, tag]);
+    }
     setInput('');
   };
 
@@ -33,31 +35,35 @@ export default function TagInput({ tags, onChange }: TagInputProps) {
     >
       {tags.map((tag, i) => (
         <span
-          key={i}
           className="flex items-center gap-1 bg-gray-800 text-white px-2.5 py-0.5 rounded-full text-xs font-medium"
+          key={i}
         >
           {tag}
           <button
-            type="button"
+            className="hover:text-gray-300 leading-none ml-0.5"
             onClick={e => {
               e.stopPropagation();
               onChange(tags.filter((_, j) => j !== i));
             }}
-            className="hover:text-gray-300 leading-none ml-0.5"
+            type="button"
           >
             &times;
           </button>
         </span>
       ))}
       <input
+        className="flex-1 outline-none min-w-[120px] bg-transparent text-sm py-0.5"
+        onBlur={() => {
+          if (input.trim()) {
+            addTag(input);
+          }
+        }}
+        onChange={e => setInput(e.target.value)}
+        onKeyDown={handleKeyDown}
+        placeholder={tags.length === 0 ? 'Type a tag, press Tab to add...' : ''}
         ref={inputRef}
         type="text"
         value={input}
-        onChange={e => setInput(e.target.value)}
-        onKeyDown={handleKeyDown}
-        onBlur={() => { if (input.trim()) addTag(input); }}
-        className="flex-1 outline-none min-w-[120px] bg-transparent text-sm py-0.5"
-        placeholder={tags.length === 0 ? 'Type a tag, press Tab to add...' : ''}
       />
     </div>
   );

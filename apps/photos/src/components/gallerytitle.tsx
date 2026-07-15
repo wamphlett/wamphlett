@@ -1,4 +1,4 @@
-import styles from "./gallerytitle.module.css";
+import styles from './gallerytitle.module.css';
 
 type GalleryTitleProps = {
   primary: string;
@@ -13,7 +13,7 @@ export default function GalleryTitle({
   secondary,
   description,
   expandOnMobile = true,
-  smaller = false
+  smaller = false,
 }: GalleryTitleProps) {
   return (
     <div
@@ -23,7 +23,7 @@ export default function GalleryTitle({
         paddingTop: 124,
       }}
     >
-      <div className="flex flex-grow flex-col" style={{ alignItems: "center" }}>
+      <div className="flex flex-grow flex-col" style={{ alignItems: 'center' }}>
         <h1 className={styles.title}>
           {primary}
           <span>{secondary}</span>

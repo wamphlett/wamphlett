@@ -1,6 +1,6 @@
 import { buildAlbum } from '../data';
 import { Content, images, youtube } from '../types';
-import { Grids, GridData } from '../types';
+import { GridData, Grids } from '../types';
 
 import fujiImages from '../images/2016mountFuji';
 

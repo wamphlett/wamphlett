@@ -1,9 +1,4 @@
-
-import {
-  EventType,
-  ImageGrid,
-  YoutubeVideo,
-} from './types';
+import { EventType, ImageGrid, YoutubeVideo } from './types';
 
 export type Content = ImageGrid | YoutubeVideo;
 

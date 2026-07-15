@@ -1,49 +1,48 @@
-'use client'
-import React, { useState, useRef, useEffect, useCallback } from "react";
+'use client';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Masonry } from '@mui/lab';
 
 import styles from './feed.module.css';
-import LazyImage from "./lazyimage";
-import AspectRatioBox from "./aspectRatioBox";
+import LazyImage from './lazyimage';
+import AspectRatioBox from './aspectRatioBox';
 import useWindowWidth from '../hooks/useWindowWidth';
-import Filter from "./filter";
-import DisplayTypeSelector from "./displayTypeSelector";
-
-interface FeedProps {}
+import Filter from './filter';
+import DisplayTypeSelector from './displayTypeSelector';
 
 type photo = {
   url: string;
   aspectRatio: number;
 };
 
-
-export default function Feed({}: FeedProps) {
+export default function Feed() {
   const [feed, setFeed] = useState<photo[]>([]);
   const [tags, setTags] = useState<string[]>([]);
   const [desiredColumns, setDesiredColumns] = useState(3);
-  
+
   const initialized = useRef(false);
   const loadingRef = useRef(false);
   const endRef = useRef(false);
   const pageRef = useRef(0);
 
   const loadMore = useCallback(async () => {
-    if (loadingRef.current || endRef.current) return;
-    loadingRef.current = true
+    if (loadingRef.current || endRef.current) {
+      return;
+    }
+    loadingRef.current = true;
     const pageToLoad = pageRef.current + 1;
     console.log('loading page:', pageToLoad);
 
     try {
       const res = await callApi('/api/feed', {
         page: pageToLoad,
-        tags: tags.join(',')
+        tags: tags.join(','),
       });
 
       console.log('loaded:', res);
       if (!res.photos) {
         endRef.current = true;
       } else {
-        setFeed((prevFeed) => [...prevFeed, ...res.photos]);
+        setFeed(prevFeed => [...prevFeed, ...res.photos]);
         pageRef.current = pageToLoad;
       }
     } catch (error) {
@@ -57,7 +56,7 @@ export default function Feed({}: FeedProps) {
     if (!initialized.current) {
       loadMore().then(() => {
         initialized.current = true;
-      })
+      });
     }
   }, [loadMore]);
 
@@ -79,17 +78,7 @@ export default function Feed({}: FeedProps) {
   }, [loadMore]);
 
   const width = useWindowWidth();
-  const [columns, setColumns] = useState(3);
-
-  useEffect(() => {
-    if (width < 720) {
-      setColumns(1);
-    } else if (width < 1200) {
-      setColumns(2);
-    } else {
-      setColumns(3);
-    }
-  }, [width]);
+  const columns = width < 720 ? 1 : width < 1200 ? 2 : 3;
 
   const resetFeed = useCallback((newTags: string[]) => {
     setTags(newTags);
@@ -101,26 +90,32 @@ export default function Feed({}: FeedProps) {
 
   // load more when tags change
   useEffect(() => {
-      loadMore();
+    loadMore();
   }, [tags, desiredColumns]);
 
   return (
     <div className={styles.container}>
-      <Filter onUpdate={(newTags) => {
-        resetFeed(newTags);
-      }}/>
-      <DisplayTypeSelector onUpdate={(columnNumber) => setDesiredColumns(columnNumber)}/>
-      { <Masonry columns={Math.min(columns, desiredColumns)} spacing={1}>
+      <Filter
+        onUpdate={newTags => {
+          resetFeed(newTags);
+        }}
+      />
+      <DisplayTypeSelector
+        onUpdate={columnNumber => setDesiredColumns(columnNumber)}
+      />
+      {
+        <Masonry columns={Math.min(columns, desiredColumns)} spacing={1}>
           {feed.map((photo: photo, i) => {
-          return (
-            <div key={i} className={styles.photo}>
-              <AspectRatioBox aspectRatio={photo.aspectRatio}>
-                <LazyImage url={photo.url} />
-              </AspectRatioBox>
-            </div>
-          )
-        })}
-      </Masonry> }
+            return (
+              <div className={styles.photo} key={i}>
+                <AspectRatioBox aspectRatio={photo.aspectRatio}>
+                  <LazyImage url={photo.url} />
+                </AspectRatioBox>
+              </div>
+            );
+          })}
+        </Masonry>
+      }
     </div>
   );
 }
@@ -128,11 +123,11 @@ export default function Feed({}: FeedProps) {
 type feedOptions = {
   cacheSeconds?: number;
   tags?: string;
-  page?: number
+  page?: number;
 };
 
 const callApi = async (route: string, feedOptions: feedOptions = {}) => {
-  let url = window.location.origin + route
+  let url = window.location.origin + route;
   url += feedOptions.page ? `?page=${feedOptions.page}` : '';
   url += feedOptions.tags ? `&tags=${feedOptions.tags}` : '';
 

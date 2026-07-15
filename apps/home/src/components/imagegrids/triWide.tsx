@@ -12,29 +12,29 @@ export default function TriWide({ images, inverted = false }: TriWideProps) {
   return (
     <div
       className={
-        `flex flex-wrap ` +
-        (inverted ? `flex-row-reverse` : `flex-row`) +
+        'flex flex-wrap ' +
+        (inverted ? 'flex-row-reverse' : 'flex-row') +
         ` ${styles.grid} ${styles.triWide}`
       }
     >
       <ImageWithDescription
-        url={images[0].url}
-        title={images[0].title}
-        description={images[0].description}
         aspectRatio={2 / 3.25}
+        description={images[0].description}
+        title={images[0].title}
+        url={images[0].url}
       />
       <div>
         <ImageWithDescription
-          url={images[1].url}
-          title={images[1].title}
-          description={images[1].description}
           aspectRatio={21 / 9}
+          description={images[1].description}
+          title={images[1].title}
+          url={images[1].url}
         />
         <ImageWithDescription
-          url={images[2].url}
-          title={images[2].title}
-          description={images[2].description}
           aspectRatio={21 / 9}
+          description={images[2].description}
+          title={images[2].title}
+          url={images[2].url}
         />
       </div>
     </div>

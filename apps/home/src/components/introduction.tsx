@@ -4,7 +4,7 @@ import { GithubIcon, LinkedInIcon } from './svgs';
 import styles from './introduction.module.css';
 import CircleIconLink from './circleIconLink';
 
-export default function Introduction({ locale }: { locale: string } ) {
+export default function Introduction({ locale }: { locale: string }) {
   return (
     <div
       className={`flex flex-row items-center justify-between ${styles.container}`}

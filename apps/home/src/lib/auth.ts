@@ -6,7 +6,9 @@ export const SESSION_MAX_AGE = 24 * 60 * 60; // 24 hours in seconds
 function getSecret(): string {
   const secret = process.env.SESSION_SECRET;
   if (!secret || secret.length < 32) {
-    throw new Error('SESSION_SECRET env var must be set and at least 32 characters');
+    throw new Error(
+      'SESSION_SECRET env var must be set and at least 32 characters',
+    );
   }
   return secret;
 }
@@ -31,10 +33,15 @@ function timingSafeStringEqual(a: string, b: string): boolean {
   return crypto.timingSafeEqual(hmacA, hmacB);
 }
 
-export function validateCredentials(username: string, password: string): boolean {
+export function validateCredentials(
+  username: string,
+  password: string,
+): boolean {
   const expectedUsername = process.env.ADMIN_USERNAME;
   const expectedPassword = process.env.ADMIN_PASSWORD;
-  if (!expectedUsername || !expectedPassword) return false;
+  if (!expectedUsername || !expectedPassword) {
+    return false;
+  }
   return (
     timingSafeStringEqual(username, expectedUsername) &&
     timingSafeStringEqual(password, expectedPassword)
@@ -51,7 +58,9 @@ export function checkRateLimit(ip: string): boolean {
     loginAttempts.set(ip, { count: 1, resetAt: now + 15 * 60 * 1000 });
     return true;
   }
-  if (entry.count >= 5) return false;
+  if (entry.count >= 5) {
+    return false;
+  }
   entry.count++;
   return true;
 }

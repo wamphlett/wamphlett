@@ -5,7 +5,9 @@ const PUBLIC = ['/manage/login', '/api/manage/auth'];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  if (PUBLIC.some(p => pathname.startsWith(p))) return NextResponse.next();
+  if (PUBLIC.some(p => pathname.startsWith(p))) {
+    return NextResponse.next();
+  }
 
   const session = request.cookies.get('manage-session')?.value;
   if (!session) {

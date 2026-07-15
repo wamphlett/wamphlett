@@ -1,6 +1,7 @@
 import { buildAlbum } from '../data';
 import { images } from '../types';
-import { Grids, GridData } from '../types';
+import { GridData, Grids } from '../types';
+import { libraryUrl } from '../utils';
 
 import comoImages from '../images/2018lakeComo';
 
@@ -57,8 +58,9 @@ export default buildAlbum({
   title: 'Lake Como',
   description:
     "Summer '18 and a short break in Lake Como, Italy. We stayed in Sala Comacina on the edge of the lake with an amazing view of Isola Comacina. The views heres really are amazing and need to be witnessed. It was my first time here and it very quickly turned out to be one of my favourite places. The people are friendly, the food is great and the views are breathtaking. I'll live here for a summer one day.",
-  headerImageUrl:
-    'https://library.wamphlett.net/photos/website/2018/lakecomo/how-can-anywhere-look-this-good.jpg',
+  headerImageUrl: libraryUrl(
+    '/2018/lakecomo/how-can-anywhere-look-this-good.jpg',
+  ),
   grids: gridData,
   moreLinks: ['/2023/albania', '/2016/tokyo', '/2016/turkey'],
 });

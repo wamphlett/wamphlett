@@ -6,6 +6,9 @@ import withPlaiceholder from '@plaiceholder/next';
 // no-op in Docker/CI (file absent) and never overrides real environment vars.
 dotenv.config({ path: path.join(import.meta.dirname, '..', '..', '.env') });
 
+const libraryUrl =
+  process.env.NEXT_PUBLIC_LIBRARY_URL ?? 'https://library.wamphlett.net';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   serverExternalPackages: ['pino', 'pino-pretty', '@opentelemetry/api'],
@@ -20,7 +23,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'library.wamphlett.net',
+        hostname: new URL(libraryUrl).hostname,
         port: '',
         pathname: '/photos/website/**',
       },

@@ -2,13 +2,17 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import PhotoModal from './PhotoModal';
 import { Photo } from './types';
 
 const formatDate = (iso: string) =>
-  new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  new Date(iso).toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
 
 function PhotoCard({
   photo,
@@ -24,26 +28,35 @@ function PhotoCard({
 
   return (
     <div className="bg-white rounded-lg overflow-hidden border border-gray-200 shadow-sm flex flex-col">
-      <a href={photo.url} target="_blank" rel="noopener noreferrer" className="block bg-gray-100 shrink-0 relative h-44">
-        {!loaded && <div className="absolute inset-0 bg-gray-200 animate-pulse" />}
+      <a
+        className="block bg-gray-100 shrink-0 relative h-44"
+        href={photo.url}
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        {!loaded && (
+          <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+        )}
         <img
-          src={photo.url}
           alt={photo.alt}
           className={`w-full h-44 object-cover transition-opacity duration-300 ${loaded ? 'opacity-100' : 'opacity-0'}`}
           onLoad={() => setLoaded(true)}
+          src={photo.url}
         />
       </a>
       <div className="p-3 flex flex-col gap-2 flex-1">
         <p className="text-xs text-gray-400">{formatDate(photo.captureTime)}</p>
         {photo.alt && (
-          <p className="text-sm text-gray-700 line-clamp-2 leading-snug">{photo.alt}</p>
+          <p className="text-sm text-gray-700 line-clamp-2 leading-snug">
+            {photo.alt}
+          </p>
         )}
         {photo.tags.length > 0 && (
           <div className="flex flex-wrap gap-1">
             {photo.tags.map(tag => (
               <span
-                key={tag}
                 className="bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full text-xs"
+                key={tag}
               >
                 {tag}
               </span>
@@ -53,16 +66,18 @@ function PhotoCard({
         <div className="mt-auto pt-2 flex gap-2">
           {confirmDelete ? (
             <>
-              <span className="text-xs text-gray-500 self-center flex-1">Delete?</span>
+              <span className="text-xs text-gray-500 self-center flex-1">
+                Delete?
+              </span>
               <button
-                onClick={() => onDelete(photo)}
                 className="text-xs px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+                onClick={() => onDelete(photo)}
               >
                 Yes
               </button>
               <button
-                onClick={() => setConfirmDelete(false)}
                 className="text-xs px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+                onClick={() => setConfirmDelete(false)}
               >
                 No
               </button>
@@ -70,14 +85,14 @@ function PhotoCard({
           ) : (
             <>
               <button
-                onClick={() => onEdit(photo)}
                 className="flex-1 text-xs border border-gray-300 rounded py-1.5 hover:bg-gray-50 transition-colors"
+                onClick={() => onEdit(photo)}
               >
                 Edit
               </button>
               <button
-                onClick={() => setConfirmDelete(true)}
                 className="flex-1 text-xs border border-red-200 text-red-600 rounded py-1.5 hover:bg-red-50 transition-colors"
+                onClick={() => setConfirmDelete(true)}
               >
                 Delete
               </button>
@@ -92,7 +107,10 @@ function PhotoCard({
 export default function ManagePage() {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [loading, setLoading] = useState(false);
-  const [modal, setModal] = useState<{ open: boolean; photo?: Photo }>({ open: false });
+  const [reachedEnd, setReachedEnd] = useState(false);
+  const [modal, setModal] = useState<{ open: boolean; photo?: Photo }>({
+    open: false,
+  });
   const router = useRouter();
 
   const loadingRef = useRef(false);
@@ -101,13 +119,17 @@ export default function ManagePage() {
   const initializedRef = useRef(false);
 
   const loadMore = useCallback(async () => {
-    if (loadingRef.current || endRef.current) return;
+    if (loadingRef.current || endRef.current) {
+      return;
+    }
     loadingRef.current = true;
     setLoading(true);
 
     try {
       const res = await fetch(`/api/manage/photos?page=${pageRef.current + 1}`);
-      if (!res.ok) throw new Error('Failed to load');
+      if (!res.ok) {
+        throw new Error('Failed to load');
+      }
       const data = await res.json();
 
       if (data.photos && data.photos.length > 0) {
@@ -116,6 +138,7 @@ export default function ManagePage() {
       }
       if (!data.next || !data.photos || data.photos.length === 0) {
         endRef.current = true;
+        setReachedEnd(true);
       }
     } catch (err) {
       console.error(err);
@@ -138,7 +161,9 @@ export default function ManagePage() {
     const handleScroll = () => {
       const scrolled = window.scrollY + window.innerHeight;
       const total = document.documentElement.scrollHeight;
-      if (scrolled >= total * 0.9) loadMore();
+      if (scrolled >= total * 0.9) {
+        loadMore();
+      }
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -160,8 +185,12 @@ export default function ManagePage() {
 
   const handleDelete = async (photo: Photo) => {
     const params = photo.tags.length > 0 ? `?tags=${photo.tags.join(',')}` : '';
-    const res = await fetch(`/api/manage/photos/${photo.id}${params}`, { method: 'DELETE' });
-    if (res.ok) setPhotos(prev => prev.filter(p => p.id !== photo.id));
+    const res = await fetch(`/api/manage/photos/${photo.id}${params}`, {
+      method: 'DELETE',
+    });
+    if (res.ok) {
+      setPhotos(prev => prev.filter(p => p.id !== photo.id));
+    }
   };
 
   const handleSave = (saved: Photo) => {
@@ -185,14 +214,14 @@ export default function ManagePage() {
           <h1 className="text-lg font-semibold text-gray-800">Manage Photos</h1>
           <div className="flex gap-3">
             <button
-              onClick={() => setModal({ open: true })}
               className="bg-gray-800 text-white px-4 py-2 rounded text-sm font-medium hover:bg-gray-700 transition-colors"
+              onClick={() => setModal({ open: true })}
             >
               + Add Photo
             </button>
             <button
-              onClick={handleLogout}
               className="border border-gray-300 text-gray-600 px-4 py-2 rounded text-sm hover:bg-gray-50 transition-colors"
+              onClick={handleLogout}
             >
               Sign out
             </button>
@@ -203,16 +232,18 @@ export default function ManagePage() {
       {/* Grid */}
       <div className="max-w-7xl mx-auto px-4 py-6">
         {photos.length === 0 && !loading && (
-          <div className="text-center text-gray-400 py-24 text-sm">No photos yet.</div>
+          <div className="text-center text-gray-400 py-24 text-sm">
+            No photos yet.
+          </div>
         )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {photos.map(photo => (
             <PhotoCard
               key={photo.id}
-              photo={photo}
-              onEdit={p => setModal({ open: true, photo: p })}
               onDelete={handleDelete}
+              onEdit={p => setModal({ open: true, photo: p })}
+              photo={photo}
             />
           ))}
         </div>
@@ -223,17 +254,19 @@ export default function ManagePage() {
           </div>
         )}
 
-        {!loading && endRef.current && photos.length > 0 && (
-          <p className="text-center text-xs text-gray-300 py-8">{photos.length} photos</p>
+        {!loading && reachedEnd && photos.length > 0 && (
+          <p className="text-center text-xs text-gray-300 py-8">
+            {photos.length} photos
+          </p>
         )}
       </div>
 
       {/* Modal */}
       {modal.open && (
         <PhotoModal
-          photo={modal.photo}
           onClose={() => setModal({ open: false })}
           onSave={handleSave}
+          photo={modal.photo}
         />
       )}
     </div>

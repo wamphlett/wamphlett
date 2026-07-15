@@ -34,7 +34,7 @@ type TopicDetails = {
 };
 
 const callApi = async (route: string, apiOptions: apiOptions = {}) => {
-  const baseUrl = process.env.REACT_APP_API_URL ?? '';
+  const baseUrl = process.env.BLOG_API_URL ?? '';
   const url = baseUrl + route;
   const routePath = route.split('?')[0];
   const start = Date.now();

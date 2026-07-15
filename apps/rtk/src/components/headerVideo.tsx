@@ -17,17 +17,19 @@ export default function HeaderVideo({
 }: HeaderVideoProps) {
   return (
     <div
-      className={styles.container + " flex flex-col absolute top-0 left-0 right-0"}
+      className={
+        styles.container + ' flex flex-col absolute top-0 left-0 right-0'
+      }
       style={{ padding }}
     >
       <div className="bg-black flex-grow overflow-hidden flex flex-col">
         <video
           autoPlay
-          muted
+          className="w-full h-full object-cover"
           loop
+          muted
           playsInline
           poster={poster}
-          className="w-full h-full object-cover"
           style={{ opacity }}
         >
           <source src={url} type="video/mp4" />

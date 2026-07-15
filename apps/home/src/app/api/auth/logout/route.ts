@@ -11,6 +11,15 @@ export async function POST() {
     maxAge: 0,
     path: '/',
   });
-  logger.info({ method: 'POST', path: '/api/auth/logout', statusCode: 200, durationMs: Date.now() - start, event: 'logout' }, 'user logged out');
+  logger.info(
+    {
+      method: 'POST',
+      path: '/api/auth/logout',
+      statusCode: 200,
+      durationMs: Date.now() - start,
+      event: 'logout',
+    },
+    'user logged out',
+  );
   return res;
 }

@@ -34,9 +34,9 @@ export default async function ImageWithDescription({
     <div className="flex-grow" style={styles}>
       <AspectRatioBox aspectRatio={aspectRatio}>
         <LazyImage
-          url={url}
           backgroundColor="lightgray"
           blurDataURL={blurDataURL}
+          url={url}
         />
         {(title || description) && overlay(title!, description)}
       </AspectRatioBox>

@@ -16,7 +16,7 @@ export default function More({ tiles }: MoreProps) {
       <div className={styles.tiles}>
         {tiles.map((details, index) =>
           details ? (
-            <AlbumTile key={index} album={details} maxWidth={200} />
+            <AlbumTile album={details} key={index} maxWidth={200} />
           ) : (
             <div key={index} />
           ),

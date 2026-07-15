@@ -1,6 +1,6 @@
 import { buildAlbum } from '../data';
 import { images } from '../types';
-import { Grids, GridData } from '../types';
+import { GridData, Grids } from '../types';
 
 import tokyoImages from '../images/2016tokyo';
 

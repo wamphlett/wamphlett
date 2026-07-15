@@ -24,10 +24,10 @@ export default async function Home() {
 
   return (
     <OverviewLayout
-      title="Photos"
       description="When I'm not playing software engineer, I like to take photos. I've been fortunate enough to travel to some amazing places and this is a collection of some of my favourite photos from those trips."
-      headerImageUrl={albaniaImages.lifesBetterByTheSea.url}
       headerImageBlurDataURL={blurDataURL}
+      headerImageUrl={albaniaImages.lifesBetterByTheSea.url}
+      title="Photos"
     >
       <Feed />
     </OverviewLayout>

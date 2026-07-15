@@ -1,7 +1,9 @@
 export function libraryUrl(path: string): string {
-  return `https://library.wamphlett.net/photos/website/` + trimSlash(path);
+  const base =
+    process.env.NEXT_PUBLIC_LIBRARY_URL ?? 'https://library.wamphlett.net';
+  return `${base}/photos/website/` + trimSlash(path);
 }
 
 function trimSlash(path: string): string {
-  return path.startsWith("/") ? path.substring(1, path.length) : path;
+  return path.startsWith('/') ? path.substring(1, path.length) : path;
 }

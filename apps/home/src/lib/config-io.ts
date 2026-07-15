@@ -1,7 +1,12 @@
 import fs from 'fs/promises';
 import path from 'path';
-import type { Config, ConfigEvent, ImageGridRow, ConfigImage } from './config-types';
-import { GRID_TYPES, EVENT_TYPES } from './config-types';
+import type {
+  Config,
+  ConfigEvent,
+  ConfigImage,
+  ImageGridRow,
+} from './config-types';
+import { EVENT_TYPES, GRID_TYPES } from './config-types';
 
 const CONFIG_PATH = process.env.CONFIG_PATH
   ? path.resolve(process.env.CONFIG_PATH)
@@ -15,7 +20,11 @@ export async function readConfig(): Promise<Config> {
     return JSON.parse(content) as Config;
   } catch (e: unknown) {
     if ((e as NodeJS.ErrnoException).code === 'ENOENT') {
-      await fs.writeFile(CONFIG_PATH, JSON.stringify(EMPTY_CONFIG, null, 4), 'utf-8');
+      await fs.writeFile(
+        CONFIG_PATH,
+        JSON.stringify(EMPTY_CONFIG, null, 4),
+        'utf-8',
+      );
       return { ...EMPTY_CONFIG };
     }
     throw e;
@@ -33,7 +42,7 @@ export async function writeConfig(incoming: Config): Promise<Config> {
 
   if (incoming.updated_ts < currentTs) {
     throw new ConflictError(
-      `Config was updated more recently (stored: ${currentTs}, incoming: ${incoming.updated_ts})`
+      `Config was updated more recently (stored: ${currentTs}, incoming: ${incoming.updated_ts})`,
     );
   }
 
@@ -54,60 +63,106 @@ export class ConflictError extends Error {
 }
 
 export function validateConfig(body: unknown): body is Config {
-  if (typeof body !== 'object' || body === null) return false;
+  if (typeof body !== 'object' || body === null) {
+    return false;
+  }
   const c = body as Record<string, unknown>;
 
-  if (typeof c.updated_ts !== 'number') return false;
-  if (!Array.isArray(c.events)) return false;
+  if (typeof c.updated_ts !== 'number') {
+    return false;
+  }
+  if (!Array.isArray(c.events)) {
+    return false;
+  }
 
   for (const event of c.events) {
-    if (!validateEvent(event)) return false;
+    if (!validateEvent(event)) {
+      return false;
+    }
   }
   return true;
 }
 
 function validateEvent(e: unknown): e is ConfigEvent {
-  if (typeof e !== 'object' || e === null) return false;
+  if (typeof e !== 'object' || e === null) {
+    return false;
+  }
   const ev = e as Record<string, unknown>;
-  if (typeof ev.date_ts !== 'number') return false;
-  if (!EVENT_TYPES.includes(ev.type as never)) return false;
-  if (typeof ev.title !== 'string' || ev.title.trim() === '') return false;
-  if (ev.sub_title !== undefined && typeof ev.sub_title !== 'string') return false;
-  if (ev.tagline !== undefined && typeof ev.tagline !== 'string') return false;
-  if (ev.icon !== undefined && typeof ev.icon !== 'string') return false;
-  if (ev.small !== undefined && typeof ev.small !== 'boolean') return false;
+  if (typeof ev.date_ts !== 'number') {
+    return false;
+  }
+  if (!EVENT_TYPES.includes(ev.type as never)) {
+    return false;
+  }
+  if (typeof ev.title !== 'string' || ev.title.trim() === '') {
+    return false;
+  }
+  if (ev.sub_title !== undefined && typeof ev.sub_title !== 'string') {
+    return false;
+  }
+  if (ev.tagline !== undefined && typeof ev.tagline !== 'string') {
+    return false;
+  }
+  if (ev.icon !== undefined && typeof ev.icon !== 'string') {
+    return false;
+  }
+  if (ev.small !== undefined && typeof ev.small !== 'boolean') {
+    return false;
+  }
   if (ev.image_grid !== undefined) {
-    if (!Array.isArray(ev.image_grid)) return false;
+    if (!Array.isArray(ev.image_grid)) {
+      return false;
+    }
     for (const row of ev.image_grid) {
-      if (!validateGridRow(row)) return false;
+      if (!validateGridRow(row)) {
+        return false;
+      }
     }
   }
   return true;
 }
 
 function validateGridRow(r: unknown): r is ImageGridRow {
-  if (typeof r !== 'object' || r === null) return false;
+  if (typeof r !== 'object' || r === null) {
+    return false;
+  }
   const row = r as Record<string, unknown>;
-  if (!GRID_TYPES.includes(row.grid_type as never)) return false;
+  if (!GRID_TYPES.includes(row.grid_type as never)) {
+    return false;
+  }
   if (
     !Array.isArray(row.ratio) ||
     row.ratio.length !== 2 ||
     !Number.isInteger(row.ratio[0]) ||
     !Number.isInteger(row.ratio[1]) ||
     (row.ratio[1] as number) === 0
-  ) return false;
-  if (!Array.isArray(row.images) || row.images.length < 1) return false;
+  ) {
+    return false;
+  }
+  if (!Array.isArray(row.images) || row.images.length < 1) {
+    return false;
+  }
   for (const img of row.images) {
-    if (!validateImage(img)) return false;
+    if (!validateImage(img)) {
+      return false;
+    }
   }
   return true;
 }
 
 function validateImage(i: unknown): i is ConfigImage {
-  if (typeof i !== 'object' || i === null) return false;
+  if (typeof i !== 'object' || i === null) {
+    return false;
+  }
   const img = i as Record<string, unknown>;
-  if (typeof img.url !== 'string' || img.url.trim() === '') return false;
-  if (img.title !== undefined && typeof img.title !== 'string') return false;
-  if (img.tagline !== undefined && typeof img.tagline !== 'string') return false;
+  if (typeof img.url !== 'string' || img.url.trim() === '') {
+    return false;
+  }
+  if (img.title !== undefined && typeof img.title !== 'string') {
+    return false;
+  }
+  if (img.tagline !== undefined && typeof img.tagline !== 'string') {
+    return false;
+  }
   return true;
 }

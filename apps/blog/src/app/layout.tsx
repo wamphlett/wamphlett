@@ -20,7 +20,10 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://blog.warrenamphlett.co.uk'),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_BLOG_SITE_URL ??
+      'https://blog.warrenamphlett.co.uk',
+  ),
   title: {
     template: '%s | Warren Amphlett Blog',
     default: 'Warren Amphlett Blog',
