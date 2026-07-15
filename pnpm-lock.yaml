@@ -248,12 +248,18 @@ importers:
       next:
         specifier: 16.1.1
         version: 16.1.1(@babel/core@7.29.7)(@opentelemetry/api@1.9.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      plaiceholder:
+        specifier: ^3.0.0
+        version: 3.0.0(sharp@0.35.3(@types/node@20.19.43))
       react:
         specifier: 19.2.3
         version: 19.2.3
       react-dom:
         specifier: 19.2.3
         version: 19.2.3(react@19.2.3)
+      sharp:
+        specifier: ^0.35.1
+        version: 0.35.3(@types/node@20.19.43)
     devDependencies:
       '@tailwindcss/postcss':
         specifier: ^4
