@@ -70,6 +70,8 @@ export default function LazyImage({
     throw new Error('url is required');
   }
 
+  const sizes = width ? `${width}px` : '100vw';
+
   return (
     <div
       className={styles.container}
@@ -85,12 +87,12 @@ export default function LazyImage({
       >
         <Image
           alt=""
-          height={width}
+          fill
           loader={imageLoaderBuilder(width)}
-          onLoadingComplete={() => setLoaded(true)}
+          onLoad={() => setLoaded(true)}
           priority={priority}
+          sizes={sizes}
           src={url}
-          width={width}
         />
       </div>
       <div
@@ -100,9 +102,7 @@ export default function LazyImage({
           transform: loaded ? 'scale(1)' : 'scale(1.1)',
         }}
       >
-        {blurDataURL && (
-          <Image alt="" height={width} src={blurDataURL} width={width} />
-        )}
+        {blurDataURL && <Image alt="" fill sizes={sizes} src={blurDataURL} />}
       </div>
     </div>
   );

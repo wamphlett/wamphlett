@@ -35,7 +35,12 @@ export default async function PostTile({
       <Link href={url}>
         <div className={styles.image}>
           <AspectRatioBox aspectRatio={3 / 2}>
-            <LazyImage blurDataURL={blurDataUrl} borderRadius={5} url={image} />
+            <LazyImage
+              blurDataURL={blurDataUrl}
+              borderRadius={5}
+              sizes="(max-width: 480px) 100vw, (max-width: 750px) 50vw, 33vw"
+              url={image}
+            />
           </AspectRatioBox>
         </div>
 

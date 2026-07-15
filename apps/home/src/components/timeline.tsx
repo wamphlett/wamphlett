@@ -34,7 +34,7 @@ export default function Timeline({ events }: TimelineProps) {
                     {event.icon && (
                       <div className={styles.icon}>
                         <AspectRatioBox aspectRatio={1}>
-                          <LazyImage url={event.icon} />
+                          <LazyImage sizes="140px" url={event.icon} />
                         </AspectRatioBox>
                       </div>
                     )}
