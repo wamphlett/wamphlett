@@ -1,0 +1,160 @@
+.container {
+  background-color: #fff;
+  margin-bottom: 10px;
+  padding: 20px 30px;
+}
+
+.container p, .container h2, .container span {
+  color: #000;
+}
+
+.container h2 {
+  font-size: 2em;
+  font-weight: 600;
+}
+
+.container .frameNumber {
+  font-size: 1.1em;
+}
+
+.kanji {
+  display: block;
+  margin-right: 30px;
+  font-size: 4em;
+  font-weight: 900;
+  text-align: center;
+} 
+
+.story {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex-grow: 1;
+}
+
+.story p {
+  display: block;
+  font-size: 1.2em;
+}
+
+.story i {
+  opacity: 0.6;
+}
+
+.story span {
+  display: block;
+  font-size: 0.9em;
+  opacity: 0.8;
+  margin-top: 5px;
+}
+
+.story span.components {
+  opacity: 0.6;
+}
+
+.details {
+
+}
+
+.details span {
+  display: block;
+  font-weight: 200;
+  margin-right: 10px;
+}
+
+.details span:last-child {
+  margin-right: 0;
+}
+
+.details span b {
+  font-weight: 600;
+}
+
+.primitives {
+
+}
+
+.primitives, .components {
+  display: inline-block;
+  font-style: italic;
+  opacity: 0.6;
+}
+
+.primitives b {
+  font-weight: 400;
+}
+
+.story .componentLink {
+  display: inline;
+  cursor: pointer;
+}
+
+.componentLink:hover {
+  text-decoration: underline;
+}
+
+.jlpt {
+  font-size: 1.6em;
+  font-weight: 800 !important;
+  opacity: 0.6;;
+}
+
+.jlpt.level_N5 {
+  color: #4CAF50;
+}
+
+.jlpt.level_N4 {
+  color: #2196F3;
+}
+
+.jlpt.level_N3 {
+  color: #FF9800;
+}
+
+.jlpt.level_N2 {
+  color: #FF5722;
+}
+
+.jlpt.level_N1 {
+  color: #cd0505;
+}
+
+.inputBox {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  transition: background-color 0.15s ease;
+  padding: 4px 6px;
+  border-radius: 3px;
+  font-style: italic;
+  opacity: 0.6;
+  color: #000;
+}
+
+/* hover OR focus */
+.inputBox:hover,
+.inputBox:focus {
+  opacity: 1;
+  background: #f2f2f2;
+}
+
+.inputBox::placeholder {
+  color: #888;
+}
+
+.inputBox.right {
+  text-align: right;
+}
+
+.inputBox.small {
+  font-size: 0.9em;
+}
+
+.textBox {
+  resize: none;
+  overflow: hidden;
+  line-height: 1.6;
+  font-style: normal;
+  font-size: 1.2em;
+}
