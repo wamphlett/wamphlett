@@ -1,0 +1,92 @@
+.defaultWidth {
+    width: 100%;
+    max-width: 1600px;
+    padding: 0 34px;
+    margin: 0 auto;
+}
+
+.page {
+    display: flex;
+}
+
+.page .content {
+    width: 70%;
+}
+
+.page .sidebar {
+    width: 30%;
+    padding-top: 60vh;
+}
+
+@media only screen and (max-width: 850px) {
+    .page {
+        position: relative;
+        display: flex;
+    }
+
+    .page .content {
+        width: 100%;
+    }
+    
+    .page .sidebar {
+        position: fixed;
+        top:0;
+        right:-70%;
+        bottom: 0;
+        width: 70%;
+        padding: 20px;
+        padding-top: 124px;
+        box-shadow: -8px 0 30px rgba(0, 0, 0, 0.15);
+        transition: right .4s ease;
+        overflow: hidden;
+    }
+
+    .page .sidebar::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: linear-gradient(to right,
+            rgba(95, 163, 214, .3) 0%,
+            rgba(255, 255, 255, 0.9) 100%);
+        backdrop-filter: blur(16px) saturate(180%);
+        -webkit-backdrop-filter: blur(16px) saturate(180%);
+    }
+
+    .page .sidebar.open {
+        right: 0;
+    }
+
+    .backdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        background: rgba(20, 20, 20, 0.12);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .4s ease;
+    }
+
+    .backdrop.backdropOpen {
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+
+.backdrop {
+    display: none;
+}
+
+@media only screen and (max-width: 480px) {
+    .defaultWidth {
+        padding: 0 4px;
+    }
+
+    .page .sidebar {
+        width: 100%;
+        right: -100%;
+    }
+}

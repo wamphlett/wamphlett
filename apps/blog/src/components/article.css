@@ -1,0 +1,143 @@
+article > pre {
+  margin: 24px 0;
+}
+article pre code {
+  padding: 20px !important;
+  border-radius: 10px;
+}
+
+article h1, article h2, article h3, article h4, article h5, article h6 {
+  font-weight: bold;
+  color: #202020;
+}
+
+article h1,
+article h2,
+article h3 {
+  font-size: 1.6em;
+  line-height: 1em;
+  text-transform: uppercase;
+}
+
+article h1 {
+  font-size: 2.8em;
+  margin: 10px 0;
+}
+
+article h3 {
+  font-size: 1.4em;
+  margin-bottom: -6px;
+  margin-top: 15px;
+}
+
+article > h1,
+article > h2,
+article > p,
+article > ul,
+article > ol,
+article > blockquote {
+  margin: 16px 0;
+}
+
+article > .images {
+  margin: 24px 0;
+  padding: 0 30px;
+}
+
+article > h2 {
+  margin-top: 40px;
+}
+
+article > p,
+article > ul,
+article > ol,
+article > blockquote {
+  padding: 0 20px;
+}
+
+article > p,
+article > blockquote p,
+article > ul li,
+article > ol li {
+  font-size: 1em;
+  line-height: 1.4em;
+  font-weight: 300;
+  color: #4a4a4a;
+}
+
+article > blockquote p {
+  font-style: italic;
+  padding: 10px 20px;
+  border-left: 6px solid #e0e0e0 ;
+}
+
+article > p a {
+  text-decoration: underline;
+}
+
+article > ul,
+article > ol {
+  padding-left: 40px;
+}
+
+article > ul {
+  list-style-type: disc;
+}
+
+article > ol {
+  list-style-type: decimal;
+}
+
+article > ul li,
+article > ol li {
+  margin: 10px 0;
+}
+
+article strong {
+  font-weight: bold;
+  color: #000;
+}
+
+article p code {
+  background-color: #dfdfdf;
+  padding: 0 8px;
+  font-size: .8em;
+  border-radius: 4px;
+  color: #474747;
+}
+
+article > p, article > h1, article > h2, article > h3 {
+  padding: 0 20px;
+}
+
+article .images {
+  display: flex;
+}
+
+article .images > a img {
+  transition: scale .4s ease, outline .4s ease;
+  outline: 0px solid #5fa3d6;
+  ;
+}
+
+article .images > a:hover img {
+  scale: 1.015;
+  outline: 5px solid #5fa3d6;
+}
+
+article > h2 {
+  position: relative;
+  padding-top: 15px;
+  letter-spacing: 0.035em;
+}
+
+article > h2::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20px;
+  width: 54px;
+  height: 4px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #5fa3d6, #8b6fc4);
+}

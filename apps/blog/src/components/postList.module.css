@@ -1,0 +1,54 @@
+.container {
+  padding: 40px;
+}
+
+.list {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.list > div {
+  max-width: 33.33%;
+}
+
+.heading {
+  display: block;
+  color: #000;
+  text-transform: uppercase;
+  font-size: 1.5em;
+  text-align: center;
+  font-weight: 300;
+}
+
+.accentBar {
+  padding-top: 22px;
+  position: relative;
+}
+
+.accentBar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 72px;
+  height: 5px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #5fa3d6, #8b6fc4);
+}
+
+.container.sidebar {
+  padding: 0;
+}
+
+@media only screen and (max-width: 750px) {
+  .list > div {
+    max-width: 50%;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .list > div {
+    max-width: 100%;
+  }
+}
