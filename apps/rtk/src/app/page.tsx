@@ -32,7 +32,7 @@ function isTokenValid(token?: string): boolean {
 }
 
 export default async function Page() {
-  const headerURL = `${process.env.NEXT_PUBLIC_LIBRARY_URL ?? 'https://library.wamphlett.net'}/photos/website/2023/albania/three-of-a-kind.jpg`;
+  const headerURL = `${process.env.LIBRARY_URL ?? 'https://library.wamphlett.net'}/photos/website/2023/albania/three-of-a-kind.jpg`;
   const blurDataURL = await getBlurUrl(headerURL);
   const apiUrl = process.env.RTK_API_URL ?? 'https://rtk.wamphlett.net';
   const res = await fetch(`${apiUrl}/frames`, {

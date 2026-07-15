@@ -9,7 +9,7 @@ const heebo = Heebo({
 });
 
 const rtkSiteUrl =
-  process.env.NEXT_PUBLIC_RTK_SITE_URL ?? 'https://rtk.warrenamphlett.co.uk';
+  process.env.RTK_SITE_URL ?? 'https://rtk.warrenamphlett.co.uk';
 
 export const metadata: Metadata = {
   metadataBase: new URL(rtkSiteUrl),
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_GB',
     url: rtkSiteUrl,
-    images: `${process.env.NEXT_PUBLIC_LIBRARY_URL ?? 'https://library.wamphlett.net'}/photos/website/2025/remembering-the-kanji.jpg`,
+    images: `${process.env.LIBRARY_URL ?? 'https://library.wamphlett.net'}/photos/website/2025/remembering-the-kanji.jpg`,
     siteName: 'Remembering the Kanji',
   },
 };

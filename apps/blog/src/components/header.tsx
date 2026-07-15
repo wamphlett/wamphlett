@@ -4,6 +4,7 @@ import styles from './header.module.css';
 import { FlickrLogo, GithubIcon, InstaLogo } from '@/components/svgs';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useRuntimeConfig } from '@/lib/config/useRuntimeConfig';
 
 import FancyMenuIcon from './fancyMenuIcon';
 
@@ -21,6 +22,7 @@ export default function Header({
   menuIcon = false,
 }: HeaderProps) {
   const [scrollPercentage, setScrollPercentage] = useState(0);
+  const { homeSiteUrl, photosSiteUrl } = useRuntimeConfig();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -98,8 +100,7 @@ export default function Header({
           <Link
             href={
               usePathname() == '/'
-                ? (process.env.NEXT_PUBLIC_HOME_SITE_URL ??
-                  'https://warrenamphlett.co.uk')
+                ? (homeSiteUrl ?? 'https://warrenamphlett.co.uk')
                 : '/'
             }
           >
@@ -108,12 +109,7 @@ export default function Header({
         </h1>
 
         <div className={styles.links}>
-          <Link
-            href={
-              process.env.NEXT_PUBLIC_PHOTOS_SITE_URL ??
-              'https://photos.warrenamphlett.co.uk'
-            }
-          >
+          <Link href={photosSiteUrl ?? 'https://photos.warrenamphlett.co.uk'}>
             Photos
           </Link>
           <div onClick={onMenuClick} ref={menuRef}>

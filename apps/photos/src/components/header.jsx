@@ -6,11 +6,13 @@ import { usePathname } from 'next/navigation';
 import FancyMenuIcon from '@/components/fancyMenuIcon';
 import Sidebar from './sidebar';
 import { FlickrLogo, InstaLogo } from '@/components/svgs';
+import { useRuntimeConfig } from '@/lib/config/useRuntimeConfig';
 
 import styles from './header.module.css';
 
 export default function Header({ position = 24 }) {
   const [open, setOpen] = useState(false);
+  const { homeSiteUrl } = useRuntimeConfig();
 
   const menuRef = useRef(null);
 
@@ -71,8 +73,7 @@ export default function Header({ position = 24 }) {
           <Link
             href={
               usePathname() == '/'
-                ? (process.env.NEXT_PUBLIC_HOME_SITE_URL ??
-                  'https://warrenamphlett.co.uk')
+                ? (homeSiteUrl ?? 'https://warrenamphlett.co.uk')
                 : '/'
             }
           >

@@ -7,7 +7,7 @@ export async function loadRuntimeConfig(): Promise<RuntimeConfig> {
     return cached;
   }
 
-  const res = await fetch('/api/config', { cache: 'no-store' });
+  const res = await fetch('/api/site-urls', { cache: 'no-store' });
 
   if (!res.ok) {
     throw new Error(`Failed to load runtime config (${res.status})`);
@@ -15,12 +15,7 @@ export async function loadRuntimeConfig(): Promise<RuntimeConfig> {
 
   const data = (await res.json()) as RuntimeConfig;
 
-  if (
-    !data.apiUrl ||
-    !data.baseUrl ||
-    !data.photosSiteUrl ||
-    !data.blogSiteUrl
-  ) {
+  if (!data.photosSiteUrl || !data.blogSiteUrl) {
     throw new Error('Invalid runtime config');
   }
 

@@ -3,12 +3,14 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 import { FlickrLogo, InstaLogo } from '@/components/svgs';
+import { useRuntimeConfig } from '@/lib/config/useRuntimeConfig';
 
 import styles from './header.module.css';
 
 export default function Header({ position = 24 }) {
   const [scrollY, setScrollY] = useState(0);
   const [windowHeight, setWindowHeight] = useState(1);
+  const { photosSiteUrl, blogSiteUrl } = useRuntimeConfig();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -100,20 +102,10 @@ export default function Header({ position = 24 }) {
         </h1>
 
         <div className={styles.links}>
-          <Link
-            href={
-              process.env.NEXT_PUBLIC_PHOTOS_SITE_URL ??
-              'https://photos.warrenamphlett.co.uk'
-            }
-          >
+          <Link href={photosSiteUrl ?? 'https://photos.warrenamphlett.co.uk'}>
             Photos
           </Link>
-          <Link
-            href={
-              process.env.NEXT_PUBLIC_BLOG_SITE_URL ??
-              'https://blog.warrenamphlett.co.uk'
-            }
-          >
+          <Link href={blogSiteUrl ?? 'https://blog.warrenamphlett.co.uk'}>
             Blog
           </Link>
         </div>

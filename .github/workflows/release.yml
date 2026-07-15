@@ -33,7 +33,7 @@ jobs:
 
       - name: Build and push image
         run: |
-          IMAGE=ghcr.io/${{ github.repository_owner }}/${{ steps.t.outputs.app }}
+          IMAGE=ghcr.io/${{ github.repository_owner }}/wamphlett-${{ steps.t.outputs.app }}
           docker build \
             --build-arg VERSION=${{ steps.t.outputs.version }} \
             -f apps/${{ steps.t.outputs.app }}/Dockerfile \
@@ -57,7 +57,7 @@ jobs:
           REF="${{ github.ref_name }}"
           APP="${REF%-v*}"
           VERSION="${REF##*-v}"
-          IMAGE=ghcr.io/${{ github.repository_owner }}/$APP
+          IMAGE=ghcr.io/${{ github.repository_owner }}/wamphlett-$APP
           jq --arg k "$IMAGE" --arg v "$VERSION" '.[$k] = $v' \
             tanka/versions.json > tmp && mv tmp tanka/versions.json
           git config user.name "release-bot"

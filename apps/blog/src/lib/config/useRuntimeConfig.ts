@@ -18,10 +18,8 @@ export function useRuntimeConfig() {
 
   return {
     config,
-    apiUrl: config?.apiUrl,
-    baseUrl: config?.baseUrl,
+    homeSiteUrl: config?.homeSiteUrl,
     photosSiteUrl: config?.photosSiteUrl,
-    blogSiteUrl: config?.blogSiteUrl,
     ready: !!config,
     error,
   };

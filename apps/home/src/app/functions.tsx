@@ -1,6 +1,5 @@
 export function libraryUrl(path: string): string {
-  const base =
-    process.env.NEXT_PUBLIC_LIBRARY_URL ?? 'https://library.wamphlett.net';
+  const base = process.env.LIBRARY_URL ?? 'https://library.wamphlett.net';
   return `${base}/photos/website/` + trimSlash(path);
 }
 

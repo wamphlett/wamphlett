@@ -6,8 +6,7 @@ import withPlaiceholder from '@plaiceholder/next';
 // no-op in Docker/CI (file absent) and never overrides real environment vars.
 dotenv.config({ path: path.join(import.meta.dirname, '..', '..', '.env') });
 
-const libraryUrl =
-  process.env.NEXT_PUBLIC_LIBRARY_URL ?? 'https://library.wamphlett.net';
+const libraryUrl = process.env.LIBRARY_URL ?? 'https://library.wamphlett.net';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {

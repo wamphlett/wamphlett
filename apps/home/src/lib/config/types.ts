@@ -1,6 +1,4 @@
 export type RuntimeConfig = {
-  apiUrl: string;
-  baseUrl: string;
   photosSiteUrl: string;
   blogSiteUrl: string;
 };

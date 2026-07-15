@@ -1,5 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+import { useRuntimeConfig } from '@/lib/config/useRuntimeConfig';
 import styles from './recentPostPopup.module.css';
 
 type Article = {
@@ -18,6 +19,7 @@ export default function RecentPostPopup() {
   const [article, setArticle] = useState<Article | null>(null);
   const [visible, setVisible] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  const { blogSiteUrl } = useRuntimeConfig();
 
   useEffect(() => {
     fetch('/api/recent-post?limit=1')
@@ -41,9 +43,7 @@ export default function RecentPostPopup() {
     return null;
   }
 
-  const blogBaseUrl =
-    process.env.NEXT_PUBLIC_BLOG_SITE_URL ??
-    'https://blog.warrenamphlett.co.uk';
+  const blogBaseUrl = blogSiteUrl ?? 'https://blog.warrenamphlett.co.uk';
   const href = `${blogBaseUrl}/${article.topicSlug}/${article.slug}`;
 
   return (

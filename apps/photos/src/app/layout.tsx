@@ -9,8 +9,7 @@ const heebo = Heebo({
 });
 
 const photosSiteUrl =
-  process.env.NEXT_PUBLIC_PHOTOS_SITE_URL ??
-  'https://photos.warrenamphlett.co.uk';
+  process.env.PHOTOS_SITE_URL ?? 'https://photos.warrenamphlett.co.uk';
 
 export const metadata: Metadata = {
   metadataBase: new URL(photosSiteUrl),
@@ -24,7 +23,7 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_GB',
     url: photosSiteUrl,
-    images: `${process.env.NEXT_PUBLIC_LIBRARY_URL ?? 'https://library.wamphlett.net'}/photos/website/2023/albania/lifes-better-by-the-sea.jpg`,
+    images: `${process.env.LIBRARY_URL ?? 'https://library.wamphlett.net'}/photos/website/2023/albania/lifes-better-by-the-sea.jpg`,
     siteName: 'Warren Amphlett Photos',
   },
 };
