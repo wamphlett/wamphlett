@@ -1,5 +1,26 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": [".env"],
+  "globalEnv": [
+    "LOG_LEVEL",
+    "NODE_ENV",
+    "BLOG_API_URL",
+    "NEXT_PUBLIC_BLOG_SITE_URL",
+    "ADMIN_USERNAME",
+    "ADMIN_PASSWORD",
+    "SESSION_SECRET",
+    "CONFIG_PATH",
+    "REACT_APP_API_URL",
+    "REVALIDATE_SECRET",
+    "STAGING_MODE",
+    "OTEL_EXPORTER_OTLP_ENDPOINT",
+    "REMOTE_API_URL",
+    "MANAGE_USERNAME",
+    "MANAGE_PASSWORD",
+    "MANAGE_SESSION_SECRET",
+    "NEXT_PUBLIC_API_URL",
+    "NEXT_PUBLIC_BASE_URL"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

@@ -1,3 +1,8 @@
 node_modules/
 .turbo/
 .DS_Store
+
+# local env (shared root file + any per-app overrides). Keep the template.
+.env
+.env.*
+!.env.example
