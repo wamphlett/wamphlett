@@ -25,7 +25,7 @@ export default function SeriesSection({
 
       <span className={styles.subheading}>Read related articles</span>
 
-      <SeriesSteps series={series} currentSlug={currentSlug} />
+      <SeriesSteps currentSlug={currentSlug} series={series} />
     </div>
   );
 }

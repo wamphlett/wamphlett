@@ -40,10 +40,10 @@ export default function SeriesPill({ series, currentSlug }: SeriesPillProps) {
   return (
     <div className={styles.container} ref={containerRef}>
       <button
-        type="button"
+        aria-expanded={open}
         className={styles.pill}
         onClick={() => setOpen(!open)}
-        aria-expanded={open}
+        type="button"
       >
         Part {seriesIndex + 1} of {series.articles.length} &middot;{' '}
         {series.name}
@@ -57,9 +57,9 @@ export default function SeriesPill({ series, currentSlug }: SeriesPillProps) {
       <div className={`${styles.popover} ${open ? styles.open : ''}`}>
         <span className={styles.popoverLabel}>{series.name}</span>
         <SeriesSteps
-          series={series}
           currentSlug={currentSlug}
           onCurrentClick={() => setOpen(false)}
+          series={series}
         />
       </div>
     </div>

@@ -33,7 +33,7 @@ export default function Title({
       <h1>{title}</h1>
       {subtitle && <h2>{subtitle}</h2>}
       {series && currentSlug && (
-        <SeriesPill series={series} currentSlug={currentSlug} />
+        <SeriesPill currentSlug={currentSlug} series={series} />
       )}
     </div>
   );
