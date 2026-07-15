@@ -1,7 +1,6 @@
-import Link from 'next/link';
 import styles from './seriesSection.module.css';
 import { Series } from '@/util/API';
-import { isStagingMode } from '@/util/staging';
+import SeriesSteps from './seriesSteps';
 
 type SeriesSectionProps = {
   series: Series;
@@ -12,8 +11,6 @@ export default function SeriesSection({
   series,
   currentSlug,
 }: SeriesSectionProps) {
-  const staging = isStagingMode();
-  const isReadable = (published: boolean) => published || staging;
   const publishedCount = series.articles.filter(a => a.published).length;
 
   return (
@@ -28,42 +25,7 @@ export default function SeriesSection({
 
       <span className={styles.subheading}>Read related articles</span>
 
-      <ul className={styles.steps}>
-        {series.articles.map((a, i) => {
-          const isCurrent = a.slug === currentSlug;
-          const nodeClass = isCurrent
-            ? styles.nodeCurrent
-            : isReadable(a.published)
-            ? styles.nodePublished
-            : styles.nodeUpcoming;
-
-          return (
-            <li className={styles.step} key={i}>
-              <span className={`${styles.node} ${nodeClass}`}>{i + 1}</span>
-              <div className={styles.content}>
-                {isCurrent ? (
-                  <>
-                    <span className={styles.currentTitle}>{a.title}</span>
-                    <span className={styles.currentBadge}>Reading now</span>
-                  </>
-                ) : isReadable(a.published) ? (
-                  <Link
-                    className={styles.link}
-                    href={`/${a.topicSlug}/${a.slug}`}
-                  >
-                    {a.title}
-                  </Link>
-                ) : (
-                  <>
-                    <span className={styles.upcomingTitle}>{a.title}</span>
-                    <span className={styles.tag}>Coming soon</span>
-                  </>
-                )}
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+      <SeriesSteps series={series} currentSlug={currentSlug} />
     </div>
   );
 }

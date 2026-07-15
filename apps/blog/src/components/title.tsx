@@ -1,5 +1,6 @@
 import styles from './title.module.css';
 import { Series } from '@/util/API';
+import SeriesPill from './seriesPill';
 
 type TitleProps = {
   title: string;
@@ -16,9 +17,6 @@ export default function Title({
   series,
   currentSlug,
 }: TitleProps) {
-  const seriesIndex =
-    series?.articles.findIndex(a => a.slug === currentSlug) ?? -1;
-
   return (
     <div
       className={`flex flex-row items-center justify-between ${styles.container}`}
@@ -34,11 +32,8 @@ export default function Title({
       )}
       <h1>{title}</h1>
       {subtitle && <h2>{subtitle}</h2>}
-      {series && seriesIndex > -1 && (
-        <span className={styles.seriesPill}>
-          Part {seriesIndex + 1} of {series.articles.length} &middot;{' '}
-          {series.name}
-        </span>
+      {series && currentSlug && (
+        <SeriesPill series={series} currentSlug={currentSlug} />
       )}
     </div>
   );
