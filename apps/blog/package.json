@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
     "@opentelemetry/api-logs": "^0.219.0",
     "@opentelemetry/auto-instrumentations-node": "^0.77.0",
     "@opentelemetry/exporter-metrics-otlp-http": "^0.219.0",
@@ -24,8 +25,10 @@
     "highlight.js": "^11.9.0",
     "next": "^15.5.19",
     "pino": "^10.3.1",
+    "plaiceholder": "^3.0.0",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "sharp": "^0.35.1"
   },
   "devDependencies": {
     "@types/node": "^20",

@@ -23,6 +23,12 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 COPY --from=builder /app/apps/photos/.next/standalone ./
 COPY --from=builder /app/apps/photos/.next/static ./apps/photos/.next/static
 COPY --from=builder /app/apps/photos/public ./apps/photos/public
+# Next's file tracer drops sharp's native libvips binary from the standalone
+# output (it can't see dlopen'd files via static analysis, and pnpm's nested
+# virtual store makes overlaying the traced copy fragile) — install a plain,
+# platform-correct sharp directly at the tree root so require('sharp') from
+# anywhere under /app resolves it via normal upward node_modules lookup.
+RUN npm install --no-save --omit=dev sharp@^0.35.1
 RUN mkdir -p apps/photos/.next/cache && chown -R appuser:appgroup apps/photos/.next
 USER appuser
 

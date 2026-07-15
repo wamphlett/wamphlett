@@ -49,6 +49,7 @@ function transformEntries(entries: Albums): SidebarData[] {
     })
     .sort((a, b) => parseInt(b.year) - parseInt(a.year)); // Sorting by year
 
+  sidebarData = result;
   return result;
 }
 

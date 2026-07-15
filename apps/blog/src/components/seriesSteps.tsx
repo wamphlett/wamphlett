@@ -24,8 +24,8 @@ export default function SeriesSteps({
         const nodeClass = isCurrent
           ? styles.nodeCurrent
           : isReadable(a.published)
-          ? styles.nodePublished
-          : styles.nodeUpcoming;
+            ? styles.nodePublished
+            : styles.nodeUpcoming;
 
         return (
           <li className={styles.step} key={i}>
