@@ -1,0 +1,51 @@
+import './globals.css';
+import type { Metadata } from 'next';
+import Script from 'next/script';
+import { Heebo } from 'next/font/google';
+
+const heebo = Heebo({
+  weight: ['100', '300', '900'],
+  subsets: ['latin'],
+});
+
+export const metadata: Metadata = {
+  metadataBase: new URL('https://photos.warrenamphlett.co.uk'),
+  title: {
+    template: '%s | Warren Amphlett Photos',
+    default: 'Warren Amphlett Photos',
+  },
+  description: 'A collection of my favourite photos.',
+  authors: { name: 'Warren Amphlett' },
+  openGraph: {
+    type: 'website',
+    locale: 'en_GB',
+    url: 'https://photos.warrenamphlett.co.uk',
+    images:
+      'https://library.wamphlett.net/photos/website/2023/albania/lifes-better-by-the-sea.jpg',
+    siteName: 'Warren Amphlett Photos',
+  },
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body className={heebo.className}>
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-5BMLMFL5P2" />
+        <Script id="google-analytics">
+          {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+ 
+          gtag('config', 'G-5BMLMFL5P2');
+        `}
+        </Script>
+        {children}
+      </body>
+    </html>
+  );
+}
