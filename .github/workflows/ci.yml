@@ -20,4 +20,5 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm turbo run lint build --filter=...[origin/master]
+      - run: pnpm run verify:catalog
+      - run: pnpm turbo run lint build

@@ -20,8 +20,8 @@ export default function Timeline({ events }: TimelineProps) {
   return (
     <div className={styles.container}>
       {Array.from(events.entries()).map((entry, index) => {
-        let year = entry[0];
-        let events = entry[1];
+        const year = entry[0];
+        const events = entry[1];
         return (
           <div className={styles.year} key={index}>
             <h2>{year}</h2>

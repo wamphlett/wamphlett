@@ -9,9 +9,11 @@ dotenv.config({ path: path.join(import.meta.dirname, '..', '..', '.env') });
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
-  experimental: {
-    outputFileTracingRoot: path.join(import.meta.dirname, '..', '..'),
-  },
+  outputFileTracingRoot: path.join(import.meta.dirname, '..', '..'),
+  // Next 16.2+ requires acknowledging Turbopack when a `webpack` config is
+  // present (added by withPlaiceholder to externalize the native sharp
+  // binary) — Turbopack ignores it and externalizes sharp on its own.
+  turbopack: {},
   images: {
     deviceSizes: [640, 1080, 1200, 1920, 2048, 3840],
     remotePatterns: [

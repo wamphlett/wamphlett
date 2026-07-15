@@ -12,20 +12,20 @@
     "@plaiceholder/next": "^3.0.0",
     "@tanstack/react-virtual": "^3.14.5",
     "plaiceholder": "^3.0.0",
-    "next": "16.1.1",
-    "react": "19.2.3",
-    "react-dom": "19.2.3",
+    "next": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "sharp": "^0.35.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.1.1",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "eslint": "catalog:",
+    "eslint-config-next": "catalog:",
     "tailwindcss": "^4",
-    "typescript": "^5",
+    "typescript": "catalog:",
     "dotenv": "^16"
   }
 }

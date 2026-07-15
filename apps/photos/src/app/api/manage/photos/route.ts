@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
   });
   if (!res.ok) return Response.json({ error: 'API error' }, { status: res.status });
   const photo = await res.json();
-  revalidateTag('everything');
-  for (const tag of (photo.tags ?? [])) revalidateTag(tag);
+  revalidateTag('everything', 'max');
+  for (const tag of (photo.tags ?? [])) revalidateTag(tag, 'max');
   return Response.json(photo);
 }

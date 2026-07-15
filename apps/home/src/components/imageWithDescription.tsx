@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import AspectRatioBox from './aspectRatioBox';
 import LazyImage from './lazyimage';
 import styles from './imageWithDescription.module.css';
@@ -23,7 +23,7 @@ export default async function ImageWithDescription({
   padding = 5,
   width,
 }: ImageWithDescriptionProps) {
-  let styles = { padding: padding, minWidth: minWidth, width: width };
+  const styles = { padding: padding, minWidth: minWidth, width: width };
   if (width) {
     styles.width = width;
   }

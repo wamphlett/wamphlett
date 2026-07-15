@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
   revalidatePath(path);
 
   for (const tag of tagsToRevalidate) {
-    revalidateTag(tag);
+    revalidateTag(tag, 'max');
   }
 
   logger.info(

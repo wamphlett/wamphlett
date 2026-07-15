@@ -16,16 +16,17 @@ import Offset, { Type as OffsetTypes } from '@/components/imagegrids/offset';
 import YouTube from '@/components/youtube';
 
 type PageProps = {
-  params: {
+  params: Promise<{
     album: string[];
-  };
+  }>;
 };
 
 export async function generateMetadata(
   { params }: PageProps,
   parent: ResolvingMetadata,
 ): Promise<Metadata> {
-  const album = getAlbum(`/${params.album.join('/')}`);
+  const { album: albumPath } = await params;
+  const album = getAlbum(`/${albumPath.join('/')}`);
   if (!album) {
     return {
       title: 'Not Found',
@@ -49,7 +50,8 @@ export async function generateMetadata(
 }
 
 export default async function Page({ params }: PageProps) {
-  const album = getAlbum(`/${params.album.join('/')}`);
+  const { album: albumPath } = await params;
+  const album = getAlbum(`/${albumPath.join('/')}`);
   if (!album) {
     return notFound();
   }

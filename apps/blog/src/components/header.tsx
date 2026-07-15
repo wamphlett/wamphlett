@@ -9,7 +9,7 @@ import FancyMenuIcon from './fancyMenuIcon';
 
 type HeaderProps = {
   position?: number;
-  menuRef?: React.RefObject<HTMLDivElement>;
+  menuRef?: React.RefObject<HTMLDivElement | null>;
   onMenuClick?: () => void;
   menuIcon?: boolean;
 };
