@@ -1,3 +1,5 @@
+import { getSocialLink } from '@wamphlett/ui';
+
 import TextReel from './textReel';
 import { GithubIcon, LinkedInIcon } from './svgs';
 
@@ -41,12 +43,12 @@ export default function Introduction({ locale }: { locale: string }) {
 
           <div className={styles.icons}>
             <CircleIconLink
-              href="https://github.com/wamphlett/"
+              href={getSocialLink('github')}
               icon={<GithubIcon />}
               size={36}
             />
             <CircleIconLink
-              href="https://www.linkedin.com/in/warren-amphlett-5bb9b6170/"
+              href={getSocialLink('linkedin')}
               icon={<LinkedInIcon />}
               size={36}
             />

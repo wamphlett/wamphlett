@@ -1,16 +1,10 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
-import { Header } from '@wamphlett/ui';
+import { Header, socialLinks } from '@wamphlett/ui';
 
 import FancyMenuIcon from '@/components/fancyMenuIcon';
 import Sidebar from './sidebar';
 import { useRuntimeConfig } from '@/lib/config/useRuntimeConfig';
-
-const socialLinks = [
-  { name: 'instagram', href: 'https://www.instagram.com/warrenamphlett/' },
-  { name: 'flickr', href: 'https://www.flickr.com/photos/199526751@N07/' },
-  { name: 'github', href: 'https://github.com/wamphlett/' },
-];
 
 export default function PhotosHeader({ position = 24 }) {
   const [open, setOpen] = useState(false);

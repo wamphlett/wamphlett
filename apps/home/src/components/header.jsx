@@ -1,14 +1,8 @@
 'use client';
 import React from 'react';
-import { Header } from '@wamphlett/ui';
+import { Header, socialLinks } from '@wamphlett/ui';
 
 import { useRuntimeConfig } from '@/lib/config/useRuntimeConfig';
-
-const socialLinks = [
-  { name: 'instagram', href: 'https://www.instagram.com/warrenamphlett/' },
-  { name: 'flickr', href: 'https://www.flickr.com/photos/199526751@N07/' },
-  { name: 'github', href: 'https://github.com/wamphlett/' },
-];
 
 export default function HomeHeader({ position = 24 }) {
   const { photosSiteUrl, blogSiteUrl } = useRuntimeConfig();
