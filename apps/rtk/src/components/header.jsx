@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { Header, socialLinks } from '@wamphlett/ui';
+import { Header, headerSocialLinks } from '@wamphlett/ui';
 
 import { useRuntimeConfig } from '@/lib/config/useRuntimeConfig';
 
@@ -16,7 +16,7 @@ export default function RtkHeader({ position = 24 }) {
       nameHref={homeSiteUrl ?? 'https://warrenamphlett.co.uk'}
       position={position}
       scrollIn
-      socialLinks={socialLinks}
+      socialLinks={headerSocialLinks}
     />
   );
 }

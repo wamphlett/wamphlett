@@ -17,3 +17,9 @@ export function getSocialLink(name: SocialLinkName): string {
   }
   return link.href;
 }
+
+/** The subset of socialLinks shown in every app's header -- linkedin is deliberately
+ * excluded here (it's still available via socialLinks/getSocialLink elsewhere, e.g. a bio). */
+export const headerSocialLinks: SocialLink[] = socialLinks.filter(
+  social => social.name !== 'linkedin',
+);

@@ -2,10 +2,10 @@ export function LinkedInIcon() {
   return (
     <svg
       fill="#fff"
-      height="800px"
+      height="100%"
       version="1.1"
       viewBox="-143 145 512 512"
-      width="800px"
+      width="100%"
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
     >

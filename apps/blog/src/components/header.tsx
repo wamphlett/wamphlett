@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { Header, socialLinks } from '@wamphlett/ui';
+import { Header, headerSocialLinks } from '@wamphlett/ui';
 
 import { useRuntimeConfig } from '@/lib/config/useRuntimeConfig';
 import FancyMenuIcon from './fancyMenuIcon';
@@ -35,7 +35,7 @@ export default function BlogHeader({
         </div>
       }
       position={position}
-      socialLinks={socialLinks}
+      socialLinks={headerSocialLinks}
     />
   );
 }

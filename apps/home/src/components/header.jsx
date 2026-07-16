@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { Header, socialLinks } from '@wamphlett/ui';
+import { Header, headerSocialLinks } from '@wamphlett/ui';
 
 import { useRuntimeConfig } from '@/lib/config/useRuntimeConfig';
 
@@ -22,7 +22,7 @@ export default function HomeHeader({ position = 24 }) {
       onNameClick={handleNameClick}
       position={position}
       scrollIn
-      socialLinks={socialLinks}
+      socialLinks={headerSocialLinks}
     />
   );
 }

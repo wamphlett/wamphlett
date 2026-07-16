@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
-import { Header, socialLinks } from '@wamphlett/ui';
+import { Header, headerSocialLinks } from '@wamphlett/ui';
 
 import FancyMenuIcon from '@/components/fancyMenuIcon';
 import Sidebar from './sidebar';
@@ -39,7 +39,7 @@ export default function PhotosHeader({ position = 24 }) {
           { name: 'Blog', link: blogSiteUrl ?? 'https://blog.warrenamphlett.co.uk' },
         ]}
         position={position}
-        socialLinks={socialLinks}
+        socialLinks={headerSocialLinks}
       />
 
       <Sidebar open={open} />
