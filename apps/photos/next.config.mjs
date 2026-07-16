@@ -10,6 +10,7 @@ const libraryUrl = process.env.LIBRARY_URL ?? 'https://library.wamphlett.net';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  transpilePackages: ['@wamphlett/ui'],
   output: 'standalone',
   outputFileTracingRoot: path.join(import.meta.dirname, '..', '..'),
   // Next 16.2+ requires acknowledging Turbopack when a `webpack` config is

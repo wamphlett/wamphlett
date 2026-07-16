@@ -1,12 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import Script from 'next/script';
-import { Heebo } from 'next/font/google';
-
-const heebo = Heebo({
-  weight: ['100', '300', '900'],
-  subsets: ['latin'],
-});
+import { brandFont } from '@wamphlett/ui';
 
 const homeSiteUrl = process.env.HOME_SITE_URL ?? 'https://warrenamphlett.co.uk';
 
@@ -34,7 +29,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={heebo.className}>
+      <body className={brandFont.className}>
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-WB51J1WT4Q" />
         <Script id="google-analytics">
           {`

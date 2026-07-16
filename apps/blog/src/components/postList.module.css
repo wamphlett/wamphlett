@@ -34,7 +34,7 @@
   width: 72px;
   height: 5px;
   border-radius: 3px;
-  background: linear-gradient(90deg, #5fa3d6, #8b6fc4);
+  background: linear-gradient(90deg, var(--color-brand-accent), #8b6fc4);
 }
 
 .container.sidebar {

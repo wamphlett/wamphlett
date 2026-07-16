@@ -9,6 +9,7 @@ import type { NextConfig } from 'next';
 dotenv.config({ path: path.join(import.meta.dirname, '..', '..', '.env') });
 
 const nextConfig: NextConfig = {
+  transpilePackages: ['@wamphlett/ui'],
   output: 'standalone',
   outputFileTracingRoot: path.join(import.meta.dirname, '..', '..'),
   // Next 16.2+ requires acknowledging Turbopack when a `webpack` config is

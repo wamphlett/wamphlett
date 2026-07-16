@@ -1,12 +1,17 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import styles from './header.module.css';
-import { FlickrLogo, GithubIcon, InstaLogo } from '@/components/svgs';
-import Link from 'next/link';
+import React from 'react';
 import { usePathname } from 'next/navigation';
-import { useRuntimeConfig } from '@/lib/config/useRuntimeConfig';
+import { Header, type SocialLink } from '@wamphlett/ui';
 
+import { useRuntimeConfig } from '@/lib/config/useRuntimeConfig';
 import FancyMenuIcon from './fancyMenuIcon';
+import styles from './header.module.css';
+
+const socialLinks: SocialLink[] = [
+  { name: 'instagram', href: 'https://www.instagram.com/warrenamphlett/' },
+  { name: 'flickr', href: 'https://www.flickr.com/photos/199526751@N07/' },
+  { name: 'github', href: 'https://github.com/wamphlett/' },
+];
 
 type HeaderProps = {
   position?: number;
@@ -15,108 +20,31 @@ type HeaderProps = {
   menuIcon?: boolean;
 };
 
-export default function Header({
+export default function BlogHeader({
   position = 24,
   menuRef,
   onMenuClick,
   menuIcon = false,
 }: HeaderProps) {
-  const [scrollPercentage, setScrollPercentage] = useState(0);
+  const pathname = usePathname();
   const { homeSiteUrl, photosSiteUrl } = useRuntimeConfig();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      const windowHeight = window.innerHeight;
-
-      // Calculate the percentage of how far we've scrolled relative to the viewport height
-      const percentageScrolled = Math.min(
-        (scrollPosition / (windowHeight / 2)) * 100,
-        100,
-      ); // capped at 100%
-      setScrollPercentage(percentageScrolled);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      // Cleanup - remove the listener when the component unmounts
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
-  const blurAmount = 4 * (scrollPercentage / 100); // Max blur of 3px
-
   return (
-    <div>
-      <div
-        className={`flex flex-column content-between ${styles.container}`}
-        style={{
-          height: 100,
-          left: position,
-          top: position,
-          right: position,
-          backgroundColor: `rgba(0, 0, 0, ${0.2 * (scrollPercentage / 100)})`,
-          backdropFilter: `blur(${blurAmount}px)`,
-          WebkitBackdropFilter: `blur(${blurAmount}px)`,
-        }}
-      >
-        <div className={`flex flex-row ${styles.social}`}>
-          <div className={styles.icon}>
-            <Link
-              href="https://www.instagram.com/warrenamphlett/"
-              passHref
-              target="_blank"
-            >
-              <InstaLogo />
-            </Link>
-          </div>
-          {/* <div className={styles.icon}>
-            <Link
-              href="https://lightroom.adobe.com/u/warrenamphlett"
-              passHref
-              target="_blank"
-            >
-              <LightroomLogo />
-            </Link>
-          </div> */}
-          <div className={styles.icon}>
-            <Link
-              href="https://www.flickr.com/photos/199526751@N07/"
-              passHref
-              target="_blank"
-            >
-              <FlickrLogo />
-            </Link>
-          </div>
-          <div className={styles.icon}>
-            <Link href="https://github.com/wamphlett/" passHref target="_blank">
-              <GithubIcon />
-            </Link>
-          </div>
+    <Header
+      className={styles.header}
+      nameHref={
+        pathname === '/' ? (homeSiteUrl ?? 'https://warrenamphlett.co.uk') : '/'
+      }
+      navLinks={[
+        { name: 'Photos', link: photosSiteUrl ?? 'https://photos.warrenamphlett.co.uk' },
+      ]}
+      menuSlot={
+        <div onClick={onMenuClick} ref={menuRef}>
+          <FancyMenuIcon open={menuIcon} />
         </div>
-
-        <h1 className={styles.title}>
-          <Link
-            href={
-              usePathname() == '/'
-                ? (homeSiteUrl ?? 'https://warrenamphlett.co.uk')
-                : '/'
-            }
-          >
-            Warren Amphlett<span>.</span>
-          </Link>
-        </h1>
-
-        <div className={styles.links}>
-          <Link href={photosSiteUrl ?? 'https://photos.warrenamphlett.co.uk'}>
-            Photos
-          </Link>
-          <div onClick={onMenuClick} ref={menuRef}>
-            <FancyMenuIcon open={menuIcon} />
-          </div>
-        </div>
-      </div>
-    </div>
+      }
+      position={position}
+      socialLinks={socialLinks}
+    />
   );
 }

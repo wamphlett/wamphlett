@@ -1,24 +1,26 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Header } from '@wamphlett/ui';
 
 import FancyMenuIcon from '@/components/fancyMenuIcon';
 import Sidebar from './sidebar';
-import { FlickrLogo, InstaLogo } from '@/components/svgs';
 import { useRuntimeConfig } from '@/lib/config/useRuntimeConfig';
 
-import styles from './header.module.css';
+const socialLinks = [
+  { name: 'instagram', href: 'https://www.instagram.com/warrenamphlett/' },
+  { name: 'flickr', href: 'https://www.flickr.com/photos/199526751@N07/' },
+];
 
-export default function Header({ position = 24 }) {
+export default function PhotosHeader({ position = 24 }) {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
   const { homeSiteUrl } = useRuntimeConfig();
 
   const menuRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = event => {
-      // If the menu is open and the click was outside the menu, close it
       if (open && menuRef.current && !menuRef.current.contains(event.target)) {
         setOpen(false);
       }
@@ -26,7 +28,6 @@ export default function Header({ position = 24 }) {
 
     document.addEventListener('click', handleClickOutside);
 
-    // Cleanup: remove the event listener on component unmount
     return () => {
       document.removeEventListener('click', handleClickOutside);
     };
@@ -34,57 +35,18 @@ export default function Header({ position = 24 }) {
 
   return (
     <div>
-      <div
-        className={`flex flex-column content-between ${styles.container}`}
-        style={{
-          height: 100,
-          left: position,
-          top: position,
-          right: position,
-        }}
-      >
-        <div className={`flex flex-row ${styles.social}`}>
-          <div className={styles.icon}>
-            <Link
-              href="https://www.instagram.com/warrenamphlett/"
-              passHref
-              target="_blank"
-            >
-              <InstaLogo />
-            </Link>
+      <Header
+        menuSlot={
+          <div className="relative" onClick={() => setOpen(!open)} ref={menuRef}>
+            <FancyMenuIcon open={open} />
           </div>
-          {/* <div className={styles.icon}>
-            <Link href="https://lightroom.adobe.com/u/warrenamphlett" passHref target="_blank">
-              <LightroomLogo />
-            </Link>
-          </div> */}
-          <div className={styles.icon}>
-            <Link
-              href="https://www.flickr.com/photos/199526751@N07/"
-              passHref
-              target="_blank"
-            >
-              <FlickrLogo />
-            </Link>
-          </div>
-        </div>
-
-        <h1 className={styles.title}>
-          <Link
-            href={
-              usePathname() == '/'
-                ? (homeSiteUrl ?? 'https://warrenamphlett.co.uk')
-                : '/'
-            }
-          >
-            Warren Amphlett<span>.</span>
-          </Link>
-        </h1>
-
-        <div className="relative" onClick={() => setOpen(!open)} ref={menuRef}>
-          <FancyMenuIcon open={open} />
-        </div>
-      </div>
+        }
+        nameHref={
+          pathname === '/' ? (homeSiteUrl ?? 'https://warrenamphlett.co.uk') : '/'
+        }
+        position={position}
+        socialLinks={socialLinks}
+      />
 
       <Sidebar open={open} />
     </div>

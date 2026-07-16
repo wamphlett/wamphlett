@@ -116,13 +116,13 @@ article .images {
 
 article .images > a img {
   transition: scale .4s ease, outline .4s ease;
-  outline: 0px solid #5fa3d6;
+  outline: 0px solid var(--color-brand-accent);
   ;
 }
 
 article .images > a:hover img {
   scale: 1.015;
-  outline: 5px solid #5fa3d6;
+  outline: 5px solid var(--color-brand-accent);
 }
 
 article > h2 {
@@ -139,5 +139,5 @@ article > h2::before {
   width: 54px;
   height: 4px;
   border-radius: 3px;
-  background: linear-gradient(90deg, #5fa3d6, #8b6fc4);
+  background: linear-gradient(90deg, var(--color-brand-accent), #8b6fc4);
 }

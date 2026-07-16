@@ -87,7 +87,7 @@ export default function PrimaryLayout({
 
       <div
         className={`relative ${styles.page} ${styles.defaultWidth}`}
-        style={{ zIndex: 20, paddingBottom: 50 }}
+        style={{ paddingBottom: 50 }}
       >
         <div className={styles.content}>{children}</div>
         <div className={`${styles.sidebar} ${open ? styles.open : ''}`}>

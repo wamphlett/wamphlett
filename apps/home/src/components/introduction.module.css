@@ -27,7 +27,7 @@
 }
 
 .title > span {
-  color: #67BBC2;
+  color: var(--color-brand-accent);
 }
 
 .desc {

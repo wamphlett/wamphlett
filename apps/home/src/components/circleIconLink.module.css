@@ -21,7 +21,7 @@
   bottom: 0;
   right: 0;
   /* background-color: rgba(0, 0, 0, 0.6); */
-  background-color: #67BBC2;
+  background-color: var(--color-brand-accent);
   transition: transform .3s ease;
   border-radius: 50%;
   z-index: 1;

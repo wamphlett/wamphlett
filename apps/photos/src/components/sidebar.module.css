@@ -25,7 +25,7 @@
 }
 
 .year > span {
-  color: #67BBC2;
+  color: var(--color-brand-accent);
   display: block;
   margin-top: 20px;
   font-size: 2em;

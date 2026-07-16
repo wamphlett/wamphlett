@@ -18,6 +18,10 @@
     padding-top: 60vh;
 }
 
+.backdrop {
+    display: none;
+}
+
 @media only screen and (max-width: 850px) {
     .page {
         position: relative;
@@ -39,6 +43,9 @@
         box-shadow: -8px 0 30px rgba(0, 0, 0, 0.15);
         transition: right .4s ease;
         overflow: hidden;
+        /* must sit above .backdrop's z-index: 50, so the backdrop only
+           blurs .content behind it, not the sidebar itself */
+        z-index: 60;
     }
 
     .page .sidebar::before {
@@ -49,8 +56,8 @@
         background: linear-gradient(to right,
             rgba(95, 163, 214, .3) 0%,
             rgba(255, 255, 255, 0.9) 100%);
-        backdrop-filter: blur(16px) saturate(180%);
         -webkit-backdrop-filter: blur(16px) saturate(180%);
+        backdrop-filter: blur(16px) saturate(180%);
     }
 
     .page .sidebar.open {
@@ -63,8 +70,8 @@
         inset: 0;
         z-index: 50;
         background: rgba(20, 20, 20, 0.12);
-        backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
         opacity: 0;
         pointer-events: none;
         transition: opacity .4s ease;
@@ -74,10 +81,6 @@
         opacity: 1;
         pointer-events: auto;
     }
-}
-
-.backdrop {
-    display: none;
 }
 
 @media only screen and (max-width: 480px) {

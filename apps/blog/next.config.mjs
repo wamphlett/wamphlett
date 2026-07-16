@@ -10,6 +10,7 @@ const libraryUrl = process.env.LIBRARY_URL ?? 'https://library.wamphlett.net';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  transpilePackages: ['@wamphlett/ui'],
   serverExternalPackages: ['pino', 'pino-pretty', '@opentelemetry/api'],
   output: 'standalone',
   outputFileTracingRoot: path.join(import.meta.dirname, '..', '..'),

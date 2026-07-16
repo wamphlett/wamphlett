@@ -1,12 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import Script from 'next/script';
-import { Heebo } from 'next/font/google';
-
-const heebo = Heebo({
-  weight: ['100', '300', '900'],
-  subsets: ['latin'],
-});
+import { brandFont } from '@wamphlett/ui';
 
 const rtkSiteUrl =
   process.env.RTK_SITE_URL ?? 'https://rtk.warrenamphlett.co.uk';
@@ -35,7 +30,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={heebo.className}>
+      <body className={brandFont.className}>
         <Script id="google-tag-manager" strategy="afterInteractive">
           {`
           (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':

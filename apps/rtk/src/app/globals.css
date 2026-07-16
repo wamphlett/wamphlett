@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "../../../../packages/ui/theme/tokens.css"; /* Tailwind's @import resolver doesn't honor package.json exports under Turbopack dev, unlike next build/Node -- relative path avoids that */
 
 :root {
   --foreground-rgb: 0, 0, 0;

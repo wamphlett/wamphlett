@@ -1,13 +1,8 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import Script from 'next/script';
-import { Heebo, Inter, Oswald } from 'next/font/google';
-
-const heebo = Heebo({
-  weight: ['100', '300', '900'],
-  subsets: ['latin'],
-  variable: '--font-brand',
-});
+import { Inter, Oswald } from 'next/font/google';
+import { brandFont } from '@wamphlett/ui';
 
 const oswald = Oswald({
   subsets: ['latin'],
@@ -39,7 +34,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${heebo.variable} ${oswald.variable} ${inter.variable}`}
+        className={`${brandFont.variable} ${oswald.variable} ${inter.variable}`}
       >
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-DLXPGV6ZK1" />
         <Script id="google-analytics">
