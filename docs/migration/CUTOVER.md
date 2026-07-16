@@ -78,7 +78,7 @@ The image names changed with the rename, so update `tanka/versions.json` keys **
 | `ghcr.io/wamphlett/photos` | (unchanged) |
 
 Also note:
-- Version **values** are now bare semver (`0.3.0`), not `v`-prefixed tags like before — matches the image tag the workflow pushes. Adjust tanka if it assumed a `v`.
+- Version **values** are `v`-prefixed semver (`v0.3.0`), matching the image tag the workflow pushes and tanka's existing expectation — no change needed on that front.
 - `photos` gets CI/deploy for the first time — add its `versions.json` key + tanka wiring if you want it auto-deployed.
 - `home` (old `wamphlett`) never bumped lab before; the new `release.yml` now includes an `update-lab` job for **all** apps. If you want to keep home manual, drop it from that job.
 - Confirm `LAB_REPO_TOKEN` is present on the `wamphlett` repo (it was there before) and the workflow has `packages: write` (it does).
