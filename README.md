@@ -1,0 +1,1 @@
+![Warren Amphlett](docs/images/intro-header.png)
