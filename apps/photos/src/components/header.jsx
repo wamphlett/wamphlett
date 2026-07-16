@@ -1,6 +1,5 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
-import { usePathname } from 'next/navigation';
 import { Header } from '@wamphlett/ui';
 
 import FancyMenuIcon from '@/components/fancyMenuIcon';
@@ -10,12 +9,12 @@ import { useRuntimeConfig } from '@/lib/config/useRuntimeConfig';
 const socialLinks = [
   { name: 'instagram', href: 'https://www.instagram.com/warrenamphlett/' },
   { name: 'flickr', href: 'https://www.flickr.com/photos/199526751@N07/' },
+  { name: 'github', href: 'https://github.com/wamphlett/' },
 ];
 
 export default function PhotosHeader({ position = 24 }) {
   const [open, setOpen] = useState(false);
-  const pathname = usePathname();
-  const { homeSiteUrl } = useRuntimeConfig();
+  const { homeSiteUrl, blogSiteUrl } = useRuntimeConfig();
 
   const menuRef = useRef(null);
 
@@ -41,9 +40,10 @@ export default function PhotosHeader({ position = 24 }) {
             <FancyMenuIcon open={open} />
           </div>
         }
-        nameHref={
-          pathname === '/' ? (homeSiteUrl ?? 'https://warrenamphlett.co.uk') : '/'
-        }
+        nameHref={homeSiteUrl ?? 'https://warrenamphlett.co.uk'}
+        navLinks={[
+          { name: 'Blog', link: blogSiteUrl ?? 'https://blog.warrenamphlett.co.uk' },
+        ]}
         position={position}
         socialLinks={socialLinks}
       />

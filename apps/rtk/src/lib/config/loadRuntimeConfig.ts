@@ -18,6 +18,7 @@ export async function loadRuntimeConfig(): Promise<RuntimeConfig> {
   if (
     !data.apiUrl ||
     !data.baseUrl ||
+    !data.homeSiteUrl ||
     !data.photosSiteUrl ||
     !data.blogSiteUrl
   ) {

@@ -19,6 +19,7 @@ export function useRuntimeConfig() {
   return {
     config,
     homeSiteUrl: config?.homeSiteUrl,
+    blogSiteUrl: config?.blogSiteUrl,
     ready: !!config,
     error,
   };

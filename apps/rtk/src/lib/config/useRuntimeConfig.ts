@@ -20,6 +20,7 @@ export function useRuntimeConfig() {
     config,
     apiUrl: config?.apiUrl,
     baseUrl: config?.baseUrl,
+    homeSiteUrl: config?.homeSiteUrl,
     photosSiteUrl: config?.photosSiteUrl,
     blogSiteUrl: config?.blogSiteUrl,
     ready: !!config,

@@ -15,7 +15,7 @@ export async function loadRuntimeConfig(): Promise<RuntimeConfig> {
 
   const data = (await res.json()) as RuntimeConfig;
 
-  if (!data.homeSiteUrl) {
+  if (!data.homeSiteUrl || !data.blogSiteUrl) {
     throw new Error('Invalid runtime config');
   }
 

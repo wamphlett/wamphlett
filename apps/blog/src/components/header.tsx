@@ -1,6 +1,5 @@
 'use client';
 import React from 'react';
-import { usePathname } from 'next/navigation';
 import { Header, type SocialLink } from '@wamphlett/ui';
 
 import { useRuntimeConfig } from '@/lib/config/useRuntimeConfig';
@@ -26,15 +25,13 @@ export default function BlogHeader({
   onMenuClick,
   menuIcon = false,
 }: HeaderProps) {
-  const pathname = usePathname();
   const { homeSiteUrl, photosSiteUrl } = useRuntimeConfig();
 
   return (
     <Header
       className={styles.header}
-      nameHref={
-        pathname === '/' ? (homeSiteUrl ?? 'https://warrenamphlett.co.uk') : '/'
-      }
+      collapseMenuOnDesktop
+      nameHref={homeSiteUrl ?? 'https://warrenamphlett.co.uk'}
       navLinks={[
         { name: 'Photos', link: photosSiteUrl ?? 'https://photos.warrenamphlett.co.uk' },
       ]}

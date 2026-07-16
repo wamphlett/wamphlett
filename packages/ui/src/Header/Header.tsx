@@ -16,6 +16,10 @@ export type HeaderProps = {
   socialLinks?: SocialLink[];
   navLinks?: NavLink[];
   menuSlot?: ReactNode;
+  /** Hide menuSlot above 850px, showing it only at mobile widths -- for
+   * apps where the menu is redundant at desktop because its content has a
+   * permanent, always-visible desktop layout elsewhere on the page. */
+  collapseMenuOnDesktop?: boolean;
   position?: number;
   className?: string;
 };
@@ -28,6 +32,7 @@ export default function Header({
   socialLinks = [],
   navLinks = [],
   menuSlot,
+  collapseMenuOnDesktop = false,
   position = 24,
   className,
 }: HeaderProps) {
@@ -70,7 +75,7 @@ export default function Header({
       </h1>
 
       <div
-        className={`${styles.links} ${navLinks.length > 0 && menuSlot ? styles.linksCollapsible : ''}`}
+        className={`${styles.links} ${collapseMenuOnDesktop && menuSlot ? styles.linksCollapsible : ''}`}
       >
         {navLinks.map(navLink => (
           <Link href={navLink.link} key={navLink.name}>
