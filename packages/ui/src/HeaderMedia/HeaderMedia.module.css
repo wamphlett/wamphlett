@@ -5,14 +5,14 @@
   top: 0;
   left: 0;
   right: 0;
-  height: var(--header-image-height, 100vh);
+  height: var(--header-media-height, 100vh);
 }
 
 @media only screen and (max-width: 850px) {
   .container {
     height: var(
-      --header-image-tablet-height,
-      var(--header-image-height, 100vh)
+      --header-media-tablet-height,
+      var(--header-media-height, 100vh)
     );
   }
 }
@@ -20,13 +20,13 @@
 @media only screen and (max-width: 480px) {
   .container {
     height: var(
-      --header-image-mobile-height,
-      var(--header-image-tablet-height, var(--header-image-height, 100vh))
+      --header-media-mobile-height,
+      var(--header-media-tablet-height, var(--header-media-height, 100vh))
     );
   }
 }
 
-.imageWrapper {
+.mediaWrapper {
   background-color: #000;
   flex-grow: 1;
   overflow: hidden;

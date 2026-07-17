@@ -6,6 +6,9 @@ export type { SocialLinkName } from './icons/registry';
 export { default as HeaderImage } from './HeaderImage/HeaderImage';
 export type { HeaderImageProps } from './HeaderImage/HeaderImage';
 
+export { default as HeaderVideo } from './HeaderVideo/HeaderVideo';
+export type { HeaderVideoProps } from './HeaderVideo/HeaderVideo';
+
 export { default as AspectRatioBox } from './AspectRatioBox/AspectRatioBox';
 export type { AspectRatioBoxProps } from './AspectRatioBox/AspectRatioBox';
 

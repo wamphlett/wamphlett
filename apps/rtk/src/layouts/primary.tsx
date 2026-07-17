@@ -1,10 +1,8 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import HeaderVideo from '@/components/headerVideo';
-// import HeaderVideo from '@/components/videoBackground';
 import Header from '@/components/header';
 import styles from './layouts.module.css';
-import { DimmingBackground } from '@wamphlett/ui';
+import { DimmingBackground, HeaderVideo } from '@wamphlett/ui';
 
 type PrimaryLayoutProps = {
   headerImageUrl: string;
