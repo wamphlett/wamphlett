@@ -22,7 +22,7 @@ export default function HeaderVideo({
       }
       style={{ padding }}
     >
-      <div className="bg-black flex-grow overflow-hidden flex flex-col">
+      <div className="bg-black flex-grow overflow-hidden flex flex-col rounded-[22px]">
         <video
           autoPlay
           className="w-full h-full object-cover"
