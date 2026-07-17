@@ -61,16 +61,18 @@ function nextId() {
 function toUI(config: Config): UIConfig {
   return {
     updated_ts: config.updated_ts,
-    events: config.events.map(e => ({
-      ...e,
-      _id: nextId(),
-      image_grid: (e.image_grid ?? []).map(row => ({
-        ...row,
+    events: sortEvents(
+      config.events.map(e => ({
+        ...e,
         _id: nextId(),
-        ratio: (row.ratio ?? [4, 3]) as [number, number],
-        images: row.images.map(img => ({ ...img, _id: nextId() })),
+        image_grid: (e.image_grid ?? []).map(row => ({
+          ...row,
+          _id: nextId(),
+          ratio: (row.ratio ?? [4, 3]) as [number, number],
+          images: row.images.map(img => ({ ...img, _id: nextId() })),
+        })),
       })),
-    })),
+    ),
   };
 }
 
@@ -115,6 +117,18 @@ function newGridRow(): UIGridRow {
 
 function newImage(): UIImage {
   return { _id: nextId(), url: '', title: '', tagline: '' };
+}
+
+// ─── Ordering ────────────────────────────────────────────────────────────────
+// Events are always kept sorted by date (newest first). Undated events (new,
+// not yet filled in) sort to the top so they're easy to find and edit.
+
+const UNDATED_SORT_KEY = Number.MAX_SAFE_INTEGER;
+
+function sortEvents(events: UIEvent[]): UIEvent[] {
+  return [...events].sort(
+    (a, b) => (b.date_ts || UNDATED_SORT_KEY) - (a.date_ts || UNDATED_SORT_KEY),
+  );
 }
 
 // ─── Validation ──────────────────────────────────────────────────────────────
@@ -504,9 +518,9 @@ function SortableGridRow({
   );
 }
 
-// ─── Event card (sortable) ───────────────────────────────────────────────────
+// ─── Event card ────────────────────────────────────────────────────────────
 
-function SortableEventCard({
+function EventCard({
   event,
   index,
   onChange,
@@ -523,23 +537,6 @@ function SortableEventCard({
   onToggle: () => void;
   errors: ValidationErrors;
 }) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: event._id,
-  });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.4 : 1,
-  };
-
   const errPrefix = `e${index}`;
   const hasErrors = Object.keys(errors).some(k => k.startsWith(errPrefix));
 
@@ -577,11 +574,7 @@ function SortableEventCard({
   }
 
   return (
-    <div
-      className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden"
-      ref={setNodeRef}
-      style={style}
-    >
+    <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
       {/* Header row */}
       <div
         className={`flex items-center gap-2 px-4 py-3 cursor-pointer select-none ${
@@ -589,7 +582,6 @@ function SortableEventCard({
         }`}
         onClick={onToggle}
       >
-        <DragHandle attributes={attributes} listeners={listeners} />
         <span className="flex-1 text-sm font-medium truncate">
           {event.title || (
             <span className="text-gray-400 italic">Untitled event</span>
@@ -777,7 +769,9 @@ export default function ConfigPage() {
       c
         ? {
             ...c,
-            events: c.events.map(e => (e._id === id ? { ...e, ...patch } : e)),
+            events: sortEvents(
+              c.events.map(e => (e._id === id ? { ...e, ...patch } : e)),
+            ),
           }
         : c,
     );
@@ -791,27 +785,8 @@ export default function ConfigPage() {
 
   function addEvent() {
     const e = newEvent();
-    setConfig(c => (c ? { ...c, events: [...c.events, e] } : c));
+    setConfig(c => (c ? { ...c, events: sortEvents([e, ...c.events]) } : c));
     setExpanded(s => new Set(s).add(e._id));
-  }
-
-  // ── Event drag-and-drop ────────────────────────────────────────────────────
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  );
-
-  function handleEventDragEnd(e: DragEndEvent) {
-    const { active, over } = e;
-    if (!config || !over || active.id === over.id) {
-      return;
-    }
-    const ids = config.events.map(ev => ev._id);
-    const oldIdx = ids.indexOf(active.id as string);
-    const newIdx = ids.indexOf(over.id as string);
-    setConfig({ ...config, events: arrayMove(config.events, oldIdx, newIdx) });
   }
 
   // ── Save ────────────────────────────────────────────────────────────────────
@@ -955,56 +930,45 @@ export default function ConfigPage() {
         </div>
       )}
 
-      {/* Events */}
-      {config.events.length === 0 ? (
-        <div className="text-center py-16 text-gray-400 text-sm">
-          No events yet. Add one below.
-        </div>
-      ) : (
-        <DndContext
-          collisionDetection={closestCenter}
-          onDragEnd={handleEventDragEnd}
-          sensors={sensors}
-        >
-          <SortableContext
-            items={config.events.map(e => e._id)}
-            strategy={verticalListSortingStrategy}
-          >
-            <div className="space-y-3 mb-4">
-              {config.events.map((ev, i) => (
-                <SortableEventCard
-                  errors={errors}
-                  event={ev}
-                  expanded={expanded.has(ev._id)}
-                  index={i}
-                  key={ev._id}
-                  onChange={p => patchEvent(ev._id, p)}
-                  onRemove={() => removeEvent(ev._id)}
-                  onToggle={() =>
-                    setExpanded(s => {
-                      const next = new Set(s);
-                      if (next.has(ev._id)) {
-                        next.delete(ev._id);
-                      } else {
-                        next.add(ev._id);
-                      }
-                      return next;
-                    })
-                  }
-                />
-              ))}
-            </div>
-          </SortableContext>
-        </DndContext>
-      )}
-
       <button
-        className="w-full py-2.5 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-500 hover:border-gray-400 hover:text-gray-700 transition-colors"
+        className="w-full py-2.5 mb-4 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-500 hover:border-gray-400 hover:text-gray-700 transition-colors"
         onClick={addEvent}
         type="button"
       >
         + Add event
       </button>
+
+      {/* Events */}
+      {config.events.length === 0 ? (
+        <div className="text-center py-16 text-gray-400 text-sm">
+          No events yet. Add one above.
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {config.events.map((ev, i) => (
+            <EventCard
+              errors={errors}
+              event={ev}
+              expanded={expanded.has(ev._id)}
+              index={i}
+              key={ev._id}
+              onChange={p => patchEvent(ev._id, p)}
+              onRemove={() => removeEvent(ev._id)}
+              onToggle={() =>
+                setExpanded(s => {
+                  const next = new Set(s);
+                  if (next.has(ev._id)) {
+                    next.delete(ev._id);
+                  } else {
+                    next.add(ev._id);
+                  }
+                  return next;
+                })
+              }
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

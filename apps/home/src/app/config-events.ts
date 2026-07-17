@@ -1,4 +1,5 @@
 import { readConfig } from '@/lib/config-io';
+import { getTimelineArticles } from '@/lib/blog-api';
 import { ContentType, EventType, Grids } from './types';
 import type { EventData, Events } from './data';
 
@@ -8,20 +9,17 @@ import type { EventData, Events } from './data';
 export async function getOrderedEventsFromConfig(): Promise<
   Map<number, Events>
 > {
-  let config;
-  try {
-    config = await readConfig();
-  } catch {
-    return new Map();
-  }
+  const [config, articles] = await Promise.all([
+    readConfig().catch(() => ({ updated_ts: 0, events: [] })),
+    getTimelineArticles(),
+  ]);
 
-  const events: EventData[] = config.events
+  const configEntries = config.events
     .filter(e => e.date_ts > 0)
-    .slice()
-    .sort((a, b) => b.date_ts - a.date_ts)
     .map(event => {
       const date = new Date(event.date_ts * 1000);
-      return {
+      const data: EventData = {
+        kind: 'config',
         year: date.getUTCFullYear(),
         month: date.getUTCMonth() + 1,
         type: event.type as EventType,
@@ -41,14 +39,36 @@ export async function getOrderedEventsFromConfig(): Promise<
           })),
         })),
       };
+      return { dateTs: event.date_ts, data };
     });
 
+  const blogSiteUrl =
+    process.env.BLOG_SITE_URL ?? 'https://blog.warrenamphlett.co.uk';
+
+  const blogEntries = articles.map(article => {
+    const date = new Date(article.publishedAt * 1000);
+    const data: EventData = {
+      kind: 'blogPost',
+      year: date.getUTCFullYear(),
+      month: date.getUTCMonth() + 1,
+      title: article.title,
+      description: article.description,
+      image: article.image,
+      url: `${blogSiteUrl}/${article.topicSlug}/${article.slug}`,
+    };
+    return { dateTs: article.publishedAt, data };
+  });
+
+  const events = [...configEntries, ...blogEntries].sort(
+    (a, b) => b.dateTs - a.dateTs,
+  );
+
   const grouped = new Map<number, Events>();
-  for (const event of events) {
-    if (!grouped.has(event.year)) {
-      grouped.set(event.year, []);
+  for (const { data } of events) {
+    if (!grouped.has(data.year)) {
+      grouped.set(data.year, []);
     }
-    grouped.get(event.year)!.push(event);
+    grouped.get(data.year)!.push(data);
   }
   return grouped;
 }

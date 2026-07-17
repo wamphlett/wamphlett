@@ -1,6 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useRuntimeConfig } from '@/lib/config/useRuntimeConfig';
+import BlogPostCard from './blogPostCard';
 import styles from './recentPostPopup.module.css';
 
 type Article = {
@@ -11,29 +12,34 @@ type Article = {
   image: string;
   url: string;
   publishedAt: number;
+  metadata?: { featured?: string };
 };
 
 const THREE_MONTHS_MS = 3 * 30 * 24 * 60 * 60 * 1000;
 
 export default function RecentPostPopup() {
   const [article, setArticle] = useState<Article | null>(null);
+  const [label, setLabel] = useState('Latest post');
   const [visible, setVisible] = useState(false);
   const [dismissed, setDismissed] = useState(false);
   const { blogSiteUrl } = useRuntimeConfig();
 
   useEffect(() => {
-    fetch('/api/recent-post?limit=1')
+    fetch('/api/recent-post?limit=100')
       .then(r => r.json())
       .then(data => {
-        const art: Article = data.articles?.[0];
-        if (!art) {
+        const articles: Article[] = data.articles ?? [];
+        const index = articles.findIndex(a => a.metadata?.featured === 'true');
+        if (index === -1) {
           return;
         }
+        const art = articles[index];
         const ageMs = Date.now() - art.publishedAt * 1000;
         if (ageMs > THREE_MONTHS_MS) {
           return;
         }
         setArticle(art);
+        setLabel(index === 0 ? 'Latest post' : 'Recent post');
         setTimeout(() => setVisible(true), 2400);
       })
       .catch(() => {});
@@ -55,27 +61,13 @@ export default function RecentPostPopup() {
       >
         ✕
       </button>
-      <a
-        className={styles.link}
-        href={href}
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        <div className={styles.imageWrapper}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            alt={article.title}
-            className={styles.image}
-            src={article.image}
-          />
-        </div>
-        <div className={styles.body}>
-          <p className={styles.label}>Latest post</p>
-          <h3 className={styles.title}>{article.title}</h3>
-          <p className={styles.description}>{article.description}</p>
-          <span className={styles.readMore}>Read post →</span>
-        </div>
-      </a>
+      <BlogPostCard
+        description={article.description}
+        image={article.image}
+        label={label}
+        title={article.title}
+        url={href}
+      />
     </div>
   );
 }

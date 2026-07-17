@@ -9,6 +9,7 @@ import TriWide from './imagegrids/triWide';
 import TriSquare from './imagegrids/triSquare';
 import Offset from './imagegrids/offset';
 import { AspectRatioBox, LazyImage } from '@wamphlett/ui';
+import BlogPostCard from './blogPostCard';
 
 type TimelineProps = {
   events: Map<number, Events>;
@@ -26,6 +27,21 @@ export default function Timeline({ events }: TimelineProps) {
             <span />
             <span />
             {events.map((event, index) => {
+              if (event.kind === 'blogPost') {
+                return (
+                  <div
+                    className={`${styles.event} ${styles.blogPost}`}
+                    key={index}
+                  >
+                    <BlogPostCard
+                      description={event.description}
+                      image={event.image}
+                      title={event.title}
+                      url={event.url}
+                    />
+                  </div>
+                );
+              }
               return (
                 <div className={styles.event} key={index}>
                   <div className={styles.details}>
