@@ -1,6 +1,10 @@
-import styles from './fancyMenuIcon.module.css';
+import styles from './FancyMenuIcon.module.css';
 
-export default function FancyMenuIcon({ open = false }) {
+export type FancyMenuIconProps = {
+  open?: boolean;
+};
+
+export default function FancyMenuIcon({ open = false }: FancyMenuIconProps) {
   return (
     <div className={styles.icon} style={{ height: 60, width: 60 }}>
       <svg>

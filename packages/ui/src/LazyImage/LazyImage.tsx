@@ -2,9 +2,9 @@
 import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
 
-import styles from './lazyimage.module.css';
+import styles from './LazyImage.module.css';
 
-type LazyImageProps = {
+export type LazyImageProps = {
   url: string;
   opacity?: number;
   borderRadius?: number;
@@ -39,7 +39,7 @@ export default function LazyImage({
   opacity = 1,
   borderRadius = 5,
   backgroundColor = '#000',
-  blurDataURL = '',
+  blurDataURL,
   priority = false,
   sizes: sizesProp = '100vw',
 }: LazyImageProps) {
@@ -65,7 +65,11 @@ export default function LazyImage({
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }, [myComponentRef]);
+
+  if (!url) {
+    throw new Error('url is required');
+  }
 
   const sizes = width ? `${width}px` : sizesProp;
 
@@ -99,7 +103,7 @@ export default function LazyImage({
           transform: loaded ? 'scale(1)' : 'scale(1.1)',
         }}
       >
-        <Image alt="" fill sizes={sizes} src={blurDataURL} />
+        {blurDataURL && <Image alt="" fill sizes={sizes} src={blurDataURL} />}
       </div>
     </div>
   );

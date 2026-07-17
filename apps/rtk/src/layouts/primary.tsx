@@ -4,7 +4,7 @@ import HeaderVideo from '@/components/headerVideo';
 // import HeaderVideo from '@/components/videoBackground';
 import Header from '@/components/header';
 import styles from './layouts.module.css';
-import DimmingBackground from '@/components/dimmingBackground';
+import { DimmingBackground } from '@wamphlett/ui';
 
 type PrimaryLayoutProps = {
   headerImageUrl: string;
@@ -48,7 +48,7 @@ export default function PrimaryLayout({
 
   return (
     <div className="relative">
-      <DimmingBackground>
+      <DimmingBackground scrollMultiplier={1.5}>
         <Header position={padding} />
 
         {/* <HeaderImage

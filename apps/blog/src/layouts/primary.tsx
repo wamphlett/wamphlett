@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
-import HeaderImage from '@/components/headerimage';
+import { HeaderImage } from '@wamphlett/ui';
 import Header from '@/components/header';
 
 import styles from './layouts.module.css';
@@ -77,7 +77,10 @@ export default function PrimaryLayout({
 
       <HeaderImage
         blurDataURL={headerImageBlurDataURL}
+        height="60vh"
+        mobileHeight="85vh"
         padding={padding}
+        tabletHeight="75vh"
         url={headerImageUrl}
       />
 

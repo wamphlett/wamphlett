@@ -1,9 +1,8 @@
 'use client';
 import React from 'react';
-import { Header, headerSocialLinks } from '@wamphlett/ui';
+import { FancyMenuIcon, Header, headerSocialLinks } from '@wamphlett/ui';
 
 import { useRuntimeConfig } from '@/lib/config/useRuntimeConfig';
-import FancyMenuIcon from './fancyMenuIcon';
 import styles from './header.module.css';
 
 type HeaderProps = {

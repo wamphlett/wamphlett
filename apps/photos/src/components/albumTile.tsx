@@ -4,8 +4,7 @@ import Link from 'next/link';
 import { AlbumData } from '@/app/types';
 import { getBlurUrl } from '@/app/loaders';
 
-import AspectRatioBox from './aspectRatioBox';
-import LazyImage from './lazyimage';
+import { AspectRatioBox, LazyImage } from '@wamphlett/ui';
 
 import styles from './albumTile.module.css';
 

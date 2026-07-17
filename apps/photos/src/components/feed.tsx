@@ -3,8 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Masonry } from '@mui/lab';
 
 import styles from './feed.module.css';
-import LazyImage from './lazyimage';
-import AspectRatioBox from './aspectRatioBox';
+import { AspectRatioBox, LazyImage } from '@wamphlett/ui';
 import useWindowWidth from '../hooks/useWindowWidth';
 import Filter from './filter';
 import DisplayTypeSelector from './displayTypeSelector';

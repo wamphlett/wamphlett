@@ -1,6 +1,5 @@
 import { CSSProperties } from 'react';
-import AspectRatioBox from './aspectRatioBox';
-import LazyImage from './lazyimage';
+import { AspectRatioBox, LazyImage } from '@wamphlett/ui';
 
 import styles from './albumTile.module.css';
 import Link from 'next/link';

@@ -1,6 +1,5 @@
 import React from 'react';
-import AspectRatioBox from './aspectRatioBox';
-import LazyImage from './lazyimage';
+import { AspectRatioBox, LazyImage } from '@wamphlett/ui';
 import styles from './imageWithDescription.module.css';
 import { getBlurUrl } from '@/app/loaders';
 

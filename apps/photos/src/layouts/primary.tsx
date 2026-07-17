@@ -1,9 +1,8 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 
-import HeaderImage from '@/components/headerimage';
+import { DimmingBackground, HeaderImage } from '@wamphlett/ui';
 import Header from '@/components/header';
-import DimmingBackground from '@/components/dimmingBackground';
 
 import styles from './layouts.module.css';
 
@@ -54,6 +53,8 @@ export default function PrimaryLayout({
 
         <HeaderImage
           blurDataURL={headerImageBlurDataURL}
+          height="80vh"
+          mobileHeight="95vh"
           padding={padding}
           url={headerImageUrl}
         />

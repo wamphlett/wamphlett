@@ -1,9 +1,8 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import HeaderImage from '@/components/headerimage';
+import { DimmingBackground, HeaderImage } from '@wamphlett/ui';
 import Header from '@/components/header';
 import styles from './layouts.module.css';
-import DimmingBackground from '@/components/dimmingBackground';
 
 type PrimaryLayoutProps = {
   headerImageUrl: string;
@@ -47,7 +46,7 @@ export default function PrimaryLayout({
 
   return (
     <div className="relative">
-      <DimmingBackground>
+      <DimmingBackground scrollMultiplier={1.5}>
         <Header position={padding} />
 
         <HeaderImage

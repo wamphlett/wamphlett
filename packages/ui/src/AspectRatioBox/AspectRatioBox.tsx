@@ -1,7 +1,8 @@
 import React from 'react';
-import styles from './aspectRatioBox.module.css';
 
-type AspectRatioBoxProps = {
+import styles from './AspectRatioBox.module.css';
+
+export type AspectRatioBoxProps = {
   aspectRatio?: number;
   borderRadius?: number;
   children: React.ReactNode;

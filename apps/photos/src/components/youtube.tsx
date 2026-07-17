@@ -1,5 +1,5 @@
 import React from 'react';
-import AspectRatioBox from './aspectRatioBox';
+import { AspectRatioBox } from '@wamphlett/ui';
 
 import styles from './youtube.module.css';
 

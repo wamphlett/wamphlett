@@ -1,8 +1,7 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react';
-import { Header, headerSocialLinks } from '@wamphlett/ui';
+import { FancyMenuIcon, Header, headerSocialLinks } from '@wamphlett/ui';
 
-import FancyMenuIcon from '@/components/fancyMenuIcon';
 import Sidebar from './sidebar';
 import { useRuntimeConfig } from '@/lib/config/useRuntimeConfig';
 

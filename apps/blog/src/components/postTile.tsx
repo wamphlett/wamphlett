@@ -1,5 +1,4 @@
-import LazyImage from '@/components/lazyimage';
-import AspectRatioBox from './aspectRatioBox';
+import { AspectRatioBox, LazyImage } from '@wamphlett/ui';
 
 import styles from './postTile.module.css';
 import { getBlurUrl } from '@/app/loaders';
