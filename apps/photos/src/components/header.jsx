@@ -30,13 +30,20 @@ export default function PhotosHeader({ position = 24 }) {
     <div>
       <Header
         menuSlot={
-          <div className="relative" onClick={() => setOpen(!open)} ref={menuRef}>
+          <div
+            className="relative"
+            onClick={() => setOpen(!open)}
+            ref={menuRef}
+          >
             <FancyMenuIcon open={open} />
           </div>
         }
         nameHref={homeSiteUrl ?? 'https://warrenamphlett.co.uk'}
         navLinks={[
-          { name: 'Blog', link: blogSiteUrl ?? 'https://blog.warrenamphlett.co.uk' },
+          {
+            name: 'Blog',
+            link: blogSiteUrl ?? 'https://blog.warrenamphlett.co.uk',
+          },
         ]}
         position={position}
         socialLinks={headerSocialLinks}

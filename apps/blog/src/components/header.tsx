@@ -25,15 +25,18 @@ export default function BlogHeader({
     <Header
       className={styles.header}
       collapseMenuOnDesktop
-      nameHref={homeSiteUrl ?? 'https://warrenamphlett.co.uk'}
-      navLinks={[
-        { name: 'Photos', link: photosSiteUrl ?? 'https://photos.warrenamphlett.co.uk' },
-      ]}
       menuSlot={
         <div onClick={onMenuClick} ref={menuRef}>
           <FancyMenuIcon open={menuIcon} />
         </div>
       }
+      nameHref={homeSiteUrl ?? 'https://warrenamphlett.co.uk'}
+      navLinks={[
+        {
+          name: 'Photos',
+          link: photosSiteUrl ?? 'https://photos.warrenamphlett.co.uk',
+        },
+      ]}
       position={position}
       socialLinks={headerSocialLinks}
     />

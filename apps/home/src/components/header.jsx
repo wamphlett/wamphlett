@@ -14,11 +14,17 @@ export default function HomeHeader({ position = 24 }) {
 
   return (
     <Header
-      navLinks={[
-        { name: 'Photos', link: photosSiteUrl ?? 'https://photos.warrenamphlett.co.uk' },
-        { name: 'Blog', link: blogSiteUrl ?? 'https://blog.warrenamphlett.co.uk' },
-      ]}
       nameHref="/"
+      navLinks={[
+        {
+          name: 'Photos',
+          link: photosSiteUrl ?? 'https://photos.warrenamphlett.co.uk',
+        },
+        {
+          name: 'Blog',
+          link: blogSiteUrl ?? 'https://blog.warrenamphlett.co.uk',
+        },
+      ]}
       onNameClick={handleNameClick}
       position={position}
       scrollIn
