@@ -295,7 +295,6 @@ function update(
 
     try {
       const url = `${apiUrl}/frames/${encodeURIComponent(keyword)}`;
-      console.log(`Updating ${keyword} at ${url} with`, payload);
 
       const res = await fetch(url, {
         method: 'POST',
@@ -311,8 +310,7 @@ function update(
         throw new Error(errorText || `Request failed (${res.status})`);
       }
 
-      const data = await res.json();
-      console.log(`Updated ${keyword}:`, data);
+      await res.json();
     } catch (err) {
       console.error(`Failed to update ${keyword}:`, err);
     }

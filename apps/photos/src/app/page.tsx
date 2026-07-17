@@ -4,8 +4,6 @@ import { getAll } from './data';
 import { AlbumData } from './types';
 import { getBlurUrl } from './loaders';
 
-import AlbumTile, { AlbumTileStyle } from '@/components/albumTile';
-
 import albaniaImages from './images/2023albania';
 import Feed from '@/components/feed';
 

@@ -1,6 +1,5 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import HeaderImage from '@/components/headerimage';
 import HeaderVideo from '@/components/headerVideo';
 // import HeaderVideo from '@/components/videoBackground';
 import Header from '@/components/header';

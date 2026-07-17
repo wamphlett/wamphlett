@@ -32,7 +32,7 @@ export async function generateMetadata({
   let data;
   try {
     data = await getTopic(topic);
-  } catch (e) {
+  } catch {
     return {
       title: 'Not Found',
       description: 'The page you are looking for does not exist',

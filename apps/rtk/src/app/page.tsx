@@ -18,8 +18,6 @@ function isTokenValid(token?: string): boolean {
       Buffer.from(token.split('.')[1], 'base64').toString(),
     ) as JWTPayload;
 
-    console.log('Payload:', payload);
-
     if (!payload.exp) {
       return false;
     }
@@ -47,7 +45,7 @@ export default async function Page() {
       headerImageBlurDataURL={blurDataURL!}
       headerImageUrl={headerURL}
     >
-      <Introduction locale="en" />
+      <Introduction />
       <FrameList
         frames={data.frames}
         token={isTokenValid(token) ? token : undefined}

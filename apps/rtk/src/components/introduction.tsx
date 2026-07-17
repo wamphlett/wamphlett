@@ -1,6 +1,6 @@
 import styles from './introduction.module.css';
 
-export default function Introduction({ locale }: { locale: string }) {
+export default function Introduction() {
   return (
     <div
       className={`flex flex-row items-center justify-between ${styles.container}`}

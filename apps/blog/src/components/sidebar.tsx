@@ -118,7 +118,7 @@ export default async function Sidebar({ topic, currentUrl }: SidebarProps) {
   let data: SidebarData;
   try {
     data = await buildSidebar(topic);
-  } catch (e) {
+  } catch {
     return <div></div>;
   }
 

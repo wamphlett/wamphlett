@@ -1,4 +1,4 @@
-import { Metadata, ResolvingMetadata } from 'next';
+import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { getAlbum } from '../data';
@@ -21,10 +21,9 @@ type PageProps = {
   }>;
 };
 
-export async function generateMetadata(
-  { params }: PageProps,
-  parent: ResolvingMetadata,
-): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { album: albumPath } = await params;
   const album = getAlbum(`/${albumPath.join('/')}`);
   if (!album) {

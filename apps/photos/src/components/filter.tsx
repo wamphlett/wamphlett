@@ -1,14 +1,8 @@
 'use client';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 
 import styles from './filter.module.css';
 import Pill from './pill';
-
-enum DisplayType {
-  FullWidth,
-  Split,
-  Thirds,
-}
 
 interface FilterPros {
   onUpdate?: (activeTags: string[]) => void;
@@ -45,8 +39,8 @@ export default function Filter({ onUpdate }: FilterPros) {
             onClick={() => {
               let newActiveTags;
               if (tag.name in activeTags) {
-                const { [tag.name]: _, ...rest } = activeTags;
-                newActiveTags = rest;
+                newActiveTags = { ...activeTags };
+                delete newActiveTags[tag.name];
               } else {
                 newActiveTags = { ...activeTags, [tag.name]: tag.values };
               }

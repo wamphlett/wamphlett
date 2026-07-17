@@ -30,7 +30,6 @@ export default function Feed() {
     }
     loadingRef.current = true;
     const pageToLoad = pageRef.current + 1;
-    console.log('loading page:', pageToLoad);
 
     try {
       const res = await callApi('/api/feed', {
@@ -38,7 +37,6 @@ export default function Feed() {
         tags: tags.join(','),
       });
 
-      console.log('loaded:', res);
       if (!res.photos) {
         endRef.current = true;
       } else {
@@ -131,7 +129,6 @@ const callApi = async (route: string, feedOptions: feedOptions = {}) => {
   url += feedOptions.page ? `?page=${feedOptions.page}` : '';
   url += feedOptions.tags ? `&tags=${feedOptions.tags}` : '';
 
-  console.log('fetching:', url);
   const res = await fetch(url, {
     next: {
       // cache all requests for 1 second by default

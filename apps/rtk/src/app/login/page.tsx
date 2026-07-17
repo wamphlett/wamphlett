@@ -58,7 +58,7 @@ export default function LoginPage() {
 
       // Redirect
       window.location.href = baseUrl || '/';
-    } catch (err) {
+    } catch {
       setError('Network error. Try again.');
     } finally {
       setLoading(false);

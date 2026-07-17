@@ -1,4 +1,3 @@
-import path from 'path';
 import { getPlaiceholder } from 'plaiceholder';
 
 type urlCacheType = {

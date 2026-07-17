@@ -983,7 +983,11 @@ export default function ConfigPage() {
                   onToggle={() =>
                     setExpanded(s => {
                       const next = new Set(s);
-                      next.has(ev._id) ? next.delete(ev._id) : next.add(ev._id);
+                      if (next.has(ev._id)) {
+                        next.delete(ev._id);
+                      } else {
+                        next.add(ev._id);
+                      }
                       return next;
                     })
                   }

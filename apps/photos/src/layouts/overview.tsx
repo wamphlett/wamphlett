@@ -7,7 +7,6 @@ import GalleryTitle from '@/components/gallerytitle';
 import DimmingBackground from '@/components/dimmingBackground';
 
 import styles from './layouts.module.css';
-import Filter from '@/components/filter';
 
 type OverviewLayoutProps = {
   children: React.ReactNode;

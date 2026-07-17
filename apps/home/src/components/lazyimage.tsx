@@ -1,5 +1,4 @@
 'use client';
-import path from 'path';
 import React, { useEffect, useRef, useState } from 'react';
 import styles from './lazyimage.module.css';
 import Image from 'next/image';

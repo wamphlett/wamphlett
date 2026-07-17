@@ -14,6 +14,7 @@ export async function register() {
   });
 
   // Intercept console.error to capture Next.js internal SSR/RSC errors
+  /* eslint-disable no-console */
   const originalConsoleError = console.error;
   console.error = (...args: unknown[]) => {
     const first = args[0];

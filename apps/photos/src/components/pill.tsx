@@ -1,5 +1,5 @@
 'use client';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React from 'react';
 
 import styles from './pill.module.css';
 
@@ -10,12 +10,7 @@ interface PillPros {
   onClick?: () => void;
 }
 
-export default function Pill({
-  name,
-  tags,
-  onClick,
-  active = false,
-}: PillPros) {
+export default function Pill({ name, onClick, active = false }: PillPros) {
   return (
     <div
       className={`${styles.container} ${active ? styles.active : ''}`}

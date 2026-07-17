@@ -8,7 +8,6 @@ import Double from './imagegrids/double';
 import TriWide from './imagegrids/triWide';
 import TriSquare from './imagegrids/triSquare';
 import Offset from './imagegrids/offset';
-import Image from 'next/image';
 import LazyImage from './lazyimage';
 import AspectRatioBox from './aspectRatioBox';
 

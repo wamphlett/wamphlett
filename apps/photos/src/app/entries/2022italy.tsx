@@ -30,8 +30,3 @@ export default buildAlbum({
   // moreLinks: ["/2023/tokyo", "/2016/turkey", "/2018/lakecomo"],
   moreLinks: ['/2016/tokyo', '/2023/albania', '/2023/albania'],
 });
-
-// This function takes a filename as a string and returns the URL of the corresponding image in the library.
-function imageUrl(filename: string): string {
-  return libraryUrl(`/2016/tokyo/${filename}.jpg`);
-}
