@@ -2,7 +2,7 @@
 
 ## Recent Blog Posts
 
-<table>
+<table id="blogsync">
   <tr>
     <td width="33%" valign="top">
       <img src="https://library.wamphlett.net/photos/blog/japan/morning-revision.jpg?w=400&c=postThumb" width="100%" alt="RTK - How I Studied Remembering the Kanji" /><br />
