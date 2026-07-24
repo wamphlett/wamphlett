@@ -15,9 +15,9 @@
       Part 1 of my Remembering the Kanji series
     </td>
     <td width="33%" valign="top">
-      <img src="https://library.wamphlett.net/photos/blog/japan/why-japan.jpg?w=400&amp;c=postThumb" width="100%" alt="Why Japan?" /><br />
-      <a href="https://blog.warrenamphlett.co.uk/japan/why-japan"><b>Why Japan?</b></a><br />
-      Trying to answer the question I get asked most: why Japan?
+      <img src="https://library.wamphlett.net/photos/blog/projects/tylers-first-program.jpg?w=400&amp;c=postThumb" width="100%" alt="Teaching my son to code in a day" /><br />
+      <a href="https://blog.warrenamphlett.co.uk/projects/teaching-my-son-to-code-in-a-day"><b>Teaching my son to code in a day</b></a><br />
+      How I turned my son&#39;s work placement day into a real Python project, with a little help from AI
     </td>
   </tr>
 </table>
