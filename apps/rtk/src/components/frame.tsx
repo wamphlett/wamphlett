@@ -43,7 +43,7 @@ function Frame({ data, token, onComponentClick }: FrameProps) {
               className={styles.right}
               initialValue={data.primitives?.join('... ')}
               onCommit={update(
-                data.keyword,
+                data.frame_number,
                 'primitives',
                 apiUrl!,
                 token,
@@ -67,7 +67,7 @@ function Frame({ data, token, onComponentClick }: FrameProps) {
               <InputBox
                 initialValue={data.components?.join('... ')}
                 onCommit={update(
-                  data.keyword,
+                  data.frame_number,
                   'components',
                   apiUrl!,
                   token,
@@ -97,7 +97,7 @@ function Frame({ data, token, onComponentClick }: FrameProps) {
           {editable ? (
             <TextBox
               initialValue={data.story}
-              onCommit={update(data.keyword, 'story', apiUrl!, token)}
+              onCommit={update(data.frame_number, 'story', apiUrl!, token)}
               placeholder="story..."
             />
           ) : data.story ? (
@@ -115,7 +115,7 @@ function Frame({ data, token, onComponentClick }: FrameProps) {
           {(editable || data.comment) && editable ? (
             <InputBox
               initialValue={data.comment}
-              onCommit={update(data.keyword, 'comment', apiUrl!, token)}
+              onCommit={update(data.frame_number, 'comment', apiUrl!, token)}
               placeholder="comments..."
               small
             />
@@ -278,7 +278,7 @@ function formatStory(
 }
 
 function update(
-  keyword: string,
+  frameNumber: number,
   updateMask: string,
   apiUrl: string,
   token: string,
@@ -294,7 +294,7 @@ function update(
     };
 
     try {
-      const url = `${apiUrl}/frames/${encodeURIComponent(keyword)}`;
+      const url = `${apiUrl}/frames/${frameNumber}`;
 
       const res = await fetch(url, {
         method: 'POST',
@@ -312,7 +312,7 @@ function update(
 
       await res.json();
     } catch (err) {
-      console.error(`Failed to update ${keyword}:`, err);
+      console.error(`Failed to update frame ${frameNumber}:`, err);
     }
   };
 }
