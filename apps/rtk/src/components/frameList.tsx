@@ -130,21 +130,39 @@ export default function FrameList({
   });
   /* eslint-enable react-hooks/refs */
 
+  // Component name → index of the frame it refers to: a keyword match wins,
+  // otherwise the first frame that lists it as a primitive.
+  const componentIndex = useMemo(() => {
+    const index = new Map<string, number>();
+    frames.forEach((frame, i) => {
+      const key = frame.keyword.toLowerCase();
+      if (!index.has(key)) {
+        index.set(key, i);
+      }
+    });
+    frames.forEach((frame, i) =>
+      frame.primitives?.forEach(primitive => {
+        const key = primitive.toLowerCase();
+        if (!index.has(key)) {
+          index.set(key, i);
+        }
+      }),
+    );
+    return index;
+  }, [frames]);
+
+  const resolveComponent = useCallback(
+    (component: string) => {
+      const index = componentIndex.get(component.trim().toLowerCase());
+      return index === undefined ? undefined : frames[index];
+    },
+    [componentIndex, frames],
+  );
+
   const handleComponentClick = useCallback(
     (component: string) => {
-      const normalized = component.trim().toLowerCase();
-
-      let index = frames.findIndex(
-        frame => frame.keyword.toLowerCase() === normalized,
-      );
-      if (index === -1) {
-        index = frames.findIndex(frame =>
-          frame.primitives?.some(
-            primitive => primitive.toLowerCase() === normalized,
-          ),
-        );
-      }
-      if (index === -1) {
+      const index = componentIndex.get(component.trim().toLowerCase());
+      if (index === undefined) {
         return;
       }
 
@@ -190,7 +208,7 @@ export default function FrameList({
       };
       requestAnimationFrame(step);
     },
-    [frames, virtualizer, getObstructionHeight],
+    [componentIndex, virtualizer, getObstructionHeight],
   );
 
   return (
@@ -232,6 +250,7 @@ export default function FrameList({
                 data={filteredFrames[virtualRow.index]}
                 onComponentClick={handleComponentClick}
                 onUpdate={handleFrameUpdate}
+                resolveComponent={resolveComponent}
                 token={token}
               />
             </div>

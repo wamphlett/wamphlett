@@ -1,5 +1,13 @@
 'use client';
-import { Fragment, memo, useEffect, useRef, useState } from 'react';
+import {
+  Fragment,
+  memo,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
+import { createPortal } from 'react-dom';
 import { useRuntimeConfig } from '@/lib/config/useRuntimeConfig';
 import styles from './frame.module.css';
 
@@ -27,10 +35,18 @@ type FrameProps = {
   data: FrameData;
   token?: string;
   onComponentClick?: (component: string) => void;
+  // Finds the frame a component refers to, for the hover preview.
+  resolveComponent?: (component: string) => FrameData | undefined;
   onUpdate?: (frameNumber: number, patch: FramePatch) => void;
 };
 
-function Frame({ data, token, onComponentClick, onUpdate }: FrameProps) {
+function Frame({
+  data,
+  token,
+  onComponentClick,
+  resolveComponent,
+  onUpdate,
+}: FrameProps) {
   const editable = !!token;
   const { apiUrl } = useRuntimeConfig();
   const commit = (field: EditableField) =>
@@ -76,14 +92,11 @@ function Frame({ data, token, onComponentClick, onUpdate }: FrameProps) {
                 {data.components?.map((component, i) => (
                   <Fragment key={component + i}>
                     {i > 0 && '... '}
-                    <span
-                      className={styles.componentLink}
+                    <ComponentLink
+                      component={component}
                       onClick={() => onComponentClick?.(component)}
-                      role="button"
-                      tabIndex={0}
-                    >
-                      {component}
-                    </span>
+                      target={resolveComponent?.(component)}
+                    />
                   </Fragment>
                 ))}
               </span>
@@ -144,6 +157,104 @@ function Frame({ data, token, onComponentClick, onUpdate }: FrameProps) {
         </div>
       </div>
     </div>
+  );
+}
+
+const PREVIEW_DELAY_MS = 200;
+const PREVIEW_GAP_PX = 6;
+const VIEWPORT_MARGIN_PX = 8;
+
+type ComponentLinkProps = {
+  component: string;
+  target?: FrameData;
+  onClick: () => void;
+};
+
+// Component name that jumps to its frame on click and, after a short hover,
+// shows that frame in a floating read-only card.
+function ComponentLink({ component, target, onClick }: ComponentLinkProps) {
+  const [open, setOpen] = useState(false);
+  const linkRef = useRef<HTMLSpanElement>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
+  const timer = useRef<number | undefined>(undefined);
+
+  const hide = () => {
+    window.clearTimeout(timer.current);
+    setOpen(false);
+  };
+
+  // Place below the link, or above it when there isn't room; keep it on screen horizontally.
+  useLayoutEffect(() => {
+    if (!open || !linkRef.current || !previewRef.current) {
+      return;
+    }
+    const link = linkRef.current.getBoundingClientRect();
+    const preview = previewRef.current;
+    const below = link.bottom + PREVIEW_GAP_PX;
+    const top =
+      below + preview.offsetHeight <= window.innerHeight - VIEWPORT_MARGIN_PX
+        ? below
+        : Math.max(
+            VIEWPORT_MARGIN_PX,
+            link.top - PREVIEW_GAP_PX - preview.offsetHeight,
+          );
+    const left = Math.max(
+      VIEWPORT_MARGIN_PX,
+      Math.min(
+        link.left,
+        window.innerWidth - preview.offsetWidth - VIEWPORT_MARGIN_PX,
+      ),
+    );
+    preview.style.top = `${top}px`;
+    preview.style.left = `${left}px`;
+  }, [open]);
+
+  // The preview is fixed-position, so it would drift away from the link on scroll; close it instead.
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+    const close = () => setOpen(false);
+    window.addEventListener('scroll', close, { passive: true });
+    return () => window.removeEventListener('scroll', close);
+  }, [open]);
+
+  useEffect(() => () => window.clearTimeout(timer.current), []);
+
+  return (
+    <>
+      <span
+        className={styles.componentLink}
+        onClick={() => {
+          hide();
+          onClick();
+        }}
+        onMouseEnter={
+          target &&
+          (() => {
+            timer.current = window.setTimeout(
+              () => setOpen(true),
+              PREVIEW_DELAY_MS,
+            );
+          })
+        }
+        onMouseLeave={hide}
+        ref={linkRef}
+        role="button"
+        tabIndex={0}
+      >
+        {component}
+      </span>
+      {/* Portaled: list rows clip their overflow. */}
+      {open &&
+        target &&
+        createPortal(
+          <div className={styles.preview} ref={previewRef} role="tooltip">
+            <Frame data={target} />
+          </div>,
+          document.body,
+        )}
+    </>
   );
 }
 

@@ -93,6 +93,22 @@
   text-decoration: underline;
 }
 
+/* hover preview of a component's frame; above the sticky search bar and header */
+.preview {
+  position: fixed;
+  z-index: 200;
+  width: min(560px, calc(100vw - 16px));
+  font-size: 0.85em;
+  border-radius: 4px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.preview .container {
+  margin: 0;
+}
+
 .jlpt {
   font-size: 1.6em;
   font-weight: 800 !important;
