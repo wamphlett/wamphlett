@@ -39,7 +39,7 @@ function reasonLabel({ code, value }: Reason): string {
     case 'lapses_14d':
       return value === null
         ? 'lapses in 14 days'
-        : `${value} lapses in 14 days`;
+        : `${value} ${value === 1 ? 'lapse' : 'lapses'} in 14 days`;
     case 'low_stability':
       return value === null ? 'low stability' : `stability ${value} days`;
     case 'leech':
@@ -497,7 +497,7 @@ export default function DailyEntry({
                         rel="noreferrer"
                         target="_blank"
                       >
-                        Tatoeba · {s.owner}
+                        Tatoeba{s.owner && ` · ${s.owner}`}
                       </a>
                     ) : (
                       <span className={styles.aiLabel}>AI-written</span>

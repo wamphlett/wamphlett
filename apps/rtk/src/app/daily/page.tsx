@@ -7,6 +7,9 @@ import styles from '@/components/daily/daily.module.css';
 
 export const metadata: Metadata = { title: 'Daily reading' };
 
+// The entries change after a build: read them on every request.
+export const dynamic = 'force-dynamic';
+
 export default function Page() {
   const days = getDailyIndex();
   return (

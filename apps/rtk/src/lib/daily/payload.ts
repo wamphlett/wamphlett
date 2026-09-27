@@ -10,7 +10,8 @@ import type {
 } from './types';
 
 type Source =
-  | { source: 'tatoeba'; source_id: number; owner: string }
+  // Tatoeba sentences can have no owner (a deleted account).
+  | { source: 'tatoeba'; source_id: number; owner: string | null }
   | { source: 'ai'; source_id: null; owner: null };
 
 export type DailyPayload = {
