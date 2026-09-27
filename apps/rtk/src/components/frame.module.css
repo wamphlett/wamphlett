@@ -158,3 +158,46 @@
   font-style: normal;
   font-size: 1.2em;
 }
+
+.field {
+  position: relative;
+  width: 100%;
+}
+
+/* small dot in the field's bottom-right corner after a successful save */
+.field .savedDot {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 5px;
+  height: 5px;
+  margin: 0;
+  border-radius: 50%;
+  background: #4CAF50;
+  opacity: 0;
+  pointer-events: none;
+  animation: savedDot 2s ease-out;
+}
+
+@keyframes savedDot {
+  10%, 60% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.inputBox.saveFailed {
+  opacity: 1;
+  box-shadow: inset 0 0 0 1px #cd0505;
+}
+
+.saveError {
+  margin-top: 4px;
+  padding: 0 6px;
+  font-size: 0.85em;
+  font-style: normal;
+  color: #cd0505;
+  text-align: left;
+}

@@ -27,7 +27,7 @@ import styles from './frameList.module.css';
 // 			"chapter": 1
 // 		},
 
-import Frame from './frame';
+import Frame, { type FramePatch } from './frame';
 
 type FrameData = {
   id: string;
@@ -50,9 +50,26 @@ type FrameProps = {
   token?: string;
 };
 
-export default function FrameList({ frames, token }: FrameProps) {
+export default function FrameList({
+  frames: initialFrames,
+  token,
+}: FrameProps) {
+  // Edits are merged in here so frames re-mounted by the virtualizer (e.g.
+  // after searching) show the saved values rather than the initial payload.
+  const [frames, setFrames] = useState(initialFrames);
   const [inputValue, setInputValue] = useState('');
   const [query, setQuery] = useState('');
+
+  const handleFrameUpdate = useCallback(
+    (frameNumber: number, patch: FramePatch) => {
+      setFrames(prev =>
+        prev.map(frame =>
+          frame.frame_number === frameNumber ? { ...frame, ...patch } : frame,
+        ),
+      );
+    },
+    [],
+  );
 
   useEffect(() => {
     const handle = setTimeout(() => setQuery(inputValue), 150);
@@ -214,6 +231,7 @@ export default function FrameList({ frames, token }: FrameProps) {
               <Frame
                 data={filteredFrames[virtualRow.index]}
                 onComponentClick={handleComponentClick}
+                onUpdate={handleFrameUpdate}
                 token={token}
               />
             </div>

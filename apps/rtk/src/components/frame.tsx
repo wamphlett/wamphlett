@@ -19,15 +19,25 @@ type FrameData = {
   components: string[];
 };
 
+type EditableField = 'primitives' | 'components' | 'story' | 'comment';
+
+export type FramePatch = Partial<Pick<FrameData, EditableField>>;
+
 type FrameProps = {
   data: FrameData;
   token?: string;
   onComponentClick?: (component: string) => void;
+  onUpdate?: (frameNumber: number, patch: FramePatch) => void;
 };
 
-function Frame({ data, token, onComponentClick }: FrameProps) {
+function Frame({ data, token, onComponentClick, onUpdate }: FrameProps) {
   const editable = !!token;
   const { apiUrl } = useRuntimeConfig();
+  const commit = (
+    field: EditableField,
+    transformFunc?: (value: string) => string | string[],
+  ) =>
+    update(data.frame_number, field, apiUrl!, token!, onUpdate, transformFunc);
 
   return (
     <div className={styles.container}>
@@ -42,13 +52,7 @@ function Frame({ data, token, onComponentClick }: FrameProps) {
             <InputBox
               className={styles.right}
               initialValue={data.primitives?.join('... ')}
-              onCommit={update(
-                data.frame_number,
-                'primitives',
-                apiUrl!,
-                token,
-                split,
-              )}
+              onCommit={commit('primitives', split)}
               placeholder="primitives..."
             />
           ) : (
@@ -66,13 +70,7 @@ function Frame({ data, token, onComponentClick }: FrameProps) {
             (editable ? (
               <InputBox
                 initialValue={data.components?.join('... ')}
-                onCommit={update(
-                  data.frame_number,
-                  'components',
-                  apiUrl!,
-                  token,
-                  split,
-                )}
+                onCommit={commit('components', split)}
                 placeholder="components..."
                 small
               />
@@ -97,7 +95,7 @@ function Frame({ data, token, onComponentClick }: FrameProps) {
           {editable ? (
             <TextBox
               initialValue={data.story}
-              onCommit={update(data.frame_number, 'story', apiUrl!, token)}
+              onCommit={commit('story')}
               placeholder="story..."
             />
           ) : data.story ? (
@@ -115,7 +113,7 @@ function Frame({ data, token, onComponentClick }: FrameProps) {
           {(editable || data.comment) && editable ? (
             <InputBox
               initialValue={data.comment}
-              onCommit={update(data.frame_number, 'comment', apiUrl!, token)}
+              onCommit={commit('comment')}
               placeholder="comments..."
               small
             />
@@ -152,10 +150,73 @@ function Frame({ data, token, onComponentClick }: FrameProps) {
   );
 }
 
+type SaveStatus =
+  | { state: 'idle' }
+  | { state: 'saved'; at: number }
+  | { state: 'error'; message: string };
+
+// Shared edit/commit behaviour for InputBox and TextBox: local value that
+// follows the persisted value, a commit on blur that is skipped when nothing
+// changed, and a save status the field renders as feedback.
+function useCommittedValue(
+  initialValue: string,
+  onCommit?: (value: string) => Promise<void>,
+) {
+  const [value, setValue] = useState(initialValue);
+  const [prevInitialValue, setPrevInitialValue] = useState(initialValue);
+  if (initialValue !== prevInitialValue) {
+    setPrevInitialValue(initialValue);
+    setValue(initialValue);
+  }
+  const [status, setStatus] = useState<SaveStatus>({ state: 'idle' });
+
+  const commit = async () => {
+    if (!onCommit) {
+      return;
+    }
+    if (value === initialValue) {
+      // Back to the persisted value: nothing to save, and any earlier failure no longer applies.
+      setStatus({ state: 'idle' });
+      return;
+    }
+    try {
+      await onCommit(value);
+      setStatus({ state: 'saved', at: Date.now() });
+    } catch (err) {
+      setStatus({
+        state: 'error',
+        message: err instanceof Error ? err.message : String(err),
+      });
+    }
+  };
+
+  const clearSaved = () =>
+    setStatus(s => (s.state === 'saved' ? { state: 'idle' } : s));
+
+  const statusClass = status.state === 'error' ? styles.saveFailed : '';
+
+  // Keyed by save time so back-to-back saves restart the dot's fade.
+  const feedback =
+    status.state === 'error' ? (
+      <div className={styles.saveError} role="alert">
+        Couldn&apos;t save: {status.message}
+      </div>
+    ) : status.state === 'saved' ? (
+      <span
+        aria-label="Saved"
+        className={styles.savedDot}
+        key={status.at}
+        onAnimationEnd={clearSaved}
+      />
+    ) : null;
+
+  return { value, setValue, commit, statusClass, feedback };
+}
+
 type InputBoxProps = {
   initialValue?: string;
   placeholder?: string;
-  onCommit?: (value: string) => void;
+  onCommit?: (value: string) => Promise<void>;
   className?: string;
   small?: boolean;
 };
@@ -167,31 +228,30 @@ export function InputBox({
   className,
   small = false,
 }: InputBoxProps) {
-  const [value, setValue] = useState(initialValue);
-  const [prevInitialValue, setPrevInitialValue] = useState(initialValue);
-  if (initialValue !== prevInitialValue) {
-    setPrevInitialValue(initialValue);
-    setValue(initialValue);
-  }
+  const { value, setValue, commit, statusClass, feedback } = useCommittedValue(
+    initialValue,
+    onCommit,
+  );
 
   return (
-    <input
-      className={`${styles.inputBox} ${className} ${small ? styles.small : ''}`}
-      onBlur={() => {
-        onCommit?.(value);
-      }}
-      onChange={e => setValue(e.target.value)}
-      placeholder={placeholder}
-      type="text"
-      value={value}
-    />
+    <div className={styles.field}>
+      <input
+        className={`${styles.inputBox} ${className} ${small ? styles.small : ''} ${statusClass}`}
+        onBlur={commit}
+        onChange={e => setValue(e.target.value)}
+        placeholder={placeholder}
+        type="text"
+        value={value}
+      />
+      {feedback}
+    </div>
   );
 }
 
 type TextBoxProps = {
   initialValue?: string;
   placeholder?: string;
-  onCommit?: (value: string) => void;
+  onCommit?: (value: string) => Promise<void>;
   className?: string;
 };
 
@@ -201,14 +261,11 @@ export function TextBox({
   onCommit,
   className,
 }: TextBoxProps) {
-  const [value, setValue] = useState(initialValue);
-  const [prevInitialValue, setPrevInitialValue] = useState(initialValue);
+  const { value, setValue, commit, statusClass, feedback } = useCommittedValue(
+    initialValue,
+    onCommit,
+  );
   const ref = useRef<HTMLTextAreaElement>(null);
-
-  if (initialValue !== prevInitialValue) {
-    setPrevInitialValue(initialValue);
-    setValue(initialValue);
-  }
 
   // Auto-grow when content changes
   useEffect(() => {
@@ -221,15 +278,18 @@ export function TextBox({
   }, [value]);
 
   return (
-    <textarea
-      className={`${styles.inputBox} ${styles.textBox} ${className}`}
-      onBlur={() => onCommit?.(value)}
-      onChange={e => setValue(e.target.value)}
-      placeholder={placeholder}
-      ref={ref}
-      rows={1}
-      value={value}
-    />
+    <div className={styles.field}>
+      <textarea
+        className={`${styles.inputBox} ${styles.textBox} ${className} ${statusClass}`}
+        onBlur={commit}
+        onChange={e => setValue(e.target.value)}
+        placeholder={placeholder}
+        ref={ref}
+        rows={1}
+        value={value}
+      />
+      {feedback}
+    </div>
   );
 }
 
@@ -277,43 +337,37 @@ function formatStory(
   return result;
 }
 
+// Returns a commit handler that persists one field. Rejects on failure so the
+// field can surface the error; on success the saved value is pushed up via
+// onUpdate so the in-memory frame list (and anything re-mounting from it,
+// e.g. after a search) reflects the edit.
 function update(
   frameNumber: number,
-  updateMask: string,
+  field: EditableField,
   apiUrl: string,
   token: string,
+  onUpdate?: (frameNumber: number, patch: FramePatch) => void,
   transformFunc?: (value: string) => string | string[],
-): (value: string) => void {
+): (value: string) => Promise<void> {
   return async function (input: string): Promise<void> {
-    let updatedValue: string | string[] = input;
-    if (transformFunc) {
-      updatedValue = transformFunc(input);
+    const updatedValue = transformFunc ? transformFunc(input) : input;
+    const payload = { [field]: updatedValue } as FramePatch;
+
+    const res = await fetch(`${apiUrl}/frames/${frameNumber}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(errorText || `Request failed (${res.status})`);
     }
-    const payload = {
-      [updateMask]: updatedValue,
-    };
 
-    try {
-      const url = `${apiUrl}/frames/${frameNumber}`;
-
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(errorText || `Request failed (${res.status})`);
-      }
-
-      await res.json();
-    } catch (err) {
-      console.error(`Failed to update frame ${frameNumber}:`, err);
-    }
+    onUpdate?.(frameNumber, payload);
   };
 }
 
