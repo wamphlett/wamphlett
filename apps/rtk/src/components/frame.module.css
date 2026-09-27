@@ -1,3 +1,32 @@
+/* frame number links to the frame itself (#<frame_number>). Black like the
+   span it replaced: .container only colours p/h2/span, and the site's own
+   text colour is light (dark theme), so an inheriting link is invisible. */
+.frameLink {
+  color: #000;
+  text-decoration: none;
+}
+
+.frameLink:hover {
+  text-decoration: underline;
+}
+
+/* outline for a linked-to frame: hold ~5s, then fade. Inset so it neither
+   changes the row's size (no virtualizer re-measure) nor gets clipped by the
+   row wrapper's overflow: hidden. */
+.highlighted {
+  animation: frameHighlight 6s ease-out forwards;
+}
+
+@keyframes frameHighlight {
+  0%,
+  83% {
+    box-shadow: inset 0 0 0 4px var(--color-brand-accent, #5fa3d6);
+  }
+  100% {
+    box-shadow: inset 0 0 0 4px transparent;
+  }
+}
+
 .container {
   background-color: #fff;
   margin-bottom: 10px;
@@ -133,6 +162,135 @@
 
 .jlpt.level_N1 {
   color: #cd0505;
+}
+
+/* compact view: spreadsheet-style rows. The header (CompactHeader) uses the
+   same .sheetRow grid; font-size is in rem so em-based columns line up
+   between rows and the header even though they sit in different parents. */
+.sheetRow {
+  display: grid;
+  grid-template-columns:
+    2.4em 1.6em minmax(6em, 1fr) minmax(6em, 1fr) minmax(6em, 1fr)
+    minmax(14em, 3.5fr) minmax(5em, 0.9fr) minmax(6em, 1fr) 1.6em 1.6em 2em;
+  column-gap: 12px;
+  align-items: baseline;
+  font-size: 0.9rem;
+}
+
+.sheetRow > * {
+  min-width: 0;
+}
+
+.container.sheetRow {
+  margin: 0;
+  padding: 6px 16px;
+  border-bottom: 1px solid #ececec;
+}
+
+/* textareas report their baseline near the bottom, which drags every other
+   cell down; editing rows align to the top and pad text to the inputs' 4px */
+.sheetRow.sheetEditing {
+  align-items: start;
+}
+
+.sheetEditing > span,
+.sheetEditing > h2 {
+  padding-top: 4px;
+}
+
+.sheetEditing > .kanji {
+  padding-top: 0;
+}
+
+.sheetHeader {
+  flex-basis: 100%;
+  padding-top: 4px;
+}
+
+.sheetHeader > * {
+  font-size: 0.75em;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #999;
+}
+
+.sortButton {
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.sortButton:hover,
+.sortButton.sorted {
+  color: #000;
+}
+
+.clamp {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.sheetRow .frameNumber {
+  font-size: 1em;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.5;
+}
+
+.sheetRow .kanji {
+  margin: 0;
+  font-size: 1.5em;
+  line-height: 1.2;
+}
+
+.sheetRow h2 {
+  font-size: 1em;
+}
+
+.sheetRow .primitives,
+.sheetRow .components {
+  display: inline;
+}
+
+.sheetRow .componentLink {
+  cursor: pointer;
+}
+
+.sheetRow .jlpt {
+  font-size: 1em;
+}
+
+.sheetMuted {
+  font-size: 0.85em;
+  opacity: 0.6;
+}
+
+.sheetStory p {
+  cursor: pointer;
+}
+
+.sheetRow .textBox {
+  font-size: 1em;
+  line-height: 1.5;
+}
+
+/* story editor shows two lines until focused */
+.sheetRow .textBox:not(:focus) {
+  max-height: calc(3em + 8px);
+}
+
+@media (max-width: 900px) {
+  .sheetRow {
+    grid-template-columns: 2.4em 1.6em minmax(5em, 1fr) minmax(10em, 3fr) 2em;
+  }
+
+  .sheetRow .sheetOptional {
+    display: none;
+  }
 }
 
 .inputBox {
