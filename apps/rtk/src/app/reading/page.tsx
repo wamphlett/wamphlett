@@ -47,7 +47,7 @@ export default function Page() {
           {days.map(day => (
             <Link
               className={styles.day}
-              href={`/daily/${day.date}`}
+              href={`/reading/${day.date}`}
               key={day.date}
             >
               <span className={styles.dayHead}>

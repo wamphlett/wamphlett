@@ -98,7 +98,7 @@ export default function DailyEntry({
   const targets: Record<string, true> = Object.fromEntries(
     entry.targets.map(t => [t.kanji, true]),
   );
-  const base = `/daily/${entry.date}`;
+  const base = `/reading/${entry.date}`;
   // Every action would be one rtk-api call; the mock only shows which.
   const mock = (call: string) => setToast(`Mock: would send ${call}`);
   const toggle = (key: string) =>
@@ -173,14 +173,14 @@ export default function DailyEntry({
           write by hand. Tap any word for its reading.
         </span>
         <div className={styles.nav}>
-          <Link href="/daily">All entries</Link>
+          <Link href="/reading">All entries</Link>
           {prevDate && (
-            <Link href={`/daily/${prevDate}`}>
+            <Link href={`/reading/${prevDate}`}>
               Previous: {formatDay(prevDate, 'short')}
             </Link>
           )}
           {nextDate && (
-            <Link href={`/daily/${nextDate}`}>
+            <Link href={`/reading/${nextDate}`}>
               Next: {formatDay(nextDate, 'short')}
             </Link>
           )}
