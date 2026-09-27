@@ -771,8 +771,9 @@ function formatStory(
 // Returns a commit handler that persists one field. Rejects on failure so the
 // field can surface the error; on success the saved value is pushed up via
 // onUpdate so the in-memory frame list (and anything re-mounting from it,
-// e.g. after a search) reflects the edit.
-function update(
+// e.g. after a search) reflects the edit. The daily reading page uses it for
+// its target kanji's stories and comments.
+export function update(
   frameNumber: number,
   field: EditableField,
   apiUrl: string,
