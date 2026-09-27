@@ -7,6 +7,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
 } from 'react';
 import { flushSync } from 'react-dom';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
@@ -27,7 +28,7 @@ import styles from './frameList.module.css';
 // 			"chapter": 1
 // 		},
 
-import Frame, { type FramePatch } from './frame';
+import Frame, { CompactHeader, type FramePatch } from './frame';
 
 type FrameData = {
   id: string;
@@ -50,6 +51,34 @@ type FrameProps = {
   token?: string;
 };
 
+type Density = 'comfortable' | 'compact';
+
+// View preference lives in localStorage. Read through useSyncExternalStore so
+// the server render (and hydration) uses the default and switches afterwards,
+// and so other tabs pick up changes via the storage event.
+const DENSITY_KEY = 'rtk:density';
+const DENSITY_EVENT = 'rtk:density-change';
+
+function subscribeDensity(onChange: () => void) {
+  window.addEventListener('storage', onChange);
+  window.addEventListener(DENSITY_EVENT, onChange);
+  return () => {
+    window.removeEventListener('storage', onChange);
+    window.removeEventListener(DENSITY_EVENT, onChange);
+  };
+}
+
+function readDensity(): Density {
+  return localStorage.getItem(DENSITY_KEY) === 'compact'
+    ? 'compact'
+    : 'comfortable';
+}
+
+const DENSITY_OPTIONS: { value: Density; label: string }[] = [
+  { value: 'comfortable', label: 'Comfortable' },
+  { value: 'compact', label: 'Compact' },
+];
+
 export default function FrameList({
   frames: initialFrames,
   token,
@@ -59,6 +88,11 @@ export default function FrameList({
   const [frames, setFrames] = useState(initialFrames);
   const [inputValue, setInputValue] = useState('');
   const [query, setQuery] = useState('');
+  const density = useSyncExternalStore(
+    subscribeDensity,
+    readDensity,
+    (): Density => 'comfortable',
+  );
 
   const handleFrameUpdate = useCallback(
     (frameNumber: number, patch: FramePatch) => {
@@ -123,7 +157,7 @@ export default function FrameList({
   /* eslint-disable react-hooks/refs */
   const virtualizer = useWindowVirtualizer({
     count: filteredFrames.length,
-    estimateSize: () => 260,
+    estimateSize: () => (density === 'compact' ? 40 : 260),
     overscan: 6,
     scrollMargin: listOffsetRef.current,
     getItemKey: index => filteredFrames[index].id,
@@ -159,6 +193,47 @@ export default function FrameList({
     [componentIndex, frames],
   );
 
+  // react-virtual only self-corrects its target for rows that were still
+  // at an estimated (unmeasured) height while a scroll is "auto" — that
+  // correction is explicitly skipped once behavior is "smooth", since
+  // adjusting the destination mid-CSS-animation would look glitchy. So a
+  // plain smooth scrollToIndex/scrollToOffset can land short by however
+  // many rows between here and the target hadn't been measured yet.
+  //
+  // Instead, drive the animation ourselves: each frame, recompute the true
+  // target via an instant (self-correcting) jump and ease window.scrollTo
+  // toward it. As the animation gets physically closer to the target, more
+  // of the intervening rows render and get measured for real, so the
+  // computed target keeps converging on the accurate value — the same
+  // self-correction "auto" mode gets, just spread continuously across a
+  // smooth-looking motion instead of applied once.
+  const scrollToFrame = useCallback(
+    (index: number, duration: number) => {
+      const startY = window.scrollY;
+      const startTime = performance.now();
+      const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+
+      const getTarget = () => {
+        virtualizer.scrollToIndex(index, { align: 'start', behavior: 'auto' });
+        const y = Math.max(window.scrollY - getObstructionHeight(), 0);
+        window.scrollTo(0, startY);
+        return y;
+      };
+
+      const step = () => {
+        const t = Math.min((performance.now() - startTime) / duration, 1);
+        const target = getTarget();
+        window.scrollTo(0, startY + (target - startY) * easeOutCubic(t));
+
+        if (t < 1) {
+          requestAnimationFrame(step);
+        }
+      };
+      requestAnimationFrame(step);
+    },
+    [virtualizer, getObstructionHeight],
+  );
+
   const handleComponentClick = useCallback(
     (component: string) => {
       const index = componentIndex.get(component.trim().toLowerCase());
@@ -171,48 +246,44 @@ export default function FrameList({
         setQuery('');
       });
 
-      // react-virtual only self-corrects its target for rows that were still
-      // at an estimated (unmeasured) height while a scroll is "auto" — that
-      // correction is explicitly skipped once behavior is "smooth", since
-      // adjusting the destination mid-CSS-animation would look glitchy. So a
-      // plain smooth scrollToIndex/scrollToOffset can land short by however
-      // many rows between here and the target hadn't been measured yet.
-      //
-      // Instead, drive the animation ourselves: each frame, recompute the true
-      // target via an instant (self-correcting) jump and ease window.scrollTo
-      // toward it. As the animation gets physically closer to the target, more
-      // of the intervening rows render and get measured for real, so the
-      // computed target keeps converging on the accurate value — the same
-      // self-correction "auto" mode gets, just spread continuously across a
-      // smooth-looking motion instead of applied once.
-      const startY = window.scrollY;
-      const startTime = performance.now();
-      const DURATION = 500;
-      const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
-
-      const getTarget = () => {
-        virtualizer.scrollToIndex(index, { align: 'start', behavior: 'auto' });
-        const y = Math.max(window.scrollY - getObstructionHeight(), 0);
-        window.scrollTo(0, startY);
-        return y;
-      };
-
-      const step = () => {
-        const t = Math.min((performance.now() - startTime) / DURATION, 1);
-        const target = getTarget();
-        window.scrollTo(0, startY + (target - startY) * easeOutCubic(t));
-
-        if (t < 1) {
-          requestAnimationFrame(step);
-        }
-      };
-      requestAnimationFrame(step);
+      scrollToFrame(index, 500);
     },
-    [componentIndex, virtualizer, getObstructionHeight],
+    [componentIndex, scrollToFrame],
   );
 
+  // Frame to keep in view across a density switch, captured before the switch.
+  const densityAnchorRef = useRef<number | undefined>(undefined);
+
+  const changeDensity = (next: Density) => {
+    if (next === density) {
+      return;
+    }
+    // Virtual item offsets are already in window scroll coordinates (they
+    // include scrollMargin). Anchor on the first row that is mostly visible
+    // below the sticky search bar, not a sliver peeking out from under it.
+    const viewTop = window.scrollY + getObstructionHeight();
+    densityAnchorRef.current = virtualizer
+      .getVirtualItems()
+      .find(item => (item.start + item.end) / 2 > viewTop)?.index;
+    localStorage.setItem(DENSITY_KEY, next);
+    window.dispatchEvent(new Event(DENSITY_EVENT));
+  };
+
+  // Row heights change completely between densities: drop the cached
+  // measurements, then bring the frame that was at the top back to the top.
+  useLayoutEffect(() => {
+    virtualizer.measure();
+    const anchor = densityAnchorRef.current;
+    densityAnchorRef.current = undefined;
+    if (anchor !== undefined && window.scrollY > 0) {
+      scrollToFrame(anchor, 150);
+    }
+  }, [density]);
+
   return (
-    <div className={styles.container}>
+    <div
+      className={`${styles.container} ${density === 'compact' ? styles.wide : ''}`}
+    >
       <div className={styles.searchBar} ref={searchBarRef}>
         <input
           className={styles.searchInput}
@@ -221,10 +292,29 @@ export default function FrameList({
           type="text"
           value={inputValue}
         />
+        <div
+          aria-label="Row density"
+          className={styles.densityToggle}
+          role="group"
+        >
+          {DENSITY_OPTIONS.map(option => (
+            <button
+              aria-pressed={density === option.value}
+              className={styles.densityOption}
+              key={option.value}
+              onClick={() => changeDensity(option.value)}
+              type="button"
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+        {density === 'compact' && <CompactHeader />}
       </div>
 
       {filteredFrames.length > 0 ? (
         <div
+          className={density === 'compact' ? styles.sheetList : undefined}
           ref={listRef}
           style={{
             position: 'relative',
@@ -247,6 +337,7 @@ export default function FrameList({
               }}
             >
               <Frame
+                compact={density === 'compact'}
                 data={filteredFrames[virtualRow.index]}
                 onComponentClick={handleComponentClick}
                 onUpdate={handleFrameUpdate}

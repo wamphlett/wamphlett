@@ -34,6 +34,8 @@ export type FramePatch = Partial<Pick<FrameData, EditableField>>;
 type FrameProps = {
   data: FrameData;
   token?: string;
+  // Single dense row instead of the full card.
+  compact?: boolean;
   onComponentClick?: (component: string) => void;
   // Finds the frame a component refers to, for the hover preview.
   resolveComponent?: (component: string) => FrameData | undefined;
@@ -43,14 +45,135 @@ type FrameProps = {
 function Frame({
   data,
   token,
+  compact = false,
   onComponentClick,
   resolveComponent,
   onUpdate,
 }: FrameProps) {
   const editable = !!token;
+  // Compact rows clamp the story to two lines; clicking it shows the rest.
+  const [storyExpanded, setStoryExpanded] = useState(false);
   const { apiUrl } = useRuntimeConfig();
   const commit = (field: EditableField) =>
     update(data.frame_number, field, apiUrl!, token!, onUpdate);
+
+  const components =
+    (editable || (data.components && data.components.length > 0)) &&
+    (editable ? (
+      <PillInput
+        className={styles.small}
+        initialValue={data.components}
+        onCommit={commit('components')}
+        placeholder="components..."
+      />
+    ) : (
+      <span className={styles.components}>
+        {data.components?.map((component, i) => (
+          <Fragment key={component + i}>
+            {i > 0 && '... '}
+            <ComponentLink
+              component={component}
+              onClick={() => onComponentClick?.(component)}
+              target={resolveComponent?.(component)}
+            />
+          </Fragment>
+        ))}
+      </span>
+    ));
+
+  const story = editable ? (
+    <TextBox
+      initialValue={data.story}
+      onCommit={commit('story')}
+      placeholder="story..."
+    />
+  ) : data.story ? (
+    <p
+      dangerouslySetInnerHTML={{
+        __html: formatStory(data.story, data.keyword, data.components),
+      }}
+    />
+  ) : (
+    <p>
+      <i>No story provided yet.</i>
+    </p>
+  );
+
+  const comment =
+    (editable || data.comment) && editable ? (
+      <InputBox
+        initialValue={data.comment}
+        onCommit={commit('comment')}
+        placeholder="comments..."
+        small
+      />
+    ) : (
+      <span>{data.comment}</span>
+    );
+
+  const jlpt = data.jlpt && (
+    <span className={styles.jlpt + ' ' + styles['level_' + data.jlpt]}>
+      {data.jlpt}
+    </span>
+  );
+
+  if (compact) {
+    const readings = [data.on_reading, data.kun_reading]
+      .map(reading => reading?.join(', '))
+      .filter(Boolean)
+      .join(' · ');
+    // Line clamping clips editors' pills, save dot and error, so only clamp text.
+    const clamp = editable ? '' : styles.clamp;
+    return (
+      <div
+        className={`${styles.container} ${styles.sheetRow} ${editable ? styles.sheetEditing : ''}`}
+      >
+        <span className={styles.frameNumber}>{data.frame_number}</span>
+        <span className={styles.kanji}>{data.kanji}</span>
+        <h2 className={styles.clamp}>{data.keyword}</h2>
+        <div className={`${styles.sheetOptional} ${clamp}`}>
+          {editable ? (
+            <PillInput
+              className={styles.small}
+              initialValue={data.primitives}
+              onCommit={commit('primitives')}
+              placeholder="primitives..."
+            />
+          ) : (
+            <span className={styles.primitives}>
+              {data.primitives?.join('... ')}
+            </span>
+          )}
+        </div>
+        <div className={`${styles.sheetOptional} ${clamp}`}>{components}</div>
+        {editable ? (
+          <div className={styles.sheetStory}>{story}</div>
+        ) : (
+          <div
+            className={`${styles.sheetStory} ${storyExpanded ? '' : styles.clamp}`}
+            onClick={() => setStoryExpanded(expanded => !expanded)}
+          >
+            {story}
+          </div>
+        )}
+        <span className={`${styles.sheetOptional} ${styles.sheetMuted}`}>
+          {readings}
+        </span>
+        <div
+          className={`${styles.sheetOptional} ${styles.sheetMuted} ${clamp}`}
+        >
+          {comment}
+        </div>
+        <span className={`${styles.sheetOptional} ${styles.sheetMuted}`}>
+          {data.chapter}
+        </span>
+        <span className={`${styles.sheetOptional} ${styles.sheetMuted}`}>
+          {data.stroke_count}
+        </span>
+        <span>{jlpt}</span>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
@@ -79,57 +202,9 @@ function Frame({
       <div className="flex flex-column content-center">
         <span className={styles.kanji}>{data.kanji}</span>
         <div className={styles.story}>
-          {(editable || (data.components && data.components.length > 0)) &&
-            (editable ? (
-              <PillInput
-                className={styles.small}
-                initialValue={data.components}
-                onCommit={commit('components')}
-                placeholder="components..."
-              />
-            ) : (
-              <span className={styles.components}>
-                {data.components?.map((component, i) => (
-                  <Fragment key={component + i}>
-                    {i > 0 && '... '}
-                    <ComponentLink
-                      component={component}
-                      onClick={() => onComponentClick?.(component)}
-                      target={resolveComponent?.(component)}
-                    />
-                  </Fragment>
-                ))}
-              </span>
-            ))}
-
-          {editable ? (
-            <TextBox
-              initialValue={data.story}
-              onCommit={commit('story')}
-              placeholder="story..."
-            />
-          ) : data.story ? (
-            <p
-              dangerouslySetInnerHTML={{
-                __html: formatStory(data.story, data.keyword, data.components),
-              }}
-            />
-          ) : (
-            <p>
-              <i>No story provided yet.</i>
-            </p>
-          )}
-
-          {(editable || data.comment) && editable ? (
-            <InputBox
-              initialValue={data.comment}
-              onCommit={commit('comment')}
-              placeholder="comments..."
-              small
-            />
-          ) : (
-            <span>{data.comment}</span>
-          )}
+          {components}
+          {story}
+          {comment}
         </div>
       </div>
 
@@ -149,13 +224,36 @@ function Frame({
         </div>
         <div className="flex flex-column justify-end items-center">
           <span className={styles.chapter}>chapter: {data.chapter}</span>
-          {data.jlpt && (
-            <span className={styles.jlpt + ' ' + styles['level_' + data.jlpt]}>
-              {data.jlpt}
-            </span>
-          )}
+          {jlpt}
         </div>
       </div>
+    </div>
+  );
+}
+
+// Column labels for the compact sheet; same grid and order as the rows above.
+const SHEET_COLUMNS: { label: string; optional?: boolean }[] = [
+  { label: '#' },
+  { label: '' },
+  { label: 'keyword' },
+  { label: 'primitives', optional: true },
+  { label: 'components', optional: true },
+  { label: 'story' },
+  { label: 'readings', optional: true },
+  { label: 'notes', optional: true },
+  { label: 'ch', optional: true },
+  { label: 'str', optional: true },
+  { label: 'jlpt' },
+];
+
+export function CompactHeader() {
+  return (
+    <div aria-hidden className={`${styles.sheetRow} ${styles.sheetHeader}`}>
+      {SHEET_COLUMNS.map((column, i) => (
+        <span className={column.optional ? styles.sheetOptional : ''} key={i}>
+          {column.label}
+        </span>
+      ))}
     </div>
   );
 }
