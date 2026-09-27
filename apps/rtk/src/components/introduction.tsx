@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import styles from './introduction.module.css';
 
 export default function Introduction() {
@@ -24,6 +25,9 @@ export default function Introduction() {
             helped me remember kanji while studying James Heisig’s Remembering
             the Kanji.
           </span>
+          <Link className={styles.link} href="/reading">
+            Daily reading<span>.</span>
+          </Link>
         </div>
       </div>
     </div>
