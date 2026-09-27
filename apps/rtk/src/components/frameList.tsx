@@ -85,6 +85,14 @@ const DENSITY_OPTIONS: { value: Density; label: string }[] = [
   { value: 'compact', label: 'Compact' },
 ];
 
+type StoryFilter = 'all' | 'has' | 'missing';
+
+const STORY_FILTER_OPTIONS: { value: StoryFilter; label: string }[] = [
+  { value: 'all', label: 'All stories' },
+  { value: 'has', label: 'With story' },
+  { value: 'missing', label: 'Without story' },
+];
+
 export default function FrameList({
   frames: initialFrames,
   token,
@@ -143,13 +151,40 @@ export default function FrameList({
     return sort.order.flatMap(id => byId.get(id) ?? []);
   }, [frames, sort, density]);
 
+  // Like sort, the matching frames are captured when the filter is picked:
+  // writing a story while filtered to "without" shouldn't make the row vanish
+  // (and take focus with it) the moment the field saves.
+  const [storyFilter, setStoryFilter] = useState<{
+    value: Exclude<StoryFilter, 'all'>;
+    ids: Set<string>;
+  }>();
+
+  const changeStoryFilter = (value: StoryFilter) => {
+    if (value === 'all') {
+      setStoryFilter(undefined);
+      return;
+    }
+    const wantStory = value === 'has';
+    setStoryFilter({
+      value,
+      ids: new Set(
+        frames
+          .filter(frame => !!frame.story?.trim() === wantStory)
+          .map(frame => frame.id),
+      ),
+    });
+  };
+
   const filteredFrames = useMemo(() => {
+    const visible = storyFilter
+      ? orderedFrames.filter(frame => storyFilter.ids.has(frame.id))
+      : orderedFrames;
     const q = query.trim().toLowerCase();
     if (!q) {
-      return orderedFrames;
+      return visible;
     }
 
-    return orderedFrames.filter(
+    return visible.filter(
       frame =>
         frame.kanji.includes(query.trim()) ||
         frame.keyword
@@ -164,7 +199,7 @@ export default function FrameList({
         ) ||
         String(frame.frame_number) === q,
     );
-  }, [orderedFrames, query]);
+  }, [orderedFrames, storyFilter, query]);
 
   const listRef = useRef<HTMLDivElement>(null);
   const listOffsetRef = useRef(0);
@@ -274,9 +309,10 @@ export default function FrameList({
       flushSync(() => {
         setInputValue('');
         setQuery('');
+        setStoryFilter(undefined);
       });
 
-      // With the search cleared the list is orderedFrames, which may be sorted.
+      // With search and filter cleared the list is orderedFrames, which may be sorted.
       scrollToFrame(orderedFrames.indexOf(target), 500);
     },
     [componentIndex, orderedFrames, scrollToFrame],
@@ -326,6 +362,18 @@ export default function FrameList({
           type="text"
           value={inputValue}
         />
+        <select
+          aria-label="Filter by story"
+          className={styles.filterSelect}
+          onChange={e => changeStoryFilter(e.target.value as StoryFilter)}
+          value={storyFilter?.value ?? 'all'}
+        >
+          {STORY_FILTER_OPTIONS.map(option => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
         <div
           aria-label="Row density"
           className={styles.densityToggle}
@@ -384,7 +432,11 @@ export default function FrameList({
           ))}
         </div>
       ) : (
-        <p className={styles.noResults}>No kanji match &quot;{query}&quot;.</p>
+        <p className={styles.noResults}>
+          {query
+            ? `No kanji match "${query}".`
+            : 'No kanji match these filters.'}
+        </p>
       )}
     </div>
   );
