@@ -3,6 +3,7 @@
 import {
   useCallback,
   useEffect,
+  useEffectEvent,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -92,6 +93,9 @@ const STORY_FILTER_OPTIONS: { value: StoryFilter; label: string }[] = [
   { value: 'has', label: 'With story' },
   { value: 'missing', label: 'Without story' },
 ];
+
+// Matches the .highlighted animation in frame.module.css (hold ~5s, fade 1s).
+const HIGHLIGHT_MS = 6000;
 
 export default function FrameList({
   frames: initialFrames,
@@ -299,13 +303,10 @@ export default function FrameList({
     [virtualizer, getObstructionHeight],
   );
 
-  const handleComponentClick = useCallback(
-    (component: string) => {
-      const target = componentIndex.get(component.trim().toLowerCase());
-      if (!target) {
-        return;
-      }
-
+  // Clears search and filter so the frame is in the list, then scrolls it to
+  // just below the sticky search bar.
+  const showFrame = useCallback(
+    (target: FrameData) => {
       flushSync(() => {
         setInputValue('');
         setQuery('');
@@ -315,8 +316,55 @@ export default function FrameList({
       // With search and filter cleared the list is orderedFrames, which may be sorted.
       scrollToFrame(orderedFrames.indexOf(target), 500);
     },
-    [componentIndex, orderedFrames, scrollToFrame],
+    [orderedFrames, scrollToFrame],
   );
+
+  const handleComponentClick = useCallback(
+    (component: string) => {
+      const target = componentIndex.get(component.trim().toLowerCase());
+      if (target) {
+        showFrame(target);
+      }
+    },
+    [componentIndex, showFrame],
+  );
+
+  // Deep links: #<frame number> (what the frame number links to) or #<kanji>.
+  const [highlightedId, setHighlightedId] = useState<string>();
+
+  const revealFromHash = useEffectEvent(() => {
+    const key = decodeURIComponent(window.location.hash.slice(1));
+    const target = key
+      ? frames.find(
+          frame => String(frame.frame_number) === key || frame.kanji === key,
+        )
+      : undefined;
+    if (!target) {
+      return;
+    }
+    showFrame(target);
+    setHighlightedId(target.id);
+  });
+
+  useEffect(() => {
+    // Initial link: wait a frame so the list has laid out (its offset below
+    // the intro is measured) before computing where to scroll.
+    const initial = requestAnimationFrame(() => revealFromHash());
+    const onHashChange = () => revealFromHash();
+    window.addEventListener('hashchange', onHashChange);
+    return () => {
+      cancelAnimationFrame(initial);
+      window.removeEventListener('hashchange', onHashChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!highlightedId) {
+      return;
+    }
+    const timer = setTimeout(() => setHighlightedId(undefined), HIGHLIGHT_MS);
+    return () => clearTimeout(timer);
+  }, [highlightedId]);
 
   // Frame (by id) to keep in view across a density switch, captured before
   // the switch. By id because the two densities can order rows differently.
@@ -423,6 +471,7 @@ export default function FrameList({
               <Frame
                 compact={density === 'compact'}
                 data={filteredFrames[virtualRow.index]}
+                highlighted={virtualRow.key === highlightedId}
                 onComponentClick={handleComponentClick}
                 onUpdate={handleFrameUpdate}
                 resolveComponent={resolveComponent}

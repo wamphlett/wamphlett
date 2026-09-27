@@ -40,6 +40,8 @@ type FrameProps = {
   // Finds the frame a component refers to, for the hover preview.
   resolveComponent?: (component: string) => FrameData | undefined;
   onUpdate?: (frameNumber: number, patch: FramePatch) => void;
+  // Briefly outline the frame, e.g. after arriving from a #<frame> link.
+  highlighted?: boolean;
 };
 
 function Frame({
@@ -49,6 +51,7 @@ function Frame({
   onComponentClick,
   resolveComponent,
   onUpdate,
+  highlighted = false,
 }: FrameProps) {
   const editable = !!token;
   // Compact rows clamp the story to two lines; clicking it shows the rest.
@@ -126,9 +129,14 @@ function Frame({
     const clamp = editable ? '' : styles.clamp;
     return (
       <div
-        className={`${styles.container} ${styles.sheetRow} ${editable ? styles.sheetEditing : ''}`}
+        className={`${styles.container} ${styles.sheetRow} ${editable ? styles.sheetEditing : ''} ${highlighted ? styles.highlighted : ''}`}
       >
-        <span className={styles.frameNumber}>{data.frame_number}</span>
+        <a
+          className={`${styles.frameNumber} ${styles.frameLink}`}
+          href={`#${data.frame_number}`}
+        >
+          {data.frame_number}
+        </a>
         <span className={styles.kanji}>{data.kanji}</span>
         <h2 className={styles.clamp}>{data.keyword}</h2>
         <div className={`${styles.sheetOptional} ${clamp}`}>
@@ -176,9 +184,16 @@ function Frame({
   }
 
   return (
-    <div className={styles.container}>
+    <div
+      className={`${styles.container} ${highlighted ? styles.highlighted : ''}`}
+    >
       <div className="flex flex-column justify-between items-center">
-        <span className={styles.frameNumber}>#{data.frame_number}</span>
+        <a
+          className={`${styles.frameNumber} ${styles.frameLink}`}
+          href={`#${data.frame_number}`}
+        >
+          #{data.frame_number}
+        </a>
         <h2>{data.keyword}</h2>
       </div>
 
