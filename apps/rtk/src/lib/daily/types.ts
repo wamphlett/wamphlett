@@ -1,6 +1,6 @@
 // The site's shapes for a daily entry. They follow version 1 of the payload
-// that rtk-anki writes (see ./payload), in camelCase. The data comes from
-// ./mock, or from local payload files (see ./data); nothing from rtk-api.
+// that rtk-anki writes (see ./payload), in camelCase, plus what rtk-api keeps
+// on the site: status, done, grades and comments. Fetched by ./data.
 
 export type ReasonCode =
   | 'again_yesterday'
@@ -48,6 +48,8 @@ export type Sentence = {
   source: 'tatoeba' | 'ai';
   sourceId: number | null;
   owner: string | null;
+  // Only ever true when logged in: visitors never get hidden sentences.
+  hidden: boolean;
 };
 
 export type WritingTask = {
@@ -93,11 +95,14 @@ export type Stats = {
 export type Grade = 'read' | 'furigana' | 'stuck';
 
 export type Comment = {
-  id: string;
+  id: number;
   body: string;
   createdAt: string;
-  updatedAt?: string;
+  // null until edited.
+  updatedAt: string | null;
 };
+
+export type EntryStatus = 'published' | 'hidden';
 
 export type DailyEntry = {
   date: string;
@@ -116,7 +121,11 @@ export type DailyEntry = {
   passage: { tokens: Token[]; translation: string; ai: boolean } | null;
   writing: WritingTask[];
   dictionary: DictionaryEntry[];
+  status: EntryStatus;
   done: boolean;
+  doneAt: string | null;
+  regenerateRequested: boolean;
+  // Keyed by sentence position.
   grades: Record<string, Grade>;
   comments: Comment[];
 };
@@ -126,7 +135,6 @@ export type DailySummary = {
   reviews: number;
   targets: { kanji: string; keyword: string }[];
   backfilled: boolean;
+  status: EntryStatus;
   done: boolean;
 };
-
-export type DailySource = 'mock' | 'file';

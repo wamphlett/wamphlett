@@ -1,9 +1,14 @@
-// Version 1 of the daily payload that `rtk-anki daily` writes, one JSON file
-// per day, and its mapping to the site's types. Nullable fields are always
-// present. Documented in rtk-anki's docs/daily-reading.md.
+// rtk-api's GET /reading/{date}: version 1 of the daily payload that
+// `rtk-anki daily` writes, plus what the site keeps (status, done, grades,
+// comments), and its mapping to the site's types. Nullable fields are always
+// present. The payload is documented in rtk-anki's docs/daily-reading.md.
 import type {
+  Comment,
   DailyEntry,
+  DailySummary,
   DictionaryEntry,
+  EntryStatus,
+  Grade,
   KanjiInfo,
   Reason,
   Token,
@@ -51,6 +56,8 @@ export type DailyPayload = {
     position: number;
     translation: string;
     tokens: Token[];
+    // Only sent to a logged-in request.
+    hidden?: boolean;
   } & Source)[];
   passage: { ai: boolean; translation: string; tokens: Token[] } | null;
   writing: ({
@@ -64,7 +71,55 @@ export type DailyPayload = {
   })[];
 };
 
-export function fromPayload(payload: DailyPayload): DailyEntry {
+export type ApiComment = {
+  id: number;
+  body: string;
+  created_at: string;
+  updated_at: string | null;
+};
+
+export type DailyResponse = DailyPayload & {
+  status: EntryStatus;
+  done: boolean;
+  done_at: string | null;
+  regenerate_requested: boolean;
+  // Keyed by sentence position.
+  grades: Record<string, Grade>;
+  comments: ApiComment[];
+};
+
+// One item of GET /reading.
+export type DailyListItem = {
+  date: string;
+  backfilled: boolean;
+  status: EntryStatus;
+  done: boolean;
+  reviews: number;
+  targets: { kanji: string; frame: number; keyword: string }[];
+};
+
+export type DailyList = {
+  entries: DailyListItem[];
+  next_before: string | null;
+};
+
+export const fromComment = (c: ApiComment): Comment => ({
+  id: c.id,
+  body: c.body,
+  createdAt: c.created_at,
+  updatedAt: c.updated_at,
+});
+
+export const fromListItem = (item: DailyListItem): DailySummary => ({
+  date: item.date,
+  reviews: item.reviews,
+  targets: item.targets.map(t => ({ kanji: t.kanji, keyword: t.keyword })),
+  backfilled: item.backfilled,
+  status: item.status,
+  done: item.done,
+});
+
+export function fromPayload(payload: DailyResponse): DailyEntry {
   if (payload.version !== 1) {
     throw new Error(
       `Unsupported daily payload version ${JSON.stringify(payload.version)}; this site reads version 1.`,
@@ -108,6 +163,7 @@ export function fromPayload(payload: DailyPayload): DailyEntry {
       source: s.source,
       sourceId: s.source_id,
       owner: s.owner,
+      hidden: s.hidden ?? false,
     })),
     passage: payload.passage,
     writing: payload.writing.map(w => ({
@@ -124,9 +180,11 @@ export function fromPayload(payload: DailyPayload): DailyEntry {
       wholeWordReading: d.whole_word_reading,
       kanji: d.kanji,
     })),
-    // Not in the payload: these live on the site.
-    done: false,
-    grades: {},
-    comments: [],
+    status: payload.status,
+    done: payload.done,
+    doneAt: payload.done_at,
+    regenerateRequested: payload.regenerate_requested,
+    grades: payload.grades,
+    comments: payload.comments.map(fromComment),
   };
 }

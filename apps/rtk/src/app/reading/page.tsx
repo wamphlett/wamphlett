@@ -1,8 +1,11 @@
 import type { Metadata } from 'next';
+import { cookies } from 'next/headers';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import PrimaryLayout from '@/layouts/primary';
+import { isTokenValid } from '@/lib/auth';
 import { formatDay } from '@/lib/daily/format';
-import { getDailyIndex, getDailySource } from '@/lib/daily/data';
+import { DATE, getDailyIndex } from '@/lib/daily/data';
 import styles from '@/components/daily/daily.module.css';
 
 export const metadata: Metadata = { title: 'Daily reading' };
@@ -10,8 +13,19 @@ export const metadata: Metadata = { title: 'Daily reading' };
 // The entries change after a build: read them on every request.
 export const dynamic = 'force-dynamic';
 
-export default function Page() {
-  const days = getDailyIndex();
+type Props = { searchParams: Promise<{ before?: string }> };
+
+export default async function Page({ searchParams }: Props) {
+  // Older pages are ?before=<date>, from the API's next_before.
+  const { before } = await searchParams;
+  if (before !== undefined && !DATE.test(before)) {
+    notFound();
+  }
+  const cookie = (await cookies()).get('TOKEN')?.value;
+  const { days, older } = await getDailyIndex(
+    isTokenValid(cookie) ? cookie : undefined,
+    before,
+  );
   return (
     <PrimaryLayout headerImageBlurDataURL="" headerImageUrl="">
       <div className={styles.page}>
@@ -26,21 +40,9 @@ export default function Page() {
             use them, a short passage, and a sentence to write by hand.
           </span>
           <div className={styles.nav}>
+            {before && <Link href="/reading">Newest entries</Link>}
             <Link href="/">All frames</Link>
           </div>
-        </div>
-
-        <div className={styles.banner}>
-          {getDailySource() === 'mock' ? (
-            <>
-              <b>Mock.</b> Example data only; nothing here is live yet.
-            </>
-          ) : (
-            <>
-              <b>Local payloads.</b> Entries generated on this machine and read
-              from files; nothing here is live yet.
-            </>
-          )}
         </div>
 
         <div className={styles.days}>
@@ -69,10 +71,17 @@ export default function Page() {
                 {day.reviews ? `${day.reviews} reviews` : 'no reviews'}
                 {day.done ? '' : ' · not done'}
                 {day.backfilled && ' · generated later'}
+                {day.status === 'hidden' && ' · hidden'}
               </span>
             </Link>
           ))}
         </div>
+        {days.length === 0 && <p className={styles.intro}>No entries yet.</p>}
+        {older && (
+          <div className={styles.nav}>
+            <Link href={`/reading?before=${older}`}>Older entries</Link>
+          </div>
+        )}
       </div>
     </PrimaryLayout>
   );

@@ -1,10 +1,11 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
+import { useRuntimeConfig } from '@/lib/config/useRuntimeConfig';
 import { formatDay, formatTime, percent } from '@/lib/daily/format';
+import { type ApiComment, fromComment } from '@/lib/daily/payload';
 import type {
   Comment,
-  DailySource,
   DailyEntry as Entry,
   Grade,
   KanjiStatus,
@@ -18,9 +19,31 @@ type DailyEntryProps = {
   entry: Entry;
   prevDate?: string;
   nextDate?: string;
-  loggedIn: boolean;
-  source: DailySource;
+  // A valid login: shows the actions, which send it to rtk-api.
+  token?: string;
 };
+
+// Why an action failed, shown where it was made. expired: rtk-api answered
+// 401, so the fix is to log in again.
+type ActionError = { message: string; expired: boolean };
+
+class ApiError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+  ) {
+    super(message);
+  }
+}
+
+function without<T>(record: Record<string, T>, key: string) {
+  const next = { ...record };
+  delete next[key];
+  return next;
+}
+
+const byCreated = (a: Comment, b: Comment) =>
+  a.createdAt.localeCompare(b.createdAt) || a.id - b.id;
 
 const GRADES: { grade: Grade; label: string; tone: string }[] = [
   { grade: 'read', label: 'Read it', tone: styles.ok },
@@ -63,20 +86,27 @@ export default function DailyEntry({
   entry,
   prevDate,
   nextDate,
-  loggedIn,
-  source,
+  token,
 }: DailyEntryProps) {
-  const [asMe, setAsMe] = useState(loggedIn);
+  const loggedIn = !!token;
+  const { apiUrl } = useRuntimeConfig();
   const [done, setDone] = useState(entry.done);
+  const [doneAt, setDoneAt] = useState(entry.doneAt);
   const [grades, setGrades] = useState<Record<string, Grade>>(entry.grades);
+  // Keyed by sentence position.
   const [hiddenSentences, setHiddenSentences] = useState<Record<string, true>>(
-    {},
+    () =>
+      Object.fromEntries(
+        entry.sentences.filter(s => s.hidden).map(s => [s.position, true]),
+      ),
   );
-  const [entryHidden, setEntryHidden] = useState(false);
-  const [regenerating, setRegenerating] = useState(false);
+  const [status, setStatus] = useState(entry.status);
+  const [regenerateQueued, setRegenerateQueued] = useState(
+    entry.regenerateRequested,
+  );
   const [comments, setComments] = useState<Comment[]>(entry.comments);
   const [draft, setDraft] = useState('');
-  const [editing, setEditing] = useState<{ id: string; body: string } | null>(
+  const [editing, setEditing] = useState<{ id: number; body: string } | null>(
     null,
   );
   const [furigana, setFurigana] = useState<Record<string, boolean>>({});
@@ -85,32 +115,137 @@ export default function DailyEntry({
     key: string;
     surface: string;
   } | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!toast) {
-      return;
-    }
-    const timer = setTimeout(() => setToast(null), 3500);
-    return () => clearTimeout(timer);
-  }, [toast]);
+  // Actions waiting for rtk-api, and the last failure where each was made.
+  const [pending, setPending] = useState<Record<string, true>>({});
+  const [errors, setErrors] = useState<Record<string, ActionError>>({});
 
   const targets: Record<string, true> = Object.fromEntries(
     entry.targets.map(t => [t.kanji, true]),
   );
-  const base = `/reading/${entry.date}`;
-  // Every action would be one rtk-api call; the mock only shows which.
-  const mock = (call: string) => setToast(`Mock: would send ${call}`);
   const toggle = (key: string) =>
-    setRevealed(r => {
-      const next = { ...r };
-      if (next[key]) {
-        delete next[key];
-      } else {
-        next[key] = true;
+    setRevealed(r => (r[key] ? without(r, key) : { ...r, [key]: true }));
+
+  // One action on this entry. Resolves to the JSON reply, or null for a 204.
+  async function send<T = null>(
+    method: string,
+    path: string,
+    body?: unknown,
+  ): Promise<T> {
+    if (!apiUrl) {
+      throw new ApiError('The page is still loading. Try again.', 0);
+    }
+    let res: Response;
+    try {
+      res = await fetch(`${apiUrl}/reading/${entry.date}${path}`, {
+        method,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
+        },
+        body: body === undefined ? undefined : JSON.stringify(body),
+      });
+    } catch {
+      throw new ApiError("Couldn't reach the server. Try again.", 0);
+    }
+    if (res.status === 401) {
+      throw new ApiError('Your login has expired.', 401);
+    }
+    if (res.status === 404) {
+      throw new ApiError(
+        'Not found. The entry may have changed: reload the page.',
+        404,
+      );
+    }
+    if (!res.ok) {
+      const text = await res.text();
+      let reason = text.trim();
+      try {
+        reason = (JSON.parse(text) as { error?: string }).error ?? reason;
+      } catch {
+        // Not JSON: the text is the reason.
       }
-      return next;
+      throw new ApiError(
+        `Couldn't save (${res.status}${reason ? `: ${reason}` : ''}).`,
+        res.status,
+      );
+    }
+    return (res.status === 204 ? null : await res.json()) as T;
+  }
+
+  // Runs an action: apply shows it at once, undo takes it back if rtk-api
+  // says no. key marks the action pending; a failure shows at `at`.
+  async function run<T>(
+    key: string,
+    request: () => Promise<T>,
+    {
+      apply,
+      undo,
+      at = key,
+    }: { apply?: () => void; undo?: () => void; at?: string } = {},
+  ): Promise<T | undefined> {
+    apply?.();
+    setPending(p => ({ ...p, [key]: true }));
+    setErrors(e => without(e, at));
+    try {
+      return await request();
+    } catch (error) {
+      undo?.();
+      setErrors(e => ({
+        ...e,
+        [at]: {
+          message: error instanceof Error ? error.message : String(error),
+          expired: error instanceof ApiError && error.status === 401,
+        },
+      }));
+      return undefined;
+    } finally {
+      setPending(p => without(p, key));
+    }
+  }
+
+  const errorAt = (at: string) =>
+    errors[at] && (
+      <div className={styles.actionError} role="alert">
+        {errors[at].message}
+        {errors[at].expired && (
+          <>
+            {' '}
+            <Link href="/login">Log in again</Link>
+          </>
+        )}
+      </div>
+    );
+
+  const toggleDone = (at: string) => {
+    const was = { done, doneAt };
+    run('done', () => send('POST', '/done', { done: !was.done }), {
+      at,
+      apply: () => {
+        setDone(!was.done);
+        setDoneAt(was.done ? null : new Date().toISOString());
+      },
+      undo: () => {
+        setDone(was.done);
+        setDoneAt(was.doneAt);
+      },
     });
+  };
+
+  const setSentenceHidden = (position: number, hide: boolean) =>
+    run(
+      `sentence:${position}`,
+      () => send(hide ? 'POST' : 'DELETE', `/sentences/${position}/hide`),
+      {
+        apply: () =>
+          setHiddenSentences(h =>
+            hide ? { ...h, [position]: true } : without(h, String(position)),
+          ),
+        undo: () =>
+          setHiddenSentences(h =>
+            hide ? without(h, String(position)) : { ...h, [position]: true },
+          ),
+      },
+    );
   const select = (key: string, surface: string) =>
     setSelected(s => (s?.key === key ? null : { key, surface }));
   const lookup = (surface: string) =>
@@ -156,8 +291,15 @@ export default function DailyEntry({
   );
 
   const { stats } = entry;
-  const visibleSentences = entry.sentences.filter(
-    s => asMe || !hiddenSentences[s.id],
+  const doneButton = (at: string, accent: boolean) => (
+    <button
+      className={`${styles.button} ${done ? styles.active : accent ? styles.accent : ''}`}
+      disabled={!!pending.done}
+      onClick={() => toggleDone(at)}
+      type="button"
+    >
+      {done ? 'Done' : 'Mark as done'}
+    </button>
   );
 
   return (
@@ -188,23 +330,7 @@ export default function DailyEntry({
         </div>
       </div>
 
-      <div className={styles.banner}>
-        {source === 'mock' ? (
-          <>
-            <b>Mock.</b> Everything on this page is example data, and nothing is
-            saved: actions only show the rtk-api call they would make. Every
-            date shows the same entry.
-          </>
-        ) : (
-          <>
-            <b>Local payload.</b> This entry was generated on this machine and
-            read from a file. Nothing is saved: actions only show the rtk-api
-            call they would make.
-          </>
-        )}
-      </div>
-
-      {entryHidden && (
+      {status === 'hidden' && (
         <div className={styles.banner}>
           This entry is hidden. Visitors get a 404; only you can see it.
         </div>
@@ -212,7 +338,10 @@ export default function DailyEntry({
 
       <div className={`${styles.card} ${styles.spread}`}>
         <div className={styles.row}>
-          <span className={`${styles.chip} ${done ? styles.statusDone : ''}`}>
+          <span
+            className={`${styles.chip} ${done ? styles.statusDone : ''}`}
+            title={done && doneAt ? `Done ${formatTime(doneAt)}` : undefined}
+          >
             {done ? 'Done' : 'Not done yet'}
           </span>
           {entry.backfilled && (
@@ -227,55 +356,58 @@ export default function DailyEntry({
             Generated {formatTime(entry.generatedAt)} from{' '}
             {formatDay(entry.studyDate, 'short')}&apos;s reviews
           </span>
-          {regenerating && (
-            <span className={`${styles.chip} ${styles.info}`}>
+          {regenerateQueued && (
+            <span
+              className={`${styles.chip} ${styles.info}`}
+              title="The generator rebuilds this entry on its next run"
+            >
               Regeneration queued
             </span>
           )}
         </div>
-        {asMe && (
+        {loggedIn && (
           <div className={styles.row}>
-            <button
-              className={`${styles.button} ${done ? styles.active : ''}`}
-              onClick={() => {
-                setDone(!done);
-                mock(`POST ${base}/done {"done":${!done}}`);
-              }}
-              type="button"
-            >
-              {done ? 'Done' : 'Mark as done'}
-            </button>
+            {doneButton('top', false)}
             <button
               className={`${styles.button} ${styles.quiet}`}
-              disabled={regenerating}
+              disabled={regenerateQueued || !!pending.regenerate}
               onClick={() => {
                 if (
                   window.confirm(
                     'Regenerate this entry? Sentence grades are lost. Comments, done and hidden sentences are kept.',
                   )
                 ) {
-                  setRegenerating(true);
-                  mock(`POST ${base}/regenerate`);
+                  run('regenerate', () => send('POST', '/regenerate'), {
+                    at: 'top',
+                  }).then(
+                    // null is a 204; undefined, a failure.
+                    reply => reply === null && setRegenerateQueued(true),
+                  );
                 }
               }}
               type="button"
             >
-              Regenerate
+              {pending.regenerate ? 'Asking...' : 'Regenerate'}
             </button>
             <button
               className={`${styles.button} ${styles.quiet}`}
+              disabled={!!pending.status}
               onClick={() => {
-                setEntryHidden(!entryHidden);
-                mock(
-                  `PATCH ${base} {"status":"${entryHidden ? 'published' : 'hidden'}"}`,
-                );
+                const was = status;
+                const next = was === 'hidden' ? 'published' : 'hidden';
+                run('status', () => send('PATCH', '', { status: next }), {
+                  at: 'top',
+                  apply: () => setStatus(next),
+                  undo: () => setStatus(was),
+                });
               }}
               type="button"
             >
-              {entryHidden ? 'Unhide entry' : 'Hide entry'}
+              {status === 'hidden' ? 'Unhide entry' : 'Hide entry'}
             </button>
           </div>
         )}
+        {errorAt('top')}
       </div>
 
       <h2 className={styles.sectionTitle}>
@@ -413,7 +545,7 @@ export default function DailyEntry({
               ) : (
                 <p>
                   <i>No story yet.</i>{' '}
-                  {asMe && <a href={`/#${t.frame}`}>Write one</a>}
+                  {loggedIn && <a href={`/#${t.frame}`}>Write one</a>}
                 </p>
               )}
               {t.comment && (
@@ -432,9 +564,10 @@ export default function DailyEntry({
         {furiganaToggle('sentences')}
       </h2>
       <div className={styles.card}>
-        {visibleSentences.map(s => {
+        {entry.sentences.map(s => {
           const prefix = `${s.id}:`;
-          if (hiddenSentences[s.id]) {
+          const key = `sentence:${s.position}`;
+          if (hiddenSentences[s.position]) {
             return (
               <div
                 className={`${styles.sentence} ${styles.hiddenSentence}`}
@@ -444,23 +577,18 @@ export default function DailyEntry({
                   Hidden sentence: {plainText(s.tokens)}{' '}
                   <button
                     className={`${styles.button} ${styles.quiet}`}
-                    onClick={() => {
-                      setHiddenSentences(h => {
-                        const next = { ...h };
-                        delete next[s.id];
-                        return next;
-                      });
-                      mock(`DELETE ${base}/sentences/${s.position}/hide`);
-                    }}
+                    disabled={!!pending[key]}
+                    onClick={() => setSentenceHidden(s.position, false)}
                     type="button"
                   >
-                    Undo
+                    Unhide
                   </button>
                 </span>
+                {errorAt(key)}
               </div>
             );
           }
-          const grade = grades[s.id];
+          const grade = grades[s.position];
           const gradeInfo = GRADES.find(g => g.grade === grade);
           return (
             <div className={styles.sentence} key={s.id}>
@@ -504,18 +632,35 @@ export default function DailyEntry({
                     )}
                   </span>
                 </div>
-                {asMe ? (
+                {loggedIn ? (
                   <div className={styles.row}>
                     {GRADES.map(g => (
                       <button
                         className={`${styles.button} ${grade === g.grade ? styles.active : styles.quiet}`}
+                        disabled={!!pending[key]}
                         key={g.grade}
-                        onClick={() => {
-                          setGrades(gs => ({ ...gs, [s.id]: g.grade }));
-                          mock(
-                            `PUT ${base}/grades/${s.position} {"grade":"${g.grade}"}`,
-                          );
-                        }}
+                        onClick={() =>
+                          run(
+                            key,
+                            () =>
+                              send('PUT', `/grades/${s.position}`, {
+                                grade: g.grade,
+                              }),
+                            {
+                              apply: () =>
+                                setGrades(gs => ({
+                                  ...gs,
+                                  [s.position]: g.grade,
+                                })),
+                              undo: () =>
+                                setGrades(gs =>
+                                  grade
+                                    ? { ...gs, [s.position]: grade }
+                                    : without(gs, String(s.position)),
+                                ),
+                            },
+                          )
+                        }
                         type="button"
                       >
                         {g.label}
@@ -523,10 +668,8 @@ export default function DailyEntry({
                     ))}
                     <button
                       className={`${styles.button} ${styles.quiet}`}
-                      onClick={() => {
-                        setHiddenSentences(h => ({ ...h, [s.id]: true }));
-                        mock(`POST ${base}/sentences/${s.position}/hide`);
-                      }}
+                      disabled={!!pending[key]}
+                      onClick={() => setSentenceHidden(s.position, true)}
                       title="Hide this sentence and never show it again"
                       type="button"
                     >
@@ -541,6 +684,7 @@ export default function DailyEntry({
                   )
                 )}
               </div>
+              {errorAt(key)}
             </div>
           );
         })}
@@ -690,78 +834,118 @@ export default function DailyEntry({
         {comments.length === 0 && (
           <p className={styles.muted}>No comments yet.</p>
         )}
-        {comments.map(c => (
-          <div className={styles.comment} key={c.id}>
-            <div className={`${styles.small} ${styles.muted}`}>
-              Warren · {formatTime(c.createdAt)}
-              {c.updatedAt && ' · edited'}
-            </div>
-            {editing?.id === c.id ? (
-              <>
-                <textarea
-                  className={styles.textarea}
-                  onChange={e => setEditing({ id: c.id, body: e.target.value })}
-                  value={editing.body}
-                />
-                <div className={styles.row}>
+        {comments.map(c => {
+          const key = `comment:${c.id}`;
+          // Posted but not saved yet: rtk-api hasn't given it an id.
+          const unsaved = c.id < 0;
+          return (
+            <div className={styles.comment} key={c.id}>
+              <div className={`${styles.small} ${styles.muted}`}>
+                Warren · {formatTime(c.createdAt)}
+                {c.updatedAt && ' · edited'}
+                {unsaved && ' · saving'}
+              </div>
+              {editing?.id === c.id ? (
+                <>
+                  <textarea
+                    className={styles.textarea}
+                    onChange={e =>
+                      setEditing({ id: c.id, body: e.target.value })
+                    }
+                    value={editing.body}
+                  />
+                  <div className={styles.row}>
+                    <button
+                      className={styles.button}
+                      disabled={!editing.body.trim()}
+                      onClick={() => {
+                        const body = editing.body.trim();
+                        run(
+                          key,
+                          () =>
+                            send<ApiComment>('PATCH', `/comments/${c.id}`, {
+                              body,
+                            }),
+                          {
+                            apply: () => {
+                              setComments(cs =>
+                                cs.map(x =>
+                                  x.id === c.id
+                                    ? {
+                                        ...x,
+                                        body,
+                                        updatedAt: new Date().toISOString(),
+                                      }
+                                    : x,
+                                ),
+                              );
+                              setEditing(null);
+                            },
+                            undo: () => {
+                              setComments(cs =>
+                                cs.map(x => (x.id === c.id ? c : x)),
+                              );
+                              setEditing({ id: c.id, body });
+                            },
+                          },
+                        ).then(
+                          saved =>
+                            saved &&
+                            setComments(cs =>
+                              cs.map(x =>
+                                x.id === c.id ? fromComment(saved) : x,
+                              ),
+                            ),
+                        );
+                      }}
+                      type="button"
+                    >
+                      Save
+                    </button>
+                    <button
+                      className={`${styles.button} ${styles.quiet}`}
+                      onClick={() => setEditing(null)}
+                      type="button"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <p style={{ whiteSpace: 'pre-wrap' }}>{c.body}</p>
+              )}
+              {loggedIn && !unsaved && editing?.id !== c.id && (
+                <div className={styles.row} style={{ marginTop: 6 }}>
                   <button
-                    className={styles.button}
-                    disabled={!editing.body.trim()}
-                    onClick={() => {
-                      setComments(cs =>
-                        cs.map(x =>
-                          x.id === c.id
-                            ? {
-                                ...x,
-                                body: editing.body.trim(),
-                                updatedAt: new Date().toISOString(),
-                              }
-                            : x,
-                        ),
-                      );
-                      setEditing(null);
-                      mock(`PATCH ${base}/comments/${c.id}`);
-                    }}
+                    className={`${styles.button} ${styles.quiet}`}
+                    disabled={!!pending[key]}
+                    onClick={() => setEditing({ id: c.id, body: c.body })}
                     type="button"
                   >
-                    Save
+                    Edit
                   </button>
                   <button
                     className={`${styles.button} ${styles.quiet}`}
-                    onClick={() => setEditing(null)}
+                    disabled={!!pending[key]}
+                    onClick={() =>
+                      run(key, () => send('DELETE', `/comments/${c.id}`), {
+                        apply: () =>
+                          setComments(cs => cs.filter(x => x.id !== c.id)),
+                        undo: () =>
+                          setComments(cs => [...cs, c].sort(byCreated)),
+                      })
+                    }
                     type="button"
                   >
-                    Cancel
+                    Delete
                   </button>
                 </div>
-              </>
-            ) : (
-              <p style={{ whiteSpace: 'pre-wrap' }}>{c.body}</p>
-            )}
-            {asMe && editing?.id !== c.id && (
-              <div className={styles.row} style={{ marginTop: 6 }}>
-                <button
-                  className={`${styles.button} ${styles.quiet}`}
-                  onClick={() => setEditing({ id: c.id, body: c.body })}
-                  type="button"
-                >
-                  Edit
-                </button>
-                <button
-                  className={`${styles.button} ${styles.quiet}`}
-                  onClick={() => {
-                    setComments(cs => cs.filter(x => x.id !== c.id));
-                    mock(`DELETE ${base}/comments/${c.id}`);
-                  }}
-                  type="button"
-                >
-                  Delete
-                </button>
-              </div>
-            )}
-          </div>
-        ))}
-        {asMe && (
+              )}
+              {errorAt(key)}
+            </div>
+          );
+        })}
+        {loggedIn && (
           <div style={{ marginTop: comments.length ? 18 : 0 }}>
             <textarea
               className={styles.textarea}
@@ -773,62 +957,57 @@ export default function DailyEntry({
               className={styles.button}
               disabled={!draft.trim()}
               onClick={() => {
-                setComments(cs => [
-                  ...cs,
+                const body = draft.trim();
+                const id = -Date.now();
+                run(
+                  `comment:${id}`,
+                  () => send<ApiComment>('POST', '/comments', { body }),
                   {
-                    id: `c${Date.now()}`,
-                    body: draft.trim(),
-                    createdAt: new Date().toISOString(),
+                    at: 'newComment',
+                    apply: () => {
+                      setComments(cs => [
+                        ...cs,
+                        {
+                          id,
+                          body,
+                          createdAt: new Date().toISOString(),
+                          updatedAt: null,
+                        },
+                      ]);
+                      setDraft('');
+                    },
+                    undo: () => {
+                      setComments(cs => cs.filter(x => x.id !== id));
+                      setDraft(body);
+                    },
                   },
-                ]);
-                setDraft('');
-                mock(`POST ${base}/comments`);
+                ).then(
+                  saved =>
+                    saved &&
+                    setComments(cs =>
+                      cs.map(x => (x.id === id ? fromComment(saved) : x)),
+                    ),
+                );
               }}
               type="button"
             >
               Post comment
             </button>
+            {errorAt('newComment')}
           </div>
         )}
       </div>
 
-      {asMe && (
+      {loggedIn && (
         <div
           className={`${styles.card} ${styles.spread}`}
           style={{ marginTop: 24 }}
         >
           <b>{done ? 'Done for today.' : 'Finished the homework?'}</b>
-          <button
-            className={`${styles.button} ${done ? styles.active : styles.accent}`}
-            onClick={() => {
-              setDone(!done);
-              mock(`POST ${base}/done {"done":${!done}}`);
-            }}
-            type="button"
-          >
-            {done ? 'Done' : 'Mark as done'}
-          </button>
+          {doneButton('finish', true)}
+          {errorAt('finish')}
         </div>
       )}
-
-      <div className={styles.mockBar}>
-        <span style={{ opacity: 0.7 }}>Mock · view as</span>
-        <button
-          className={`${styles.darkButton} ${asMe ? '' : styles.active}`}
-          onClick={() => setAsMe(false)}
-          type="button"
-        >
-          Visitor
-        </button>
-        <button
-          className={`${styles.darkButton} ${asMe ? styles.active : ''}`}
-          onClick={() => setAsMe(true)}
-          type="button"
-        >
-          Me, logged in
-        </button>
-      </div>
-      {toast && <div className={styles.toast}>{toast}</div>}
     </div>
   );
 }
