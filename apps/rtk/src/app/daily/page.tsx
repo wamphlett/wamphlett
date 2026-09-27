@@ -31,35 +31,35 @@ export default function Page() {
           <b>Mock.</b> Example data only; nothing here is live yet.
         </div>
 
-        {days.map(day => (
-          <Link
-            className={styles.dayRow}
-            href={`/daily/${day.date}`}
-            key={day.date}
-          >
-            <span className={styles.dayDate}>
-              {formatDay(day.date, 'short')}
-            </span>
-            <span className={styles.dayKanji}>
-              {day.targets.map(t => (
-                <span key={t.kanji}>
-                  <b lang="ja">{t.kanji}</b>
-                  <span className={styles.muted}>{t.keyword}</span>
-                </span>
-              ))}
-            </span>
-            <span className={styles.muted}>
-              {day.reviews ? `${day.reviews} reviews` : 'no reviews'}
-            </span>
-            <span>
-              <span
-                className={`${styles.chip} ${day.done ? styles.statusDone : ''}`}
-              >
-                {day.done ? 'Done' : 'Not done'}
+        <div className={styles.days}>
+          {days.map(day => (
+            <Link
+              className={styles.day}
+              href={`/daily/${day.date}`}
+              key={day.date}
+            >
+              <span className={styles.dayHead}>
+                <b>{formatDay(day.date, 'short')}</b>
+                <span
+                  className={`${styles.dot} ${day.done ? styles.done : ''}`}
+                  title={day.done ? 'Done' : 'Not done'}
+                />
               </span>
-            </span>
-          </Link>
-        ))}
+              <span className={styles.dayKanji} lang="ja">
+                {day.targets.map(t => (
+                  <span key={t.kanji}>{t.kanji}</span>
+                ))}
+              </span>
+              <span className={styles.dayKeywords}>
+                {day.targets.map(t => t.keyword).join(' · ')}
+              </span>
+              <span className={styles.dayFoot}>
+                {day.reviews ? `${day.reviews} reviews` : 'no reviews'}
+                {day.done ? '' : ' · not done'}
+              </span>
+            </Link>
+          ))}
+        </div>
       </div>
     </PrimaryLayout>
   );

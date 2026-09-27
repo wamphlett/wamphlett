@@ -1,4 +1,5 @@
 .page {
+  --radius: 14px;
   padding-top: 140px;
   padding-bottom: 80px;
 }
@@ -76,6 +77,7 @@
 .card {
   margin-bottom: 10px;
   padding: 20px 30px;
+  border-radius: var(--radius);
   background: #fff;
   color: #000;
 }
@@ -190,7 +192,7 @@
   display: inline-block;
   padding: 1px 8px;
   border: 1px solid #c9c9c9;
-  border-radius: 4px;
+  border-radius: 6px;
   color: #666;
   font-size: 0.7em;
   letter-spacing: 0.05em;
@@ -208,6 +210,7 @@
   margin-bottom: 10px;
   padding: 10px 16px;
   border-left: 4px solid var(--color-brand-accent);
+  border-radius: var(--radius);
   background: rgba(255, 255, 255, 0.92);
   color: #000;
   font-size: 0.9em;
@@ -223,6 +226,7 @@
 
 .stat {
   padding: 16px 20px;
+  border-radius: var(--radius);
   background: #fff;
   color: #000;
 }
@@ -262,11 +266,13 @@
 .barTrack {
   position: relative;
   height: 10px;
+  border-radius: 999px;
   background: #f1f1f1;
 }
 
 .barFill {
   height: 100%;
+  border-radius: 999px;
 }
 
 .barTarget {
@@ -295,6 +301,7 @@
   flex-direction: column;
   gap: 10px;
   padding: 20px 24px;
+  border-radius: var(--radius);
   background: #fff;
   color: #000;
 }
@@ -342,7 +349,7 @@
 .word {
   padding: 0;
   border: none;
-  border-radius: 3px;
+  border-radius: 6px;
   background: none;
   color: inherit;
   font: inherit;
@@ -399,6 +406,7 @@
   margin: 4px 0 2px;
   padding: 12px 16px;
   border-left: 3px solid var(--color-brand-accent);
+  border-radius: 10px;
   background: #f7fafc;
 }
 
@@ -416,6 +424,7 @@
 
 .entry {
   padding: 14px 18px;
+  border-radius: var(--radius);
   background: #fff;
   color: #000;
 }
@@ -476,7 +485,7 @@
   margin: 8px 0;
   padding: 10px 12px;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 10px;
   color: #000;
   font: inherit;
   resize: vertical;
@@ -487,42 +496,74 @@
   outline: none;
 }
 
-/* index */
-.dayRow {
+/* index: small tiles that wrap to the screen width */
+.days {
   display: grid;
-  grid-template-columns: 11em minmax(0, 1fr) 8em 7em;
-  gap: 16px;
-  align-items: center;
-  padding: 16px 30px;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 10px;
+}
+
+.day {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 16px 14px;
+  border-radius: var(--radius);
   background: #fff;
   color: #000;
-  margin-bottom: 10px;
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s;
 }
 
-.dayRow:hover {
-  box-shadow: inset 4px 0 0 var(--color-brand-accent);
+.day:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 0 2px var(--color-brand-accent);
 }
 
-.dayDate {
+.dayHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.9em;
+}
+
+.dayHead b {
   font-weight: 700;
-  font-size: 1.2em;
+}
+
+/* done: filled green; not done: an empty ring */
+.dot {
+  width: 10px;
+  height: 10px;
+  border: 2px solid #c9c9c9;
+  border-radius: 50%;
+}
+
+.dot.done {
+  border-color: #2e9d52;
+  background: #2e9d52;
 }
 
 .dayKanji {
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px 18px;
-}
-
-.dayKanji span {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 6px;
-}
-
-.dayKanji b {
-  font-size: 1.8em;
+  gap: 8px;
   font-weight: 900;
+  font-size: 1.9em;
+  line-height: 1.1;
+}
+
+.dayKeywords {
+  overflow: hidden;
+  font-size: 0.8em;
+  opacity: 0.6;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dayFoot {
+  font-size: 0.75em;
+  opacity: 0.5;
 }
 
 /* mock bar */
@@ -554,7 +595,7 @@
   transform: translateX(-50%);
   max-width: min(560px, calc(100vw - 32px));
   padding: 10px 18px;
-  border-radius: 6px;
+  border-radius: 12px;
   background: #fff;
   color: #000;
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
@@ -569,14 +610,6 @@
   .twoCol {
     grid-template-columns: minmax(0, 1fr);
   }
-
-  .dayRow {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-
-  .dayRow > :nth-child(3) {
-    display: none;
-  }
 }
 
 @media (max-width: 480px) {
@@ -584,9 +617,12 @@
     font-size: 3em;
   }
 
-  .card,
-  .dayRow {
+  .card {
     padding: 16px;
+  }
+
+  .days {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .ja {
