@@ -1,12 +1,23 @@
 'use client';
 import { Fragment } from 'react';
-import { KANJI } from '@/lib/daily/kanji';
-import { parseJapanese } from '@/lib/daily/text';
-import type { DictionaryEntry } from '@/lib/daily/types';
+import type {
+  DictionaryEntry,
+  KanjiInfo,
+  KanjiStatus,
+  Token,
+} from '@/lib/daily/types';
 import styles from './daily.module.css';
 
+// Kanji I haven't studied are marked, and always show their reading.
+export const STATUS_CLASS: Record<KanjiStatus, string> = {
+  covered: '',
+  not_studied: styles.notStudied,
+  not_in_rtk: styles.outside,
+};
+
 type JapaneseTextProps = {
-  markup: string;
+  tokens: Token[];
+  kanji: Record<string, KanjiInfo>;
   targets: Record<string, true>;
   furigana: boolean;
   // Word taps: the selected word's key, and a callback. Without onSelect the
@@ -16,11 +27,9 @@ type JapaneseTextProps = {
   idPrefix?: string;
 };
 
-// Kanji outside RTK always show their reading.
-const outsideRtk = (text: string) => [...text].some(c => !KANJI[c]);
-
 export function JapaneseText({
-  markup,
+  tokens,
+  kanji,
   targets,
   furigana,
   selected,
@@ -29,18 +38,18 @@ export function JapaneseText({
 }: JapaneseTextProps) {
   return (
     <p className={styles.ja} lang="ja">
-      {parseJapanese(markup).map((segment, i) => {
-        if (segment.kind === 'text') {
-          return <Fragment key={i}>{segment.text}</Fragment>;
+      {tokens.map((token, i) => {
+        if (!token.parts.some(p => p.reading)) {
+          return <Fragment key={i}>{token.surface}</Fragment>;
         }
         const key = `${idPrefix}${i}`;
         const isSelected = selected === key;
-        const ruby = segment.parts.map((part, j) =>
+        const ruby = token.parts.map((part, j) =>
           part.reading ? (
             <ruby key={j}>
               {[...part.text].map((c, k) => (
                 <span
-                  className={`${targets[c] ? styles.target_ : ''} ${KANJI[c] ? '' : styles.outside}`}
+                  className={`${targets[c] ? styles.target_ : ''} ${kanji[c] ? STATUS_CLASS[kanji[c].status] : ''}`}
                   key={k}
                 >
                   {c}
@@ -48,7 +57,11 @@ export function JapaneseText({
               ))}
               <rt
                 className={
-                  furigana || isSelected || outsideRtk(part.text)
+                  furigana ||
+                  isSelected ||
+                  [...part.text].some(
+                    c => kanji[c] && kanji[c].status !== 'covered',
+                  )
                     ? ''
                     : styles.hidden
                 }
@@ -64,7 +77,7 @@ export function JapaneseText({
           <button
             className={`${styles.word} ${isSelected ? styles.selected : ''}`}
             key={i}
-            onClick={() => onSelect(key, segment.surface)}
+            onClick={() => onSelect(key, token.surface)}
             type="button"
           >
             {ruby}
@@ -79,10 +92,12 @@ export function JapaneseText({
 
 export function DictionaryItem({
   entry,
+  kanji,
   targets,
   bare = false,
 }: {
   entry: DictionaryEntry;
+  kanji: Record<string, KanjiInfo>;
   targets: Record<string, true>;
   // Inside a sentence's word detail: no card chrome.
   bare?: boolean;
@@ -102,14 +117,14 @@ export function DictionaryItem({
         <span className={styles.entryReading} lang="ja">
           {entry.reading}
         </span>
-        {entry.lemma && (
+        {entry.lemma !== entry.forms[0] && (
           <span className={`${styles.small} ${styles.muted}`} lang="ja">
             {' '}
             · from {entry.lemma}
           </span>
         )}
       </div>
-      <div>{entry.meanings.join('; ')}</div>
+      {entry.meanings.length > 0 && <div>{entry.meanings.join('; ')}</div>}
       <div className={styles.kanjiList}>
         {entry.wholeWordReading && (
           <span className={`${styles.chip} ${styles.info}`}>
@@ -118,7 +133,7 @@ export function DictionaryItem({
           </span>
         )}
         {entry.kanji.map(k => {
-          const frame = KANJI[k.kanji];
+          const info = kanji[k.kanji];
           return (
             <div className={styles.kanjiLine} key={k.kanji}>
               <b className={targets[k.kanji] ? styles.target_ : ''} lang="ja">
@@ -126,10 +141,14 @@ export function DictionaryItem({
               </b>
               <span lang="ja">{k.reading ?? ''}</span>
               <span>
-                {frame ? (
-                  <a href={`/#${frame.frame}`}>
-                    #{frame.frame} {frame.keyword}
+                {info?.status === 'covered' ? (
+                  <a href={`/#${info.frame}`}>
+                    #{info.frame} {info.keyword}
                   </a>
+                ) : info?.status === 'not_studied' ? (
+                  <span className={`${styles.chip} ${styles.info}`}>
+                    not studied yet
+                  </span>
                 ) : (
                   <span className={`${styles.chip} ${styles.warn}`}>
                     not in RTK

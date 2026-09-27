@@ -2,14 +2,16 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { formatDay, formatTime, percent } from '@/lib/daily/format';
-import { parseJapanese } from '@/lib/daily/text';
 import type {
   Comment,
+  DailySource,
   DailyEntry as Entry,
   Grade,
+  KanjiStatus,
   Reason,
+  Token,
 } from '@/lib/daily/types';
-import { DictionaryItem, JapaneseText } from './japanese';
+import { DictionaryItem, JapaneseText, STATUS_CLASS } from './japanese';
 import styles from './daily.module.css';
 
 type DailyEntryProps = {
@@ -17,6 +19,7 @@ type DailyEntryProps = {
   prevDate?: string;
   nextDate?: string;
   loggedIn: boolean;
+  source: DailySource;
 };
 
 const GRADES: { grade: Grade; label: string; tone: string }[] = [
@@ -28,13 +31,17 @@ const GRADES: { grade: Grade; label: string; tone: string }[] = [
 function reasonLabel({ code, value }: Reason): string {
   switch (code) {
     case 'again_yesterday':
-      return value === 1
-        ? 'failed once yesterday'
-        : `failed ${value} times yesterday`;
+      return value === null
+        ? 'failed yesterday'
+        : value === 1
+          ? 'failed once yesterday'
+          : `failed ${value} times yesterday`;
     case 'lapses_14d':
-      return `${value} lapses in 14 days`;
+      return value === null
+        ? 'lapses in 14 days'
+        : `${value} lapses in 14 days`;
     case 'low_stability':
-      return `stability ${value} days`;
+      return value === null ? 'low stability' : `stability ${value} days`;
     case 'leech':
       return 'leech';
     case 'reading_struggle':
@@ -42,16 +49,22 @@ function reasonLabel({ code, value }: Reason): string {
   }
 }
 
-const plainText = (markup: string) =>
-  parseJapanese(markup)
-    .map(s => (s.kind === 'text' ? s.text : s.surface))
-    .join('');
+const plainText = (tokens: Token[]) => tokens.map(t => t.surface).join('');
+
+const LEGEND: { status: KanjiStatus; label: string }[] = [
+  {
+    status: 'not_studied',
+    label: 'not studied yet, so its reading always shows',
+  },
+  { status: 'not_in_rtk', label: 'not in RTK, so its reading always shows' },
+];
 
 export default function DailyEntry({
   entry,
   prevDate,
   nextDate,
   loggedIn,
+  source,
 }: DailyEntryProps) {
   const [asMe, setAsMe] = useState(loggedIn);
   const [done, setDone] = useState(entry.done);
@@ -112,7 +125,12 @@ export default function DailyEntry({
       <div className={styles.wordDetail}>
         {found ? (
           <>
-            <DictionaryItem bare entry={found} targets={targets} />
+            <DictionaryItem
+              bare
+              entry={found}
+              kanji={entry.kanji}
+              targets={targets}
+            />
             <a
               className={`${styles.small} ${styles.muted}`}
               href={`#word-${found.forms[0]}`}
@@ -171,9 +189,19 @@ export default function DailyEntry({
       </div>
 
       <div className={styles.banner}>
-        <b>Mock.</b> Everything on this page is example data, and nothing is
-        saved: actions only show the rtk-api call they would make. Every date
-        shows the same entry.
+        {source === 'mock' ? (
+          <>
+            <b>Mock.</b> Everything on this page is example data, and nothing is
+            saved: actions only show the rtk-api call they would make. Every
+            date shows the same entry.
+          </>
+        ) : (
+          <>
+            <b>Local payload.</b> This entry was generated on this machine and
+            read from a file. Nothing is saved: actions only show the rtk-api
+            call they would make.
+          </>
+        )}
       </div>
 
       {entryHidden && (
@@ -187,6 +215,14 @@ export default function DailyEntry({
           <span className={`${styles.chip} ${done ? styles.statusDone : ''}`}>
             {done ? 'Done' : 'Not done yet'}
           </span>
+          {entry.backfilled && (
+            <span
+              className={`${styles.chip} ${styles.info}`}
+              title="Generated after its date"
+            >
+              Generated later
+            </span>
+          )}
           <span className={`${styles.small} ${styles.muted}`}>
             Generated {formatTime(entry.generatedAt)} from{' '}
             {formatDay(entry.studyDate, 'short')}&apos;s reviews
@@ -249,8 +285,11 @@ export default function DailyEntry({
       <div className={styles.stats}>
         {[
           [stats.reviews, 'reviews'],
-          [stats.minutes, 'minutes'],
-          [percent(stats.againRate), 'answered Again'],
+          [Math.round(stats.minutes), 'minutes'],
+          [
+            stats.againRate === null ? 'n/a' : percent(stats.againRate),
+            'answered Again',
+          ],
           [stats.newKanji, 'new kanji'],
         ].map(([value, label]) => (
           <div className={styles.stat} key={label}>
@@ -302,29 +341,39 @@ export default function DailyEntry({
               value={stats.recognitionAgainRate}
             />
           </div>
-          <b style={{ display: 'block', marginTop: 18 }}>Weakest lessons</b>
-          <div className={styles.bars} style={{ marginTop: 12 }}>
-            {stats.weakestLessons.map(l => (
-              <Bar
-                color="#b3261e"
-                key={l.lesson}
-                label={`Lesson ${l.lesson}`}
-                value={l.againRate}
-              />
-            ))}
+          {stats.weakestLessons.length > 0 && (
+            <>
+              <b style={{ display: 'block', marginTop: 18 }}>Weakest lessons</b>
+              <div className={styles.bars} style={{ marginTop: 12 }}>
+                {stats.weakestLessons.map(l => (
+                  <Bar
+                    color="#b3261e"
+                    key={l.lesson}
+                    label={`Lesson ${l.lesson}`}
+                    value={l.againRate}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+      {entry.summary && (
+        <div className={styles.card} style={{ marginTop: 10 }}>
+          <div className={styles.row}>
+            <b>Where I am</b>
+            {entry.summary.ai && (
+              <span className={styles.aiLabel}>AI summary</span>
+            )}
           </div>
+          <p className={styles.summary}>{entry.summary.text}</p>
+          <span className={`${styles.small} ${styles.muted}`}>
+            Written{' '}
+            {entry.summary.ai && entry.model ? `by ${entry.model} ` : ''}from
+            the numbers above only.
+          </span>
         </div>
-      </div>
-      <div className={styles.card} style={{ marginTop: 10 }}>
-        <div className={styles.row}>
-          <b>Where I am</b>
-          <span className={styles.aiLabel}>AI summary</span>
-        </div>
-        <p className={styles.summary}>{entry.summary}</p>
-        <span className={`${styles.small} ${styles.muted}`}>
-          Written by {entry.model} from the numbers above only.
-        </span>
-      </div>
+      )}
 
       <h2 className={styles.sectionTitle}>
         Today&apos;s kanji
@@ -385,7 +434,6 @@ export default function DailyEntry({
       <div className={styles.card}>
         {visibleSentences.map(s => {
           const prefix = `${s.id}:`;
-          const position = entry.sentences.indexOf(s) + 1;
           if (hiddenSentences[s.id]) {
             return (
               <div
@@ -393,7 +441,7 @@ export default function DailyEntry({
                 key={s.id}
               >
                 <span>
-                  Hidden sentence: {plainText(s.text)}{' '}
+                  Hidden sentence: {plainText(s.tokens)}{' '}
                   <button
                     className={`${styles.button} ${styles.quiet}`}
                     onClick={() => {
@@ -402,7 +450,7 @@ export default function DailyEntry({
                         delete next[s.id];
                         return next;
                       });
-                      mock(`DELETE ${base}/sentences/${position}/hide`);
+                      mock(`DELETE ${base}/sentences/${s.position}/hide`);
                     }}
                     type="button"
                   >
@@ -419,10 +467,11 @@ export default function DailyEntry({
               <JapaneseText
                 furigana={!!furigana.sentences}
                 idPrefix={prefix}
-                markup={s.text}
+                kanji={entry.kanji}
                 onSelect={select}
                 selected={selected?.key}
                 targets={targets}
+                tokens={s.tokens}
               />
               {wordDetail(prefix)}
               {revealed[s.id] && (
@@ -440,7 +489,11 @@ export default function DailyEntry({
                   <span className={`${styles.small} ${styles.muted}`}>
                     {s.source === 'tatoeba' ? (
                       <a
-                        href={`https://tatoeba.org/en/sentences/search?from=jpn&query=${encodeURIComponent(plainText(s.text))}`}
+                        href={
+                          s.sourceId === null
+                            ? `https://tatoeba.org/en/sentences/search?from=jpn&query=${encodeURIComponent(plainText(s.tokens))}`
+                            : `https://tatoeba.org/en/sentences/show/${s.sourceId}`
+                        }
                         rel="noreferrer"
                         target="_blank"
                       >
@@ -460,7 +513,7 @@ export default function DailyEntry({
                         onClick={() => {
                           setGrades(gs => ({ ...gs, [s.id]: g.grade }));
                           mock(
-                            `PUT ${base}/grades/${position} {"grade":"${g.grade}"}`,
+                            `PUT ${base}/grades/${s.position} {"grade":"${g.grade}"}`,
                           );
                         }}
                         type="button"
@@ -472,7 +525,7 @@ export default function DailyEntry({
                       className={`${styles.button} ${styles.quiet}`}
                       onClick={() => {
                         setHiddenSentences(h => ({ ...h, [s.id]: true }));
-                        mock(`POST ${base}/sentences/${position}/hide`);
+                        mock(`POST ${base}/sentences/${s.position}/hide`);
                       }}
                       title="Hide this sentence and never show it again"
                       type="button"
@@ -506,10 +559,11 @@ export default function DailyEntry({
             <JapaneseText
               furigana={!!furigana.passage}
               idPrefix="passage:"
-              markup={entry.passage.text}
+              kanji={entry.kanji}
               onSelect={select}
               selected={selected?.key}
               targets={targets}
+              tokens={entry.passage.tokens}
             />
             {wordDetail('passage:')}
             {revealed.passage && (
@@ -525,7 +579,9 @@ export default function DailyEntry({
               >
                 {revealed.passage ? 'Hide translation' : 'Show translation'}
               </button>
-              <span className={styles.aiLabel}>AI-written</span>
+              {entry.passage.ai && (
+                <span className={styles.aiLabel}>AI-written</span>
+              )}
               <span className={`${styles.small} ${styles.muted}`}>
                 checked by code: every kanji studied, every target used
               </span>
@@ -548,8 +604,8 @@ export default function DailyEntry({
             Uses{' '}
             {w.uses
               .map(k => {
-                const t = entry.targets.find(t => t.kanji === k);
-                return t ? `${k} (${t.keyword})` : k;
+                const keyword = entry.kanji[k]?.keyword;
+                return keyword ? `${k} (${keyword})` : k;
               })
               .join(', ')}
           </p>
@@ -558,10 +614,11 @@ export default function DailyEntry({
               <JapaneseText
                 furigana={!!furigana.writing}
                 idPrefix={`${w.id}:`}
-                markup={w.answer}
+                kanji={entry.kanji}
                 onSelect={select}
                 selected={selected?.key}
                 targets={targets}
+                tokens={w.answer}
               />
               {wordDetail(`${w.id}:`)}
             </>
@@ -594,17 +651,33 @@ export default function DailyEntry({
         <small>every word above, with the reading it has here</small>
       </h2>
       <div className={styles.legend}>
-        <span>
-          <b className={styles.target_}>府</b> a target kanji for today
-        </span>
-        <span>
-          <span className={styles.outside}>嘘</span> not in RTK, so its reading
-          always shows
-        </span>
+        {entry.targets.length > 0 && (
+          <span>
+            <b className={styles.target_}>{entry.targets[0].kanji}</b> a target
+            kanji for today
+          </span>
+        )}
+        {LEGEND.map(({ status, label }) => {
+          const sample = Object.entries(entry.kanji).find(
+            ([, k]) => k.status === status,
+          )?.[0];
+          return (
+            sample && (
+              <span key={status}>
+                <span className={STATUS_CLASS[status]}>{sample}</span> {label}
+              </span>
+            )
+          );
+        })}
       </div>
       <div className={styles.dictionary}>
         {entry.dictionary.map(d => (
-          <DictionaryItem entry={d} key={d.forms[0]} targets={targets} />
+          <DictionaryItem
+            entry={d}
+            kanji={entry.kanji}
+            key={d.forms[0]}
+            targets={targets}
+          />
         ))}
       </div>
       <p className={`${styles.small}`} style={{ marginTop: 10, opacity: 0.7 }}>
@@ -767,7 +840,7 @@ function Bar({
   target,
 }: {
   label: string;
-  value: number;
+  value: number | null;
   color: string;
   target?: number;
 }) {
@@ -775,15 +848,17 @@ function Bar({
     <>
       <span>{label}</span>
       <div className={styles.barTrack}>
-        <div
-          className={styles.barFill}
-          style={{ width: percent(value), background: color }}
-        />
+        {value !== null && (
+          <div
+            className={styles.barFill}
+            style={{ width: percent(value), background: color }}
+          />
+        )}
         {target !== undefined && (
           <div className={styles.barTarget} style={{ left: percent(target) }} />
         )}
       </div>
-      <span>{percent(value)}</span>
+      <span>{value === null ? 'n/a' : percent(value)}</span>
     </>
   );
 }

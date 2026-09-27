@@ -2,11 +2,48 @@
 // are real (copied from rtk-api); the stats, sentences' sources, summary and
 // grades are made up. See rtk-anki's docs/daily-reading.md for the design.
 import { KANJI } from './kanji';
-import type { DailyEntry, DailySummary } from './types';
+import { parseJapanese } from './text';
+import type {
+  DailyEntry,
+  DailySummary,
+  DictionaryEntry,
+  KanjiInfo,
+  ReasonCode,
+  Sentence,
+  Target,
+} from './types';
 
 export const MOCK_TODAY = '2026-09-27';
 
-const entry: Omit<DailyEntry, 'date' | 'studyDate'> = {
+// The hand-written shape: Japanese as markup (see ./text), and fields that
+// would be null left out. toEntry turns it into the site's types.
+type MockEntry = Pick<
+  DailyEntry,
+  'generatedAt' | 'model' | 'stats' | 'done' | 'grades' | 'comments'
+> & {
+  summary: string;
+  targets: (Pick<Target, 'kanji' | 'frame' | 'keyword'> & {
+    story?: string;
+    comment?: string;
+    reasons: { code: ReasonCode; value?: number }[];
+  })[];
+  sentences: {
+    id: string;
+    text: string;
+    translation: string;
+    source: Sentence['source'];
+    owner?: string;
+  }[];
+  passage: { text: string; translation: string };
+  writing: { id: string; prompt: string; answer: string; uses: string[] }[];
+  dictionary: (Pick<DictionaryEntry, 'forms' | 'reading' | 'meanings'> & {
+    lemma?: string;
+    wholeWordReading?: boolean;
+    kanji: { kanji: string; reading: string | null; note?: string }[];
+  })[];
+};
+
+const mock: MockEntry = {
   generatedAt: '2026-09-27T04:31:12Z',
   model: 'mock-model',
   stats: {
@@ -494,6 +531,81 @@ const entry: Omit<DailyEntry, 'date' | 'studyDate'> = {
   ],
 };
 
+// 々 repeats the kanji before it and isn't one itself.
+const KANJI_CHAR = /(?!々)\p{Script=Han}/u;
+
+function toEntry(m: MockEntry): Omit<DailyEntry, 'date' | 'studyDate'> {
+  const sentences = m.sentences.map((s, i): Sentence => ({
+    id: s.id,
+    position: i + 1,
+    tokens: parseJapanese(s.text),
+    translation: s.translation,
+    source: s.source,
+    // No real Tatoeba ids here, so the page links to a search instead.
+    sourceId: null,
+    owner: s.owner ?? null,
+  }));
+  const passage = {
+    tokens: parseJapanese(m.passage.text),
+    translation: m.passage.translation,
+    ai: true,
+  };
+  const writing = m.writing.map(w => ({
+    ...w,
+    answer: parseJapanese(w.answer),
+  }));
+  const dictionary = m.dictionary.map((d): DictionaryEntry => ({
+    ...d,
+    lemma: d.lemma ?? d.forms[0],
+    wholeWordReading: d.wholeWordReading ?? false,
+    kanji: d.kanji.map(k => ({ ...k, note: k.note ?? null })),
+  }));
+  // Every kanji in the entry, in the order it first appears. A kanji
+  // missing from ./kanji is outside RTK.
+  const text = [
+    ...sentences.flatMap(s => s.tokens),
+    ...passage.tokens,
+    ...writing.flatMap(w => w.answer),
+  ]
+    .map(t => t.surface)
+    .concat(dictionary.flatMap(d => d.kanji.map(k => k.kanji)))
+    .concat(m.targets.map(t => t.kanji))
+    .join('');
+  const kanji = Object.fromEntries(
+    [...text]
+      .filter(c => KANJI_CHAR.test(c))
+      .map((c): [string, KanjiInfo] => [
+        c,
+        KANJI[c]
+          ? { ...KANJI[c], status: 'covered' }
+          : { frame: null, keyword: null, status: 'not_in_rtk' },
+      ]),
+  );
+  return {
+    generatedAt: m.generatedAt,
+    backfilled: false,
+    model: m.model,
+    stats: m.stats,
+    summary: { text: m.summary, ai: true },
+    targets: m.targets.map(t => ({
+      ...t,
+      story: t.story ?? null,
+      comment: t.comment ?? null,
+      reasons: t.reasons.map(r => ({ code: r.code, value: r.value ?? null })),
+    })),
+    kanji,
+    sentences,
+    passage,
+    writing,
+    dictionary,
+    done: m.done,
+    grades: m.grades,
+    comments: m.comments,
+  };
+}
+
+const entry = toEntry(mock);
+
 const history: {
   date: string;
   reviews: number;
@@ -518,6 +630,7 @@ export function getDailyIndex(): DailySummary[] {
     date: MOCK_TODAY,
     reviews: entry.stats.reviews,
     targets: entry.targets.map(t => ({ kanji: t.kanji, keyword: t.keyword })),
+    backfilled: false,
     done: entry.done,
   };
   return [
@@ -525,6 +638,7 @@ export function getDailyIndex(): DailySummary[] {
     ...history.map(h => ({
       date: h.date,
       reviews: h.reviews,
+      backfilled: false,
       done: h.done,
       targets: h.targets.map(k => ({
         kanji: k,

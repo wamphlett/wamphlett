@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import PrimaryLayout from '@/layouts/primary';
 import { formatDay } from '@/lib/daily/format';
-import { getDailyIndex } from '@/lib/daily/mock';
+import { getDailyIndex, getDailySource } from '@/lib/daily/data';
 import styles from '@/components/daily/daily.module.css';
 
 export const metadata: Metadata = { title: 'Daily reading' };
@@ -28,7 +28,16 @@ export default function Page() {
         </div>
 
         <div className={styles.banner}>
-          <b>Mock.</b> Example data only; nothing here is live yet.
+          {getDailySource() === 'mock' ? (
+            <>
+              <b>Mock.</b> Example data only; nothing here is live yet.
+            </>
+          ) : (
+            <>
+              <b>Local payloads.</b> Entries generated on this machine and read
+              from files; nothing here is live yet.
+            </>
+          )}
         </div>
 
         <div className={styles.days}>
@@ -56,6 +65,7 @@ export default function Page() {
               <span className={styles.dayFoot}>
                 {day.reviews ? `${day.reviews} reviews` : 'no reviews'}
                 {day.done ? '' : ' · not done'}
+                {day.backfilled && ' · generated later'}
               </span>
             </Link>
           ))}

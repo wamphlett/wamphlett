@@ -5,7 +5,7 @@ import PrimaryLayout from '@/layouts/primary';
 import DailyEntry from '@/components/daily/dailyEntry';
 import { isTokenValid } from '@/lib/auth';
 import { formatDay } from '@/lib/daily/format';
-import { getDailyEntry, getDailyIndex } from '@/lib/daily/mock';
+import { getDailyEntry, getDailyIndex, getDailySource } from '@/lib/daily/data';
 
 type Params = { params: Promise<{ date: string }> };
 
@@ -32,6 +32,7 @@ export default async function Page({ params }: Params) {
         loggedIn={isTokenValid(token)}
         nextDate={dates[i - 1]}
         prevDate={dates[i + 1]}
+        source={getDailySource()}
       />
     </PrimaryLayout>
   );

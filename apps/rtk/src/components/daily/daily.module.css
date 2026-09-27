@@ -386,6 +386,11 @@
   text-underline-offset: 6px;
 }
 
+.notStudied {
+  text-decoration: underline dotted #245a82;
+  text-underline-offset: 6px;
+}
+
 .sentence {
   display: flex;
   flex-direction: column;

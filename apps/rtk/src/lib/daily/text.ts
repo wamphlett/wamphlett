@@ -1,36 +1,37 @@
-// Parses the markup described in ./types: {word} groups a word, and a kanji
-// run inside it is followed by its reading, e.g. {占[うらな]い師[し]}.
+// Turns the mock's hand-written markup into tokens. {word} groups a word, and
+// a kanji run inside it is followed by its reading, e.g. {占[うらな]い師[し]}.
+// Text outside braces becomes plain tokens. The markup has no lemmas, so a
+// token's lemma is its surface.
+import type { Token, TokenPart } from './types';
 
-export type Part = { text: string; reading?: string };
-
-export type Segment =
-  | { kind: 'text'; text: string }
-  | { kind: 'word'; surface: string; parts: Part[] };
-
-const WORD = /\{([^}]*)\}/g;
 const PART =
   /([\p{Script=Han}々]+)\[([^\]]+)\]|([^[\]]+?)(?=[\p{Script=Han}々]+\[|$)/gu;
 
-export function parseJapanese(markup: string): Segment[] {
-  const segments: Segment[] = [];
-  let last = 0;
-  for (const match of markup.matchAll(WORD)) {
-    if (match.index > last) {
-      segments.push({ kind: 'text', text: markup.slice(last, match.index) });
-    }
-    const parts = [...match[1].matchAll(PART)].map(
-      ([, base, reading, kana]): Part =>
-        base ? { text: base, reading } : { text: kana },
-    );
-    segments.push({
-      kind: 'word',
-      surface: parts.map(p => p.text).join(''),
-      parts,
+export function parseJapanese(markup: string): Token[] {
+  return markup
+    .split(/(\{[^}]*\})/)
+    .filter(Boolean)
+    .map(piece => {
+      if (!piece.startsWith('{')) {
+        return {
+          surface: piece,
+          lemma: piece,
+          reading: null,
+          parts: [{ text: piece, reading: null }],
+        };
+      }
+      const parts = [...piece.slice(1, -1).matchAll(PART)].map(
+        ([, base, reading, kana]): TokenPart =>
+          base ? { text: base, reading } : { text: kana, reading: null },
+      );
+      const surface = parts.map(p => p.text).join('');
+      return {
+        surface,
+        lemma: surface,
+        reading: parts.some(p => p.reading)
+          ? parts.map(p => p.reading ?? p.text).join('')
+          : null,
+        parts,
+      };
     });
-    last = match.index + match[0].length;
-  }
-  if (last < markup.length) {
-    segments.push({ kind: 'text', text: markup.slice(last) });
-  }
-  return segments;
 }

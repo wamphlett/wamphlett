@@ -1,5 +1,6 @@
-// Shapes follow the payload in rtk-anki's docs/daily-reading.md. The page is a
-// mock for now: everything comes from ./mock, nothing from rtk-api.
+// The site's shapes for a daily entry. They follow version 1 of the payload
+// that rtk-anki writes (see ./payload), in camelCase. The data comes from
+// ./mock, or from local payload files (see ./data); nothing from rtk-api.
 
 export type ReasonCode =
   | 'again_yesterday'
@@ -8,62 +9,84 @@ export type ReasonCode =
   | 'lapses_14d'
   | 'reading_struggle';
 
-export type Reason = { code: ReasonCode; value?: number };
+export type Reason = { code: ReasonCode; value: number | null };
 
 export type Target = {
   kanji: string;
   frame: number;
   keyword: string;
-  story?: string;
-  comment?: string;
+  story: string | null;
+  comment: string | null;
   reasons: Reason[];
 };
 
-// Japanese text uses a small markup: {word} groups a word, and inside it a
-// kanji run is followed by its reading in brackets, e.g. {占[うらな]い師[し]}.
-// Text outside braces is plain.
+export type KanjiStatus = 'covered' | 'not_studied' | 'not_in_rtk';
+
+export type KanjiInfo = {
+  frame: number | null;
+  keyword: string | null;
+  status: KanjiStatus;
+};
+
+// Japanese text is a list of tokens; joining their surfaces gives the text.
+// Parts split a token into kanji runs (with a reading) and kana or
+// punctuation (reading null). A token with no reading is plain text.
+export type TokenPart = { text: string; reading: string | null };
+
+export type Token = {
+  surface: string;
+  lemma: string;
+  reading: string | null;
+  parts: TokenPart[];
+};
+
 export type Sentence = {
   id: string;
-  text: string;
+  position: number;
+  tokens: Token[];
   translation: string;
   source: 'tatoeba' | 'ai';
-  owner?: string;
+  sourceId: number | null;
+  owner: string | null;
 };
 
 export type WritingTask = {
   id: string;
   prompt: string;
-  answer: string;
+  answer: Token[];
   uses: string[];
 };
-
-export type KanjiStatus = 'covered' | 'not_studied' | 'not_in_rtk';
 
 export type DictionaryKanji = {
   kanji: string;
   // null when the reading belongs to the whole word (jukujikun).
   reading: string | null;
-  note?: string;
+  note: string | null;
 };
 
 export type DictionaryEntry = {
   // The forms that appear in the day's text; the first is shown.
   forms: string[];
+  lemma: string;
   reading: string;
-  lemma?: string;
   meanings: string[];
-  wholeWordReading?: boolean;
+  wholeWordReading: boolean;
   kanji: DictionaryKanji[];
 };
 
+// Rates are fractions 0..1, null when there were no reviews of that kind.
 export type Stats = {
   reviews: number;
   minutes: number;
-  againRate: number;
-  recallAgainRate: number;
-  recognitionAgainRate: number;
+  againRate: number | null;
+  recallAgainRate: number | null;
+  recognitionAgainRate: number | null;
   newKanji: number;
-  weeklyRetention: { week: string; recall: number; recognition: number }[];
+  weeklyRetention: {
+    week: string;
+    recall: number | null;
+    recognition: number | null;
+  }[];
   weakestLessons: { lesson: number; againRate: number }[];
 };
 
@@ -80,12 +103,17 @@ export type DailyEntry = {
   date: string;
   studyDate: string;
   generatedAt: string;
-  model: string;
+  // Generated after its date.
+  backfilled: boolean;
+  // null when the AI parts were skipped.
+  model: string | null;
   stats: Stats;
-  summary: string;
+  summary: { text: string; ai: boolean } | null;
   targets: Target[];
+  // Every kanji that appears anywhere in the entry.
+  kanji: Record<string, KanjiInfo>;
   sentences: Sentence[];
-  passage: { text: string; translation: string } | null;
+  passage: { tokens: Token[]; translation: string; ai: boolean } | null;
   writing: WritingTask[];
   dictionary: DictionaryEntry[];
   done: boolean;
@@ -97,5 +125,8 @@ export type DailySummary = {
   date: string;
   reviews: number;
   targets: { kanji: string; keyword: string }[];
+  backfilled: boolean;
   done: boolean;
 };
+
+export type DailySource = 'mock' | 'file';
