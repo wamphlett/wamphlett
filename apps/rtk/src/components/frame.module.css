@@ -93,6 +93,22 @@
   text-decoration: underline;
 }
 
+/* hover preview of a component's frame; above the sticky search bar and header */
+.preview {
+  position: fixed;
+  z-index: 200;
+  width: min(560px, calc(100vw - 16px));
+  font-size: 0.85em;
+  border-radius: 4px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.preview .container {
+  margin: 0;
+}
+
 .jlpt {
   font-size: 1.6em;
   font-weight: 800 !important;
@@ -157,4 +173,116 @@
   line-height: 1.6;
   font-style: normal;
   font-size: 1.2em;
+}
+
+.field {
+  position: relative;
+  width: 100%;
+}
+
+.pillBox {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  cursor: text;
+}
+
+.pillBox:hover,
+.pillBox:focus-within {
+  opacity: 1;
+  background: #f2f2f2;
+}
+
+.pillBox.right {
+  justify-content: flex-end;
+}
+
+/* .story span sets block/margin/opacity on every span; pills opt out */
+.field .pill {
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  padding: 0 2px 0 8px;
+  border-radius: 999px;
+  background: #e8e8e8;
+  font-size: 0.9em;
+  line-height: 1.6;
+  opacity: 1;
+}
+
+.pillRemove {
+  padding: 0 4px;
+  border: none;
+  background: none;
+  color: #999;
+  font-style: normal;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.pillRemove:hover {
+  color: #000;
+}
+
+.pillInput {
+  flex: 1 1 4em;
+  min-width: 4em;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+}
+
+/* right-aligned lists keep the draft flush against the pills; it only takes
+   room while focused or when showing the placeholder of an empty list */
+.pillBox.right .pillInput {
+  flex: 0 1 1em;
+  min-width: 1em;
+  text-align: right;
+}
+
+.pillBox.right .pillInput:focus,
+.pillBox.right .pillInput:placeholder-shown {
+  flex-basis: 8em;
+}
+
+/* small dot in the field's bottom-right corner after a successful save */
+.field .savedDot {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 5px;
+  height: 5px;
+  margin: 0;
+  border-radius: 50%;
+  background: #4CAF50;
+  opacity: 0;
+  pointer-events: none;
+  animation: savedDot 2s ease-out;
+}
+
+@keyframes savedDot {
+  10%, 60% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.inputBox.saveFailed {
+  opacity: 1;
+  box-shadow: inset 0 0 0 1px #cd0505;
+}
+
+.saveError {
+  margin-top: 4px;
+  padding: 0 6px;
+  font-size: 0.85em;
+  font-style: normal;
+  color: #cd0505;
+  text-align: left;
 }
