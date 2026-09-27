@@ -12,6 +12,7 @@ import type {
   Reason,
   Token,
 } from '@/lib/daily/types';
+import { InputBox, TextBox, update } from '@/components/frame';
 import { DictionaryItem, JapaneseText, STATUS_CLASS } from './japanese';
 import styles from './daily.module.css';
 
@@ -540,15 +541,30 @@ export default function DailyEntry({
               ))}
             </div>
             <div className={styles.story}>
-              {t.story ? (
+              {loggedIn && apiUrl ? (
+                // The frame's own story and comment, saved on blur exactly as
+                // on the frames page. Anki picks the story up on its next sync.
+                <>
+                  <TextBox
+                    initialValue={t.story ?? ''}
+                    onCommit={update(t.frame, 'story', apiUrl, token!)}
+                    placeholder="story..."
+                  />
+                  <InputBox
+                    initialValue={t.comment ?? ''}
+                    onCommit={update(t.frame, 'comment', apiUrl, token!)}
+                    placeholder="comments..."
+                    small
+                  />
+                </>
+              ) : t.story ? (
                 <p>{t.story}</p>
               ) : (
                 <p>
-                  <i>No story yet.</i>{' '}
-                  {loggedIn && <a href={`/#${t.frame}`}>Write one</a>}
+                  <i>No story yet.</i>
                 </p>
               )}
-              {t.comment && (
+              {!loggedIn && t.comment && (
                 <p className={`${styles.small} ${styles.muted}`}>{t.comment}</p>
               )}
             </div>
