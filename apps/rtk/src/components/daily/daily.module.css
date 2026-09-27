@@ -1,0 +1,618 @@
+.page {
+  --radius: 14px;
+  padding-top: 140px;
+  padding-bottom: 80px;
+}
+
+.hero {
+  padding: 0 0 30px;
+}
+
+.title {
+  font-weight: 900;
+  font-size: 4.5em;
+  line-height: 0.9em;
+  text-transform: uppercase;
+}
+
+.title > span {
+  color: var(--color-brand-accent);
+}
+
+.subtitle {
+  display: block;
+  margin-top: 12px;
+  font-weight: 100;
+  font-size: 1.8em;
+}
+
+.intro {
+  display: block;
+  max-width: 700px;
+  margin-top: 16px;
+  opacity: 0.8;
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+  margin-top: 20px;
+  font-size: 0.95em;
+}
+
+.nav a {
+  color: #fff;
+  opacity: 0.8;
+}
+
+.nav a:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.sectionTitle {
+  margin: 36px 0 12px;
+  font-weight: 900;
+  font-size: 1.6em;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.sectionTitle .darkButton {
+  font-size: 0.55em;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.sectionTitle small {
+  margin-left: 12px;
+  font-weight: 200;
+  font-size: 0.55em;
+  letter-spacing: 0;
+  text-transform: none;
+  opacity: 0.8;
+}
+
+.card {
+  margin-bottom: 10px;
+  padding: 20px 30px;
+  border-radius: var(--radius);
+  background: #fff;
+  color: #000;
+}
+
+.card a {
+  color: inherit;
+}
+
+.muted {
+  opacity: 0.6;
+}
+
+.small {
+  font-size: 0.85em;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.spread {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* buttons */
+.button {
+  padding: 6px 14px;
+  border: 1px solid #000;
+  border-radius: 999px;
+  background: #fff;
+  color: #000;
+  font-size: 0.9em;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.button:hover {
+  background: #000;
+  color: #fff;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: default;
+  pointer-events: none;
+}
+
+.button.active {
+  background: #000;
+  color: #fff;
+}
+
+.button.accent {
+  border-color: var(--color-brand-accent);
+  background: var(--color-brand-accent);
+  color: #fff;
+}
+
+.button.quiet {
+  border-color: #ddd;
+  color: #555;
+}
+
+.button.quiet:hover {
+  border-color: #000;
+  background: #fff;
+  color: #000;
+}
+
+.darkButton {
+  padding: 6px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 999px;
+  background: transparent;
+  color: #fff;
+  font-size: 0.9em;
+  cursor: pointer;
+}
+
+.darkButton:hover,
+.darkButton.active {
+  background: #fff;
+  color: #000;
+}
+
+.chip {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #f1f1f1;
+  color: #333;
+  font-size: 0.8em;
+}
+
+.chip.warn {
+  background: #fdecea;
+  color: #b3261e;
+}
+
+.chip.info {
+  background: #e7f1f9;
+  color: #245a82;
+}
+
+.chip.ok {
+  background: #e6f4ea;
+  color: #1e6b34;
+}
+
+.aiLabel {
+  display: inline-block;
+  padding: 1px 8px;
+  border: 1px solid #c9c9c9;
+  border-radius: 6px;
+  color: #666;
+  font-size: 0.7em;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+/* status */
+.statusDone {
+  color: #1e6b34;
+  background: #e6f4ea;
+}
+
+.banner {
+  margin-bottom: 10px;
+  padding: 10px 16px;
+  border-left: 4px solid var(--color-brand-accent);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.92);
+  color: #000;
+  font-size: 0.9em;
+}
+
+/* a failed action, where it was made */
+.actionError {
+  flex-basis: 100%;
+  margin-top: 8px;
+  color: #b3261e;
+  font-size: 0.85em;
+}
+
+.card .actionError a {
+  text-decoration: underline;
+}
+
+/* stats */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.stat {
+  padding: 16px 20px;
+  border-radius: var(--radius);
+  background: #fff;
+  color: #000;
+}
+
+.statValue {
+  display: block;
+  font-weight: 800;
+  font-size: 2.2em;
+  line-height: 1.1;
+}
+
+.statLabel {
+  display: block;
+  font-size: 0.85em;
+  opacity: 0.6;
+}
+
+.twoCol {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 10px;
+}
+
+.twoCol > .card {
+  margin-bottom: 0;
+}
+
+.bars {
+  display: grid;
+  grid-template-columns: 6em minmax(0, 1fr) 3em;
+  row-gap: 6px;
+  column-gap: 10px;
+  align-items: center;
+  font-size: 0.85em;
+}
+
+.barTrack {
+  position: relative;
+  height: 10px;
+  border-radius: 999px;
+  background: #f1f1f1;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.barTarget {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  background: #1e6b34;
+}
+
+.summary {
+  margin-top: 14px;
+  font-size: 1.1em;
+  line-height: 1.6;
+}
+
+/* targets */
+.targets {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px;
+}
+
+.target {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 24px;
+  border-radius: var(--radius);
+  background: #fff;
+  color: #000;
+}
+
+.targetHead {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.targetKanji {
+  font-weight: 900;
+  font-size: 4em;
+  line-height: 1;
+}
+
+.targetKeyword {
+  display: block;
+  font-weight: 600;
+  font-size: 1.5em;
+}
+
+.story {
+  font-size: 1.05em;
+}
+
+.story i {
+  opacity: 0.6;
+}
+
+/* Japanese text */
+.ja {
+  font-family: 'Hiragino Mincho ProN', 'Yu Mincho', 'Noto Serif JP', serif;
+  font-size: 1.7em;
+  line-height: 2.3;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.passage .ja {
+  font-size: 1.45em;
+  line-height: 2.4;
+}
+
+.word {
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.word:hover {
+  background: #f1f1f1;
+}
+
+.word.selected {
+  background: #e7f1f9;
+}
+
+.ja rt {
+  font-family: 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+  font-size: 0.45em;
+  color: #555;
+  transition: opacity 0.15s;
+}
+
+/* display: none, not opacity: a hidden reading still widens its kanji */
+.ja rt.hidden {
+  display: none;
+}
+
+.target_ {
+  color: var(--color-brand-accent);
+  font-weight: 700;
+}
+
+.outside {
+  text-decoration: underline dotted #b3261e;
+  text-underline-offset: 6px;
+}
+
+.notStudied {
+  text-decoration: underline dotted #245a82;
+  text-underline-offset: 6px;
+}
+
+.sentence {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sentence + .sentence {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid #eee;
+}
+
+.translation {
+  font-size: 1.05em;
+}
+
+.wordDetail {
+  margin: 4px 0 2px;
+  padding: 12px 16px;
+  border-left: 3px solid var(--color-brand-accent);
+  border-radius: 10px;
+  background: #f7fafc;
+}
+
+.hiddenSentence {
+  font-size: 0.9em;
+  opacity: 0.6;
+}
+
+/* dictionary */
+.dictionary {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 10px;
+}
+
+.entry {
+  padding: 14px 18px;
+  border-radius: var(--radius);
+  background: #fff;
+  color: #000;
+}
+
+.entry.targetEntry {
+  box-shadow: inset 4px 0 0 var(--color-brand-accent);
+}
+
+.entryWord {
+  font-family: 'Hiragino Mincho ProN', 'Yu Mincho', 'Noto Serif JP', serif;
+  font-size: 1.6em;
+  font-weight: 600;
+}
+
+.entryReading {
+  margin-left: 10px;
+  font-size: 1.05em;
+  color: #555;
+}
+
+.kanjiList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+  font-size: 0.9em;
+}
+
+.kanjiLine {
+  display: grid;
+  grid-template-columns: 1.6em 4.5em minmax(0, 1fr);
+  gap: 8px;
+  align-items: baseline;
+}
+
+.kanjiLine b {
+  font-size: 1.3em;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin-bottom: 12px;
+  font-size: 0.9em;
+}
+
+/* comments */
+.comment + .comment {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #eee;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 80px;
+  margin: 8px 0;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  color: #000;
+  font: inherit;
+  resize: vertical;
+}
+
+.textarea:focus {
+  border-color: #000;
+  outline: none;
+}
+
+/* index: small tiles that wrap to the screen width */
+.days {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 10px;
+}
+
+.day {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 16px 14px;
+  border-radius: var(--radius);
+  background: #fff;
+  color: #000;
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s;
+}
+
+.day:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 0 2px var(--color-brand-accent);
+}
+
+.dayHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.9em;
+}
+
+.dayHead b {
+  font-weight: 700;
+}
+
+/* done: filled green; not done: an empty ring */
+.dot {
+  width: 10px;
+  height: 10px;
+  border: 2px solid #c9c9c9;
+  border-radius: 50%;
+}
+
+.dot.done {
+  border-color: #2e9d52;
+  background: #2e9d52;
+}
+
+.dayKanji {
+  display: flex;
+  gap: 8px;
+  font-weight: 900;
+  font-size: 1.9em;
+  line-height: 1.1;
+}
+
+.dayKeywords {
+  overflow: hidden;
+  font-size: 0.8em;
+  opacity: 0.6;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dayFoot {
+  font-size: 0.75em;
+  opacity: 0.5;
+}
+
+@media (max-width: 900px) {
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .twoCol {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 3em;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .days {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ja {
+    font-size: 1.4em;
+  }
+}

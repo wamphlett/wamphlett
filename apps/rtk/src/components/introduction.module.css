@@ -38,6 +38,24 @@
   font-size: 2.25em;
 }
 
+.link {
+  display: block;
+  margin-top: 24px;
+  font-weight: 900;
+  font-size: 1.4em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.link:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.link > span {
+  color: var(--color-brand-accent);
+}
+
 .smallprint {
   font-size: 1.2em;
 }

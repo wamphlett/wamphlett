@@ -3,31 +3,7 @@ import Introduction from '@/components/introduction';
 import { getBlurUrl } from './loaders';
 import FrameList from '@/components/frameList';
 import { cookies } from 'next/headers';
-
-type JWTPayload = {
-  exp?: number;
-};
-
-function isTokenValid(token?: string): boolean {
-  if (!token) {
-    return false;
-  }
-
-  try {
-    const payload = JSON.parse(
-      Buffer.from(token.split('.')[1], 'base64').toString(),
-    ) as JWTPayload;
-
-    if (!payload.exp) {
-      return false;
-    }
-
-    const now = Math.floor(Date.now() / 1000);
-    return payload.exp > now;
-  } catch {
-    return false;
-  }
-}
+import { isTokenValid } from '@/lib/auth';
 
 export default async function Page() {
   const headerURL = `${process.env.LIBRARY_URL ?? 'https://library.wamphlett.net'}/photos/website/2023/albania/three-of-a-kind.jpg`;
