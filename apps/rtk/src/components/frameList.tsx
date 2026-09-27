@@ -28,7 +28,13 @@ import styles from './frameList.module.css';
 // 			"chapter": 1
 // 		},
 
-import Frame, { CompactHeader, type FramePatch } from './frame';
+import Frame, {
+  CompactHeader,
+  type FramePatch,
+  type SheetSort,
+  sortFrames,
+  type SortKey,
+} from './frame';
 
 type FrameData = {
   id: string;
@@ -110,13 +116,40 @@ export default function FrameList({
     return () => clearTimeout(handle);
   }, [inputValue]);
 
+  // Compact-only column sort. The order is captured as ids when a header is
+  // clicked, so saving an edit doesn't make the row jump to its new position.
+  const [sort, setSort] = useState<SheetSort & { order: string[] }>();
+
+  const cycleSort = (key: SortKey) => {
+    const next: SheetSort | undefined =
+      sort?.key !== key
+        ? { key, direction: 'asc' }
+        : sort.direction === 'asc'
+          ? { key, direction: 'desc' }
+          : undefined;
+    setSort(
+      next && {
+        ...next,
+        order: sortFrames(frames, next).map(frame => frame.id),
+      },
+    );
+  };
+
+  const orderedFrames = useMemo(() => {
+    if (density !== 'compact' || !sort) {
+      return frames;
+    }
+    const byId = new Map(frames.map(frame => [frame.id, frame]));
+    return sort.order.flatMap(id => byId.get(id) ?? []);
+  }, [frames, sort, density]);
+
   const filteredFrames = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) {
-      return frames;
+      return orderedFrames;
     }
 
-    return frames.filter(
+    return orderedFrames.filter(
       frame =>
         frame.kanji.includes(query.trim()) ||
         frame.keyword
@@ -131,7 +164,7 @@ export default function FrameList({
         ) ||
         String(frame.frame_number) === q,
     );
-  }, [frames, query]);
+  }, [orderedFrames, query]);
 
   const listRef = useRef<HTMLDivElement>(null);
   const listOffsetRef = useRef(0);
@@ -164,21 +197,21 @@ export default function FrameList({
   });
   /* eslint-enable react-hooks/refs */
 
-  // Component name → index of the frame it refers to: a keyword match wins,
+  // Component name → the frame it refers to: a keyword match wins,
   // otherwise the first frame that lists it as a primitive.
   const componentIndex = useMemo(() => {
-    const index = new Map<string, number>();
-    frames.forEach((frame, i) => {
+    const index = new Map<string, FrameData>();
+    frames.forEach(frame => {
       const key = frame.keyword.toLowerCase();
       if (!index.has(key)) {
-        index.set(key, i);
+        index.set(key, frame);
       }
     });
-    frames.forEach((frame, i) =>
+    frames.forEach(frame =>
       frame.primitives?.forEach(primitive => {
         const key = primitive.toLowerCase();
         if (!index.has(key)) {
-          index.set(key, i);
+          index.set(key, frame);
         }
       }),
     );
@@ -186,11 +219,8 @@ export default function FrameList({
   }, [frames]);
 
   const resolveComponent = useCallback(
-    (component: string) => {
-      const index = componentIndex.get(component.trim().toLowerCase());
-      return index === undefined ? undefined : frames[index];
-    },
-    [componentIndex, frames],
+    (component: string) => componentIndex.get(component.trim().toLowerCase()),
+    [componentIndex],
   );
 
   // react-virtual only self-corrects its target for rows that were still
@@ -236,8 +266,8 @@ export default function FrameList({
 
   const handleComponentClick = useCallback(
     (component: string) => {
-      const index = componentIndex.get(component.trim().toLowerCase());
-      if (index === undefined) {
+      const target = componentIndex.get(component.trim().toLowerCase());
+      if (!target) {
         return;
       }
 
@@ -246,13 +276,15 @@ export default function FrameList({
         setQuery('');
       });
 
-      scrollToFrame(index, 500);
+      // With the search cleared the list is orderedFrames, which may be sorted.
+      scrollToFrame(orderedFrames.indexOf(target), 500);
     },
-    [componentIndex, scrollToFrame],
+    [componentIndex, orderedFrames, scrollToFrame],
   );
 
-  // Frame to keep in view across a density switch, captured before the switch.
-  const densityAnchorRef = useRef<number | undefined>(undefined);
+  // Frame (by id) to keep in view across a density switch, captured before
+  // the switch. By id because the two densities can order rows differently.
+  const densityAnchorRef = useRef<string | undefined>(undefined);
 
   const changeDensity = (next: Density) => {
     if (next === density) {
@@ -262,9 +294,10 @@ export default function FrameList({
     // include scrollMargin). Anchor on the first row that is mostly visible
     // below the sticky search bar, not a sliver peeking out from under it.
     const viewTop = window.scrollY + getObstructionHeight();
-    densityAnchorRef.current = virtualizer
+    const item = virtualizer
       .getVirtualItems()
-      .find(item => (item.start + item.end) / 2 > viewTop)?.index;
+      .find(virtualItem => (virtualItem.start + virtualItem.end) / 2 > viewTop);
+    densityAnchorRef.current = item && filteredFrames[item.index].id;
     localStorage.setItem(DENSITY_KEY, next);
     window.dispatchEvent(new Event(DENSITY_EVENT));
   };
@@ -275,8 +308,9 @@ export default function FrameList({
     virtualizer.measure();
     const anchor = densityAnchorRef.current;
     densityAnchorRef.current = undefined;
-    if (anchor !== undefined && window.scrollY > 0) {
-      scrollToFrame(anchor, 150);
+    const index = filteredFrames.findIndex(frame => frame.id === anchor);
+    if (index !== -1 && window.scrollY > 0) {
+      scrollToFrame(index, 150);
     }
   }, [density]);
 
@@ -309,7 +343,9 @@ export default function FrameList({
             </button>
           ))}
         </div>
-        {density === 'compact' && <CompactHeader />}
+        {density === 'compact' && (
+          <CompactHeader onSort={cycleSort} sort={sort} />
+        )}
       </div>
 
       {filteredFrames.length > 0 ? (

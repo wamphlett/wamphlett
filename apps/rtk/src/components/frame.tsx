@@ -231,29 +231,137 @@ function Frame({
   );
 }
 
+export type SortKey =
+  | 'number'
+  | 'keyword'
+  | 'primitives'
+  | 'components'
+  | 'readings'
+  | 'notes'
+  | 'chapter'
+  | 'strokes'
+  | 'jlpt';
+
+export type SheetSort = { key: SortKey; direction: 'asc' | 'desc' };
+
+// Easiest level first, so ascending reads N5 → N1.
+const JLPT_RANK: Record<string, number> = { N5: 0, N4: 1, N3: 2, N2: 3, N1: 4 };
+
+// What a frame sorts by in a column; undefined is an empty cell.
+function sortValue(
+  frame: FrameData,
+  key: SortKey,
+): string | number | undefined {
+  switch (key) {
+    case 'number':
+      return frame.frame_number;
+    case 'keyword':
+      return frame.keyword;
+    case 'primitives':
+      return frame.primitives?.filter(Boolean).join(' ') || undefined;
+    case 'components':
+      return frame.components?.filter(Boolean).join(' ') || undefined;
+    case 'readings':
+      return (
+        [...(frame.on_reading ?? []), ...(frame.kun_reading ?? [])].join(' ') ||
+        undefined
+      );
+    case 'notes':
+      return frame.comment || undefined;
+    case 'chapter':
+      return frame.chapter;
+    case 'strokes':
+      return frame.stroke_count;
+    case 'jlpt':
+      return frame.jlpt ? JLPT_RANK[frame.jlpt] : undefined;
+  }
+}
+
+// Empty cells go last in either direction; ties keep frame order.
+export function sortFrames<T extends FrameData>(
+  frames: T[],
+  sort: SheetSort,
+): T[] {
+  const collator = new Intl.Collator(undefined, {
+    numeric: true,
+    sensitivity: 'base',
+  });
+  const sign = sort.direction === 'asc' ? 1 : -1;
+  return frames
+    .map(frame => ({ frame, value: sortValue(frame, sort.key) }))
+    .sort((a, b) => {
+      if (a.value === undefined || b.value === undefined) {
+        if (a.value !== b.value) {
+          return a.value === undefined ? 1 : -1;
+        }
+        return a.frame.frame_number - b.frame.frame_number;
+      }
+      const order =
+        typeof a.value === 'number' && typeof b.value === 'number'
+          ? a.value - b.value
+          : collator.compare(String(a.value), String(b.value));
+      return order * sign || a.frame.frame_number - b.frame.frame_number;
+    })
+    .map(entry => entry.frame);
+}
+
 // Column labels for the compact sheet; same grid and order as the rows above.
-const SHEET_COLUMNS: { label: string; optional?: boolean }[] = [
-  { label: '#' },
+const SHEET_COLUMNS: {
+  label: string;
+  optional?: boolean;
+  sortKey?: SortKey;
+}[] = [
+  { label: '#', sortKey: 'number' },
   { label: '' },
-  { label: 'keyword' },
-  { label: 'primitives', optional: true },
-  { label: 'components', optional: true },
+  { label: 'keyword', sortKey: 'keyword' },
+  { label: 'primitives', optional: true, sortKey: 'primitives' },
+  { label: 'components', optional: true, sortKey: 'components' },
   { label: 'story' },
-  { label: 'readings', optional: true },
-  { label: 'notes', optional: true },
-  { label: 'ch', optional: true },
-  { label: 'str', optional: true },
-  { label: 'jlpt' },
+  { label: 'readings', optional: true, sortKey: 'readings' },
+  { label: 'notes', optional: true, sortKey: 'notes' },
+  { label: 'ch', optional: true, sortKey: 'chapter' },
+  { label: 'str', optional: true, sortKey: 'strokes' },
+  { label: 'jlpt', sortKey: 'jlpt' },
 ];
 
-export function CompactHeader() {
+type CompactHeaderProps = {
+  sort?: SheetSort;
+  onSort: (key: SortKey) => void;
+};
+
+export function CompactHeader({ sort, onSort }: CompactHeaderProps) {
   return (
-    <div aria-hidden className={`${styles.sheetRow} ${styles.sheetHeader}`}>
-      {SHEET_COLUMNS.map((column, i) => (
-        <span className={column.optional ? styles.sheetOptional : ''} key={i}>
-          {column.label}
-        </span>
-      ))}
+    <div className={`${styles.sheetRow} ${styles.sheetHeader}`}>
+      {SHEET_COLUMNS.map((column, i) => {
+        const className = column.optional ? styles.sheetOptional : '';
+        const { sortKey } = column;
+        if (!sortKey) {
+          return (
+            <span className={className} key={i}>
+              {column.label}
+            </span>
+          );
+        }
+        const direction = sort?.key === sortKey ? sort.direction : undefined;
+        return (
+          <button
+            aria-label={
+              direction
+                ? `${column.label}, sorted ${direction === 'asc' ? 'ascending' : 'descending'}`
+                : `Sort by ${column.label}`
+            }
+            className={`${className} ${styles.sortButton} ${direction ? styles.sorted : ''}`}
+            key={i}
+            onClick={() => onSort(sortKey)}
+            type="button"
+          >
+            {column.label}
+            {direction && (
+              <span aria-hidden>{direction === 'asc' ? ' ▲' : ' ▼'}</span>
+            )}
+          </button>
+        );
+      })}
     </div>
   );
 }

@@ -178,11 +178,25 @@
   padding-top: 4px;
 }
 
-.sheetHeader > span {
+.sheetHeader > * {
   font-size: 0.75em;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: #999;
+}
+
+.sortButton {
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.sortButton:hover,
+.sortButton.sorted {
+  color: #000;
 }
 
 .clamp {
