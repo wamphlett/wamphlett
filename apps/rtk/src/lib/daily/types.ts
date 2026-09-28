@@ -110,6 +110,8 @@ export type DailyEntry = {
   generatedAt: string;
   // Generated after its date.
   backfilled: boolean;
+  // The JLPT level it was pitched at; null for entries from before levels.
+  level: string | null;
   // null when the AI parts were skipped.
   model: string | null;
   stats: Stats;

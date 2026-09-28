@@ -26,6 +26,8 @@ export type DailyPayload = {
   study_date: string;
   generated_at: string;
   backfilled: boolean;
+  // The JLPT level it was written for; older entries don't have one.
+  level?: 'N4' | 'N3' | 'N2' | 'N1' | null;
   generator: { version: string; model: string | null };
   stats: {
     reviews: number;
@@ -131,6 +133,7 @@ export function fromPayload(payload: DailyResponse): DailyEntry {
     studyDate: payload.study_date,
     generatedAt: payload.generated_at,
     backfilled: payload.backfilled,
+    level: payload.level ?? null,
     model: payload.generator.model,
     stats: {
       reviews: stats.reviews,

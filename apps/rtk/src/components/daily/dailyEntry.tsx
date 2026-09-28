@@ -353,6 +353,14 @@ export default function DailyEntry({
               Generated later
             </span>
           )}
+          {entry.level && (
+            <span
+              className={`${styles.chip} ${styles.info}`}
+              title="The JLPT level the passage, sentences and writing were pitched at"
+            >
+              JLPT {entry.level}
+            </span>
+          )}
           <span className={`${styles.small} ${styles.muted}`}>
             Generated {formatTime(entry.generatedAt)} from{' '}
             {formatDay(entry.studyDate, 'short')}&apos;s reviews
