@@ -110,6 +110,8 @@ export type DailyEntry = {
   generatedAt: string;
   // Generated after its date.
   backfilled: boolean;
+  // The JLPT level it was pitched at; null for entries from before levels.
+  level: string | null;
   // null when the AI parts were skipped.
   model: string | null;
   stats: Stats;
@@ -118,12 +120,7 @@ export type DailyEntry = {
   // Every kanji that appears anywhere in the entry.
   kanji: Record<string, KanjiInfo>;
   sentences: Sentence[];
-  passage: {
-    tokens: Token[];
-    translation: string;
-    ai: boolean;
-    level?: string;
-  } | null;
+  passage: { tokens: Token[]; translation: string; ai: boolean } | null;
   writing: WritingTask[];
   dictionary: DictionaryEntry[];
   status: EntryStatus;

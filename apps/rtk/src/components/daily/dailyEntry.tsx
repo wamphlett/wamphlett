@@ -353,6 +353,14 @@ export default function DailyEntry({
               Generated later
             </span>
           )}
+          {entry.level && (
+            <span
+              className={`${styles.chip} ${styles.info}`}
+              title="The JLPT level the passage, sentences and writing were pitched at"
+            >
+              JLPT {entry.level}
+            </span>
+          )}
           <span className={`${styles.small} ${styles.muted}`}>
             Generated {formatTime(entry.generatedAt)} from{' '}
             {formatDay(entry.studyDate, 'short')}&apos;s reviews
@@ -741,14 +749,6 @@ export default function DailyEntry({
               </button>
               {entry.passage.ai && (
                 <span className={styles.aiLabel}>AI-written</span>
-              )}
-              {entry.passage.level && (
-                <span
-                  className={styles.aiLabel}
-                  title="The JLPT level the passage was written for"
-                >
-                  JLPT {entry.passage.level}
-                </span>
               )}
               <span className={`${styles.small} ${styles.muted}`}>
                 checked by code: every kanji studied, every target used
