@@ -742,6 +742,14 @@ export default function DailyEntry({
               {entry.passage.ai && (
                 <span className={styles.aiLabel}>AI-written</span>
               )}
+              {entry.passage.level && (
+                <span
+                  className={styles.aiLabel}
+                  title="The JLPT level the passage was written for"
+                >
+                  JLPT {entry.passage.level}
+                </span>
+              )}
               <span className={`${styles.small} ${styles.muted}`}>
                 checked by code: every kanji studied, every target used
               </span>

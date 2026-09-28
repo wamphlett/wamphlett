@@ -59,7 +59,13 @@ export type DailyPayload = {
     // Only sent to a logged-in request.
     hidden?: boolean;
   } & Source)[];
-  passage: { ai: boolean; translation: string; tokens: Token[] } | null;
+  // level: the JLPT level it was written for; older entries don't have it.
+  passage: {
+    ai: boolean;
+    translation: string;
+    tokens: Token[];
+    level?: 'N4' | 'N3' | 'N2' | 'N1';
+  } | null;
   writing: ({
     position: number;
     prompt: string;

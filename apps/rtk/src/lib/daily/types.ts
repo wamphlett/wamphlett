@@ -118,7 +118,12 @@ export type DailyEntry = {
   // Every kanji that appears anywhere in the entry.
   kanji: Record<string, KanjiInfo>;
   sentences: Sentence[];
-  passage: { tokens: Token[]; translation: string; ai: boolean } | null;
+  passage: {
+    tokens: Token[];
+    translation: string;
+    ai: boolean;
+    level?: string;
+  } | null;
   writing: WritingTask[];
   dictionary: DictionaryEntry[];
   status: EntryStatus;
