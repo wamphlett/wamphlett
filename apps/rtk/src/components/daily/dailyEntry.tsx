@@ -751,7 +751,12 @@ export default function DailyEntry({
                 <span className={styles.aiLabel}>AI-written</span>
               )}
               <span className={`${styles.small} ${styles.muted}`}>
-                checked by code: every kanji studied, every target used
+                checked by code: every kanji studied. Uses{' '}
+                {entry.targets
+                  .map(t => t.kanji)
+                  .filter(k => plainText(entry.passage!.tokens).includes(k))
+                  .join('、')}{' '}
+                of today&apos;s {entry.targets.length} targets
               </span>
             </div>
           </div>
